@@ -17,6 +17,7 @@
 
     <modules>
         <module>system</module>
+        <module>device</module>
     </modules>
 
     <dependencies>
