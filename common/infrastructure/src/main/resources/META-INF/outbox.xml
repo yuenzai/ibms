@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.1"
+                 xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm
+                 http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd">
+    <entity class="cn.ecosync.ibms.outbox.model.Outbox" access="FIELD">
+        <table name="outbox"/>
+        <convert attribute-name="payload" converter="cn.ecosync.ibms.jpa.ObjectJpaConverter"/>
+        <attributes>
+            <basic name="aggregateType">
+                <column name="aggregate_type" nullable="false" updatable="false"/>
+            </basic>
+            <basic name="aggregateId">
+                <column name="aggregate_id" nullable="false" updatable="false"/>
+            </basic>
+            <basic name="eventId">
+                <column name="event_id" nullable="false" updatable="false"/>
+            </basic>
+            <basic name="eventTime">
+                <column name="event_time" nullable="false" updatable="false"/>
+            </basic>
+            <basic name="eventType">
+                <column name="event_type" nullable="false" updatable="false"/>
+            </basic>
+            <basic name="payload">
+                <column name="payload" updatable="false"/>
+            </basic>
+        </attributes>
+    </entity>
+
+    <entity class="cn.ecosync.ibms.outbox.model.OutboxProcessed" access="FIELD">
+        <table name="outbox_processed"/>
+        <attributes>
+            <basic name="eventId">
+                <column name="event_id" nullable="false" updatable="false" unique="true"/>
+            </basic>
+        </attributes>
+    </entity>
+</entity-mappings>

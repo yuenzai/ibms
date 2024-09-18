@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.1"
+                 xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm
+                 http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd">
+    <persistence-unit-metadata>
+        <!-- 不要声明这个，不然 Spring Data JPA 的 Auditing 会失效 -->
+        <!--<xml-mapping-metadata-complete/>-->
+        <persistence-unit-defaults>
+            <entity-listeners>
+                <entity-listener class="org.springframework.data.jpa.domain.support.AuditingEntityListener"/>
+            </entity-listeners>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+
+    <mapped-superclass class="cn.ecosync.ibms.model.IdentifiedDomainObject" access="FIELD">
+        <attributes>
+            <id name="id">
+                <column name="id" nullable="false" unique="true" updatable="false"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+        </attributes>
+    </mapped-superclass>
+
+    <mapped-superclass class="cn.ecosync.ibms.model.IdentifiedValueObject" access="FIELD"/>
+
+    <mapped-superclass class="cn.ecosync.ibms.model.Entity" access="FIELD">
+        <attributes>
+            <basic name="createdDate">
+                <column name="created_date" nullable="false" updatable="false"/>
+            </basic>
+            <basic name="lastModifiedDate">
+                <column name="last_modified_date" nullable="false"/>
+            </basic>
+        </attributes>
+    </mapped-superclass>
+
+    <mapped-superclass class="cn.ecosync.ibms.model.ConcurrencySafeEntity" access="FIELD">
+        <attributes>
+            <version name="version">
+                <column name="version" nullable="false"/>
+            </version>
+        </attributes>
+    </mapped-superclass>
+
+    <converter class="cn.ecosync.ibms.jpa.ObjectJpaConverter"/>
+    <converter class="cn.ecosync.ibms.jpa.MapJpaConverter"/>
+</entity-mappings>
