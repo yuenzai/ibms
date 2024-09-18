@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.1"
+                 xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm
+                 http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd">
+    <entity class="cn.ecosync.ibms.system.model.SystemDictionary" access="FIELD">
+        <table name="dictionary"/>
+        <attributes>
+            <embedded name="key" access="FIELD"/>
+            <embedded name="value" access="FIELD"/>
+        </attributes>
+    </entity>
+
+    <embeddable class="cn.ecosync.ibms.system.model.SystemDictionaryKey" access="FIELD">
+        <attributes>
+            <basic name="dictKey">
+                <column name="dict_key" nullable="false" updatable="false"/>
+            </basic>
+        </attributes>
+    </embeddable>
+
+    <embeddable class="cn.ecosync.ibms.system.model.SystemDictionaryValue" access="FIELD">
+        <attributes>
+            <basic name="dictValue">
+                <column name="dict_value" nullable="false"/>
+                <convert attribute-name="dictValue" converter="cn.ecosync.ibms.jpa.MapJpaConverter"/>
+            </basic>
+        </attributes>
+    </embeddable>
+</entity-mappings>
