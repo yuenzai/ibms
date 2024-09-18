@@ -8,4 +8,8 @@ public interface JsonSerde {
     <T> Optional<T> readValue(String json, Class<T> valueType);
 
     <T> Optional<T> readValue(String json, TypeReference<T> valueTypeRef);
+
+    <T> Optional<T> convertValue(Object fromValue, Class<T> toValueType);
+
+    <T> Optional<T> convertValue(Object fromValue, TypeReference<T> toValueTypeRef);
 }

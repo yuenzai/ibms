@@ -38,7 +38,7 @@ public class EventBusDefaultAdapter implements EventBus, ApplicationEventPublish
 
     private void handleImpl(Event event) {
         if (applicationEventPublisher == null || event == null) {
-            log.warn("No SpringEventPublisher or Event");
+            log.error("No SpringEventPublisher or Event");
             return;
         }
         applicationEventPublisher.publishEvent(event);

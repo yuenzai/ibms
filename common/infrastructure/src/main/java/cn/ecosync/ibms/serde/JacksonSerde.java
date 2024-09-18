@@ -44,4 +44,25 @@ public class JacksonSerde implements JsonSerde {
             return Optional.empty();
         }
     }
+
+    @Override
+    public <T> Optional<T> convertValue(Object fromValue, Class<T> toValueType) {
+        try {
+            return Optional.ofNullable(objectMapper.convertValue(fromValue, toValueType));
+        } catch (Exception e) {
+            log.error("", e);
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public <T> Optional<T> convertValue(Object fromValue, TypeReference<T> toValueTypeRef) {
+        try {
+            JavaType valueType = objectMapper.getTypeFactory().constructType(toValueTypeRef.getType());
+            return Optional.ofNullable(objectMapper.convertValue(fromValue, valueType));
+        } catch (Exception e) {
+            log.error("", e);
+            return Optional.empty();
+        }
+    }
 }
