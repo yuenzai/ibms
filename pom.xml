@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>cn.ecosync.common</groupId>
-        <artifactId>common-parent</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.7.18</version>
         <relativePath/>
     </parent>
 
@@ -16,9 +16,20 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>common</module>
         <module>system</module>
         <module>device</module>
+        <module>bootstrap</module>
+        <module>shared-kernel</module>
     </modules>
+
+    <properties>
+        <basedir.ref>${project.basedir}</basedir.ref>
+        <java.version>8</java.version>
+        <!-- 升级 Kafka Streams 版本，因为 RocksDB 不支持 Apple Silicon 芯片 -->
+        <kafka.version>3.2.3</kafka.version>
+        <spring-kafka.version>2.9.13</spring-kafka.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -27,4 +38,71 @@
             <optional>true</optional>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>cn.ecosync.ibms.common</groupId>
+                <artifactId>ibms-common-domain</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms.common</groupId>
+                <artifactId>ibma-common-infrastructure</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms</groupId>
+                <artifactId>ibms-shared-kernel</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>3.4.1</version>
+                    <executions>
+                        <execution>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>java</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <mainClass>cn.ecosync.ibms.jpa.JPADomainExporterRunnable</mainClass>
+                        <!-- 在插件执行代码时，是否包含项目的依赖 -->
+                        <includeProjectDependencies>true</includeProjectDependencies>
+                        <!-- 在插件执行代码时，是否包含插件的依赖 -->
+                        <includePluginDependencies>true</includePluginDependencies>
+                        <!-- 是否将 build.resources 标签的资源添加到 classpath 中 -->
+                        <addResourcesToClasspath>true</addResourcesToClasspath>
+                        <sourceRoot>target/generated-sources/java</sourceRoot>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>cn.ecosync.ibms.common</groupId>
+                            <artifactId>ibms-common-infrastructure</artifactId>
+                            <version>0.0.1-SNAPSHOT</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>com.querydsl</groupId>
+                            <artifactId>querydsl-jpa-codegen</artifactId>
+                            <version>${querydsl.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-starter-data-jpa</artifactId>
+                            <version>2.7.18</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>
