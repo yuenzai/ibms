@@ -1,0 +1,77 @@
+spring:
+  application:
+    name: metaiot
+  datasource:
+    url: jdbc:mysql://110.41.57.238:3306/ibms?serverTimezone=Asia/Shanghai
+    username: root
+    password: FXlqUQNMnNgvaouhsa5y4WTbBsoMMyfP
+    # url: jdbc:mysql://rm-wz90yr2u19dkvvh779o.mysql.rds.aliyuncs.com:3306/metaiot?serverTimezone=Asia/Shanghai
+    # username: metaiot
+    # password: cx553YzCSgPKnmX
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
+    mapping-resources:
+      - META-INF/common.xml
+      - META-INF/outbox.xml
+      - META-INF/dictionary.xml
+
+# kafka
+---
+spring:
+  kafka:
+    bootstrap-servers: 110.41.57.238:19092
+    consumer:
+      group-id: ${spring.application.name}
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    listener:
+      ack-mode: manual_immediate
+      concurrency: 1
+    streams:
+      application-id: ${spring.application.name}
+      bootstrap-servers: 110.41.57.238:19092
+      cache-max-size-buffering: 10MB
+      cleanup:
+        on-startup: true
+        on-shutdown: true
+      state-dir: rocksdb
+      properties:
+        default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        num.stream.threads: 1
+        default.dsl.store: rocksDB
+      auto-startup: false
+
+# flyway
+---
+spring:
+  flyway:
+    enabled: true
+    create-schemas: false
+    locations: classpath:db/migration/{vendor}
+    encoding: UTF-8
+    sql-migration-prefix: V
+    sql-migration-separator: __
+    sql-migration-suffixes: .sql
+    validate-on-migrate: true
+#    target: 1.0.0
+#    placeholder-prefix: '${'
+#    placeholder-replacement: true
+#    placeholder-separator: ':'
+#    placeholder-suffix: '}'
+#    script-placeholder-prefix: 'FP__'
+#    script-placeholder-suffix: '__'
+#    placeholders:
+#      db-vendor: mysql
+
+#logging:
+#  level:
+#    org.flywaydb: debug
+
+---
+ibms:
+  outbox:
+    enabled: true
