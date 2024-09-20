@@ -31,11 +31,10 @@
     <build>
         <resources>
             <resource>
-                <!-- 将项目根目录的 resources/META-INF/persistence.xml 添加到 classpath -->
-                <directory>../../resources</directory>
-            </resource>
-            <resource>
                 <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>**/persistence.xml</exclude>
+                </excludes>
             </resource>
         </resources>
         <plugins>

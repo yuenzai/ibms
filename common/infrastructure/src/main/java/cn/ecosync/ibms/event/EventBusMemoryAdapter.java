@@ -1,10 +1,8 @@
 package cn.ecosync.ibms.event;
 
-import cn.ecosync.ibms.config.OutboxConfigurationProperties;
-import cn.ecosync.ibms.outbox.model.Outbox;
-import cn.ecosync.ibms.repository.OutboxRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Component;
@@ -16,19 +14,13 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class EventBusDefaultAdapter implements EventBus, ApplicationEventPublisherAware {
-    private final OutboxRepository outboxRepository;
-    private final OutboxConfigurationProperties outboxConfig;
+@ConditionalOnMissingClass({"org.springframework.data.jpa.repository.JpaRepository"})
+public class EventBusMemoryAdapter implements EventBus, ApplicationEventPublisherAware {
     private ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     public void publish(Event event) {
-        if (outboxConfig.getEnabled()) {
-            Outbox outbox = new Outbox(event);
-            outboxRepository.put(outbox);
-        } else {
-            handleImpl(event);
-        }
+        handleImpl(event);
     }
 
     @Override

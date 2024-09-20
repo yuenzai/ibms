@@ -16,9 +16,5 @@
             <groupId>cn.ecosync.ibms.system</groupId>
             <artifactId>ibms-system-domain</artifactId>
         </dependency>
-        <dependency>
-            <groupId>cn.ecosync.ibms</groupId>
-            <artifactId>ibms-shared-kernel</artifactId>
-        </dependency>
     </dependencies>
 </project>

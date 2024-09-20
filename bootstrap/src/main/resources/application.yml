@@ -15,6 +15,7 @@ spring:
       - META-INF/common.xml
       - META-INF/outbox.xml
       - META-INF/dictionary.xml
+      - META-INF/device.xml
 
 # kafka
 ---
@@ -70,8 +71,3 @@ spring:
 #logging:
 #  level:
 #    org.flywaydb: debug
-
----
-ibms:
-  outbox:
-    enabled: true

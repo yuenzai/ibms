@@ -16,5 +16,10 @@
             <groupId>cn.ecosync.ibms.device</groupId>
             <artifactId>ibms-device-domain</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>

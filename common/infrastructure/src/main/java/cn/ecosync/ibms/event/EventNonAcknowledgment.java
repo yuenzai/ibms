@@ -1,10 +1,10 @@
 package cn.ecosync.ibms.event;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
+import org.springframework.stereotype.Repository;
 
-@Component
-@ConditionalOnMissingBean(EventAcknowledgment.class)
+@Repository
+@ConditionalOnMissingClass({"org.springframework.data.jpa.repository.JpaRepository"})
 public class EventNonAcknowledgment implements EventAcknowledgment {
     @Override
     public void acknowledge(String eventId) {

@@ -5,6 +5,7 @@ import cn.ecosync.ibms.system.model.QSystemDictionary;
 import cn.ecosync.ibms.system.query.GetSystemDictionaryQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +14,8 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class GetSystemDictionaryQueryHandler implements QueryHandler<GetSystemDictionaryQuery, Map<String, Object>> {
+@ConditionalOnClass(JPAQueryFactory.class)
+public class GetSystemDictionaryQueryJpaHandler implements QueryHandler<GetSystemDictionaryQuery, Map<String, Object>> {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
