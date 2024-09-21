@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,7 +16,6 @@ import java.util.stream.Collectors;
 public class RemoveDevicePointCommand implements Command {
     @NotBlank
     private String deviceCode;
-    @NotEmpty
     private List<String> pointCodes;
 
     public DeviceId toDeviceId() {
