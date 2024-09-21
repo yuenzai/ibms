@@ -18,14 +18,14 @@ public class RemoveDevicePointCommand implements Command {
     @NotBlank
     private String deviceCode;
     @NotEmpty
-    private List<String> pointCode;
+    private List<String> pointCodes;
 
     public DeviceId toDeviceId() {
         return new DeviceId(this.deviceCode);
     }
 
     public List<DevicePointId> toDevicePointIds() {
-        return CollectionUtils.nullSafeOf(this.pointCode).stream()
+        return CollectionUtils.nullSafeOf(this.pointCodes).stream()
                 .map(DevicePointId::new)
                 .collect(Collectors.toList());
     }

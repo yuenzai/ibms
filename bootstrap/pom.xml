@@ -32,6 +32,11 @@
             <artifactId>ibms-common-infrastructure</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>cn.ecosync.ibms.system</groupId>
+            <artifactId>ibms-system-presentation</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.kafka</groupId>

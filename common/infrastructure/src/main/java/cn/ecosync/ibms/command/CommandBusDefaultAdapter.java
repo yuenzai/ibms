@@ -38,6 +38,7 @@ public class CommandBusDefaultAdapter implements CommandBus {
         Method handleMethod = ReflectionUtils.findMethod(commandHandler.getClass(), "handle", command.getClass());
         Assert.notNull(handleMethod, "handle method not found: " + commandHandler.getClass().getCanonicalName());
         log.debug("execute command[{}]", CollectionUtils.mapOf("commandType", command.getClass().getCanonicalName(), "commandHandler", commandHandler.getClass().getCanonicalName()));
+        command.validate();
         ReflectionUtils.invokeMethod(handleMethod, commandHandler, command);
     }
 

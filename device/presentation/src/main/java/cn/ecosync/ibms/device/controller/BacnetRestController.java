@@ -30,13 +30,11 @@ public class BacnetRestController {
 
     @PostMapping("/device")
     public void addBacnetDevice(@RequestBody @Validated(Constants.Create.class) PutDeviceCommand command) {
-        command.setNetworkId(BacnetNetworkProperties.TYPE);
         commandBus.execute(command);
     }
 
     @PutMapping("/device")
     public void updateBacnetDevice(@RequestBody @Validated(Constants.Update.class) PutDeviceCommand command) {
-        command.setNetworkId(BacnetNetworkProperties.TYPE);
         commandBus.execute(command);
     }
 

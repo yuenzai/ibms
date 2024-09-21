@@ -6,9 +6,18 @@ import cn.ecosync.ibms.system.model.DictionaryValue;
 import lombok.Getter;
 import lombok.ToString;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 @Getter
 @ToString
 public class PutDictionaryCommand implements Command {
-    private DictionaryKey dictKey;
+    @NotNull
+    private String dictKey;
+    @Valid
     private DictionaryValue dictValue;
+
+    public DictionaryKey toDictionaryKey() {
+        return new DictionaryKey(dictKey);
+    }
 }

@@ -13,10 +13,9 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnClass(ObjectMapper.class)
 public class SystemConfig {
     @Bean
-    public Module deviceTypeModule() {
+    public Module systemTypeModule() {
         SimpleModule simpleModule = new SimpleModule();
-        // command
-        simpleModule.registerSubtypes(new NamedType(PutDictionaryCommand.class, "PUT_DICTIONARY_CMD"));
+        simpleModule.registerSubtypes(new NamedType(PutDictionaryCommand.class, "PUT_DICTIONARY"));
         return simpleModule;
     }
 }

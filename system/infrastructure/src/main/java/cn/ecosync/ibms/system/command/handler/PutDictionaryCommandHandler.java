@@ -18,7 +18,7 @@ public class PutDictionaryCommandHandler implements CommandHandler<PutDictionary
     @Override
     @Transactional
     public void handle(PutDictionaryCommand command) {
-        DictionaryKey key = command.getDictKey();
+        DictionaryKey key = command.toDictionaryKey();
         DictionaryValue value = command.getDictValue();
         Dictionary dictionary = repository.get(key).orElse(null);
         if (dictionary == null) {
