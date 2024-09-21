@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @NoRepositoryBean
 public interface DeviceRepository {
-    void put(Device device);
+    void add(Device device);
 
     void remove(Device device);
 

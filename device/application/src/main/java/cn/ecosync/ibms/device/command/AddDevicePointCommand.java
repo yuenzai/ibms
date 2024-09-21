@@ -14,7 +14,7 @@ import java.util.List;
 
 @Getter
 @ToString
-public class PutDevicePointCommand implements Command {
+public class AddDevicePointCommand implements Command {
     @NotBlank
     private String deviceCode;
     @Valid

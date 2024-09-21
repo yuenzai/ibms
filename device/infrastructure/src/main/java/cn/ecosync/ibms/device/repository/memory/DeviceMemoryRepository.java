@@ -12,7 +12,7 @@ import java.util.Optional;
 @ConditionalOnMissingClass({"org.springframework.data.jpa.repository.JpaRepository"})
 public class DeviceMemoryRepository implements DeviceRepository {
     @Override
-    public void put(Device device) {
+    public void add(Device device) {
 
     }
 

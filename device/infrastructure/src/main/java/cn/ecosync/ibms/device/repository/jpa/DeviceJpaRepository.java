@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface DeviceJpaRepository extends JpaRepository<Device, Integer>, DeviceRepository {
     @Override
-    default void put(Device device) {
+    default void add(Device device) {
         save(device);
     }
 

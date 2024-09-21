@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @ToString
-public class PutDeviceCommand implements Command {
+public class AddDeviceCommand implements Command {
     @NotBlank
     private String networkId;
     @NotBlank
