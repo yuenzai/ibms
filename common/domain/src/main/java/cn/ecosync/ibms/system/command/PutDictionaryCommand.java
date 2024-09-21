@@ -15,6 +15,7 @@ public class PutDictionaryCommand implements Command {
     @NotNull
     private String dictKey;
     @Valid
+    @NotNull
     private DictionaryValue dictValue;
 
     public DictionaryKey toDictionaryKey() {

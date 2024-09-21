@@ -23,14 +23,10 @@ public class AddDeviceCommandHandler implements CommandHandler<AddDeviceCommand>
         DictionaryKey networkId = command.toNetworkId();
         DeviceProperties deviceProperties = command.getProperties();
         Device device = deviceRepository.get(deviceId).orElse(null);
-        if (device == null) {
-            device = new Device(deviceId, networkId, command.getDeviceName(), command.getPath(), command.getDescription(), deviceProperties);
-            deviceRepository.add(device);
-        } else {
-            device.setDeviceName(command.getDeviceName());
-            device.setPath(command.getPath());
-            device.setDescription(command.getDescription());
-            device.setDeviceProperties(deviceProperties);
+        if (device != null) {
+            throw new IllegalArgumentException("device already exists: " + deviceId.getDeviceCode());
         }
+        device = new Device(deviceId, networkId, command.getDeviceName(), command.getPath(), command.getDescription(), deviceProperties);
+        deviceRepository.add(device);
     }
 }

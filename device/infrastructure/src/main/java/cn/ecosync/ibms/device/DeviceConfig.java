@@ -1,9 +1,6 @@
 package cn.ecosync.ibms.device;
 
-import cn.ecosync.ibms.device.command.AddDeviceCommand;
-import cn.ecosync.ibms.device.command.AddDevicePointCommand;
-import cn.ecosync.ibms.device.command.RemoveDeviceCommand;
-import cn.ecosync.ibms.device.command.RemoveDevicePointCommand;
+import cn.ecosync.ibms.device.command.*;
 import cn.ecosync.ibms.device.model.DeviceConstant;
 import cn.ecosync.ibms.device.model.bacnet.BacnetDevicePointProperties;
 import cn.ecosync.ibms.device.model.bacnet.BacnetDeviceProperties;
@@ -27,8 +24,9 @@ public class DeviceConfig {
         simpleModule.registerSubtypes(new NamedType(BacnetDevicePointProperties.class, DeviceConstant.BACNET));
         // command
         simpleModule.registerSubtypes(new NamedType(AddDeviceCommand.class, "ADD_DEVICE"));
+        simpleModule.registerSubtypes(new NamedType(UpdateDeviceCommand.class, "UPDATE_DEVICE"));
         simpleModule.registerSubtypes(new NamedType(RemoveDeviceCommand.class, "REMOVE_DEVICE"));
-        simpleModule.registerSubtypes(new NamedType(AddDevicePointCommand.class, "ADD_DEVICE_POINT"));
+        simpleModule.registerSubtypes(new NamedType(PutDevicePointCommand.class, "PUT_DEVICE_POINT"));
         simpleModule.registerSubtypes(new NamedType(RemoveDevicePointCommand.class, "REMOVE_DEVICE_POINT"));
         return simpleModule;
     }
