@@ -2,13 +2,12 @@ package cn.ecosync.ibms.device.controller;
 
 import cn.ecosync.ibms.command.Command;
 import cn.ecosync.ibms.command.CommandBus;
+import cn.ecosync.ibms.device.dto.DeviceDto;
+import cn.ecosync.ibms.device.query.GetDeviceQuery;
 import cn.ecosync.ibms.query.QueryBus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,5 +19,10 @@ public class DeviceRestController {
     @PostMapping
     public void execute(@RequestBody @Validated Command command) {
         commandBus.execute(command);
+    }
+
+    @GetMapping("/{deviceCode}")
+    public DeviceDto getBacnetDevice(@PathVariable String deviceCode) {
+        return queryBus.execute(new GetDeviceQuery(deviceCode)).orElse(null);
     }
 }
