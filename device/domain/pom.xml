@@ -13,18 +13,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>cn.ecosync.ibms</groupId>
-            <artifactId>ibms-shared-kernel</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.persistence</groupId>
-            <artifactId>jakarta.persistence-api</artifactId>
-            <scope>provided</scope>
+            <groupId>cn.ecosync.ibms.common</groupId>
+            <artifactId>ibms-common-domain</artifactId>
         </dependency>
     </dependencies>
 </project>

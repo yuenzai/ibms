@@ -51,11 +51,6 @@
                 <artifactId>ibma-common-infrastructure</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms</groupId>
-                <artifactId>ibms-shared-kernel</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 

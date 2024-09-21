@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>ibms-common-domain</artifactId>
+    <description>共享内核</description>
 
     <dependencies>
         <dependency>
@@ -27,7 +28,10 @@
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
-            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
         </dependency>
     </dependencies>
 </project>
