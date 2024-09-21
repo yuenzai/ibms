@@ -3,7 +3,6 @@ package cn.ecosync.ibms.device.command;
 import cn.ecosync.ibms.command.Command;
 import cn.ecosync.ibms.device.dto.DevicePointDto;
 import cn.ecosync.ibms.device.model.DeviceId;
-import cn.ecosync.ibms.device.model.DevicePointProperties;
 import cn.ecosync.ibms.util.CollectionUtils;
 import lombok.Getter;
 import lombok.ToString;
@@ -15,18 +14,18 @@ import java.util.List;
 
 @Getter
 @ToString
-public class PutDevicePointCommand<T extends DevicePointProperties> implements Command {
+public class PutDevicePointCommand implements Command {
     @NotBlank
     private String deviceCode;
     @Valid
     @NotEmpty
-    private List<DevicePointDto<T>> devicePoints;
+    private List<DevicePointDto> devicePoints;
 
     public DeviceId toDeviceId() {
         return new DeviceId(this.deviceCode);
     }
 
-    public List<DevicePointDto<T>> getDevicePoints() {
+    public List<DevicePointDto> getDevicePoints() {
         return CollectionUtils.nullSafeOf(devicePoints);
     }
 }

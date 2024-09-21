@@ -11,13 +11,13 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @ToString
-public class DevicePointDto<T extends DevicePointProperties> {
+public class DevicePointDto {
     @NotBlank
     private String pointCode;
     private String pointName;
     @Valid
     @NotNull
-    private T pointProperties;
+    private DevicePointProperties pointProperties;
 
     public DevicePointId toDevicePointId() {
         return new DevicePointId(pointCode);

@@ -6,13 +6,13 @@ import org.springframework.util.Assert;
 
 @Getter
 @EqualsAndHashCode
-public class SystemDictionaryKey {
+public class DictionaryKey {
     private String dictKey;
 
-    protected SystemDictionaryKey() {
+    protected DictionaryKey() {
     }
 
-    public SystemDictionaryKey(String dictKey) {
+    public DictionaryKey(String dictKey) {
         Assert.hasText(dictKey, "dictionary key must not be empty");
         this.dictKey = dictKey;
     }

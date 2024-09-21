@@ -5,15 +5,15 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @Getter
 @ToString
 @EqualsAndHashCode
 public class BacnetDeviceProperties implements DeviceProperties {
-    @NotNull
+    @NotBlank(message = "networkNumber must not be empty")
     private String networkNumber;
-    @NotNull
+    @NotBlank(message = "macAddress must not be empty")
     private String macAddress;
     private String macAddressStyle;
 }

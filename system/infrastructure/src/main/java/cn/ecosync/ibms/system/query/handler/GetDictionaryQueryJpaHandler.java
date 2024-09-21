@@ -1,8 +1,8 @@
 package cn.ecosync.ibms.system.query.handler;
 
 import cn.ecosync.ibms.query.QueryHandler;
-import cn.ecosync.ibms.system.model.QSystemDictionary;
-import cn.ecosync.ibms.system.query.GetSystemDictionaryQuery;
+import cn.ecosync.ibms.system.model.QDictionary;
+import cn.ecosync.ibms.system.query.GetDictionaryQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -15,13 +15,13 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 @ConditionalOnClass(JPAQueryFactory.class)
-public class GetSystemDictionaryQueryJpaHandler implements QueryHandler<GetSystemDictionaryQuery, Map<String, Object>> {
+public class GetDictionaryQueryJpaHandler implements QueryHandler<GetDictionaryQuery, Map<String, Object>> {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
     @Transactional(readOnly = true)
-    public Map<String, Object> handle(GetSystemDictionaryQuery query) {
-        QSystemDictionary dict = QSystemDictionary.systemDictionary;
+    public Map<String, Object> handle(GetDictionaryQuery query) {
+        QDictionary dict = QDictionary.dictionary;
         Map<String, Object> dictValue = jpaQueryFactory.select(dict.value.dictValue)
                 .from(dict)
                 .where(dict.key.dictKey.eq(query.getDictKey()))

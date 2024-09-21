@@ -9,13 +9,13 @@ import java.util.Map;
 
 @ToString
 @EqualsAndHashCode
-public class SystemDictionaryValue {
+public class DictionaryValue {
     private Map<String, Object> dictValue;
 
-    protected SystemDictionaryValue() {
+    protected DictionaryValue() {
     }
 
-    public SystemDictionaryValue(Map<String, Object> dictValue) {
+    public DictionaryValue(Map<String, Object> dictValue) {
         Assert.notNull(dictValue, "dictionary value must not be null");
         this.dictValue = dictValue;
     }

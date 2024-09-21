@@ -10,7 +10,7 @@ import java.util.Map;
 @Getter
 @ToString
 @RequiredArgsConstructor
-public class PutSystemDictionaryCommand implements Command {
+public class PutDictionaryCommand implements Command {
     private final String dictKey;
     private final Map<String, Object> dictValue;
 }

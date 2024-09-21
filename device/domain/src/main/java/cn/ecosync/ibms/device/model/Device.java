@@ -2,7 +2,7 @@ package cn.ecosync.ibms.device.model;
 
 import cn.ecosync.ibms.model.AggregateRoot;
 import cn.ecosync.ibms.model.ConcurrencySafeEntity;
-import cn.ecosync.ibms.system.model.SystemDictionaryKey;
+import cn.ecosync.ibms.system.model.DictionaryKey;
 import cn.ecosync.ibms.util.StringUtils;
 import lombok.Getter;
 import org.springframework.util.Assert;
@@ -14,7 +14,7 @@ import java.util.Objects;
 @Getter
 public class Device extends ConcurrencySafeEntity implements AggregateRoot {
     private DeviceId deviceId;
-    private SystemDictionaryKey networkId;
+    private DictionaryKey networkId;
     private String deviceName;
     private String path;
     private String description;
@@ -25,7 +25,7 @@ public class Device extends ConcurrencySafeEntity implements AggregateRoot {
     protected Device() {
     }
 
-    public Device(DeviceId deviceId, SystemDictionaryKey networkId, String deviceName, String path, String description, DeviceProperties deviceProperties) {
+    public Device(DeviceId deviceId, DictionaryKey networkId, String deviceName, String path, String description, DeviceProperties deviceProperties) {
         Assert.notNull(deviceId, "device id must not be null");
         Assert.notNull(networkId, "network id must not be null");
         Assert.notNull(deviceProperties, "device properties must not be null");

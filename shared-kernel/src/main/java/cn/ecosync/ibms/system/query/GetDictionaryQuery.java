@@ -10,6 +10,6 @@ import java.util.Map;
 @Getter
 @ToString
 @RequiredArgsConstructor
-public class GetSystemDictionaryQuery implements Query<Map<String, Object>> {
+public class GetDictionaryQuery implements Query<Map<String, Object>> {
     private final String dictKey;
 }

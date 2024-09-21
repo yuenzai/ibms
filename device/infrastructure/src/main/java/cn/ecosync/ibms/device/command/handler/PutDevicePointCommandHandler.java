@@ -14,18 +14,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
-public class PutDevicePointCommandHandler implements CommandHandler<PutDevicePointCommand<?>> {
+public class PutDevicePointCommandHandler implements CommandHandler<PutDevicePointCommand> {
     private final DeviceRepository deviceRepository;
 
     @Override
     @Transactional
-    public void handle(PutDevicePointCommand<?> command) {
+    public void handle(PutDevicePointCommand command) {
         DeviceId deviceId = command.toDeviceId();
         Device device = deviceRepository.get(deviceId).orElse(null);
         if (device == null) {
             return;
         }
-        for (DevicePointDto<?> dto : command.getDevicePoints()) {
+        for (DevicePointDto dto : command.getDevicePoints()) {
             DevicePointId devicePointId = dto.toDevicePointId();
             DevicePoint devicePoint = device.getDevicePoints().get(devicePointId);
             if (devicePoint == null) {

@@ -4,22 +4,22 @@ import cn.ecosync.ibms.model.AggregateRoot;
 import cn.ecosync.ibms.model.ConcurrencySafeEntity;
 import org.springframework.util.Assert;
 
-public class SystemDictionary extends ConcurrencySafeEntity implements AggregateRoot {
-    private SystemDictionaryKey key;
+public class Dictionary extends ConcurrencySafeEntity implements AggregateRoot {
+    private DictionaryKey key;
 
-    private SystemDictionaryValue value;
+    private DictionaryValue value;
 
-    protected SystemDictionary() {
+    protected Dictionary() {
     }
 
-    public SystemDictionary(SystemDictionaryKey key, SystemDictionaryValue value) {
+    public Dictionary(DictionaryKey key, DictionaryValue value) {
         Assert.notNull(key, "dictionary key must not be null");
         Assert.notNull(value, "dictionary value must not be null");
         this.key = key;
         this.value = value;
     }
 
-    public void setValue(SystemDictionaryValue value) {
+    public void setValue(DictionaryValue value) {
         if (value != null) {
             this.value = value;
         }
@@ -27,7 +27,7 @@ public class SystemDictionary extends ConcurrencySafeEntity implements Aggregate
 
     @Override
     public String aggregateType() {
-        return SystemDictionaryConstant.AGGREGATE_TYPE;
+        return DictionaryConstant.AGGREGATE_TYPE;
     }
 
     @Override
