@@ -9,6 +9,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -19,6 +20,7 @@ public class GetDeviceQueryJpaHandler implements QueryHandler<GetDeviceQuery, Op
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<DeviceDto> handle(GetDeviceQuery query) {
         QDevice dev = QDevice.device;
         DeviceDto dto = jpaQueryFactory.select(Projections.fields(
