@@ -6,9 +6,12 @@
                  http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd">
     <entity class="cn.ecosync.ibms.system.model.Dictionary" access="FIELD">
         <table name="dictionary"/>
+        <convert attribute-name="value" converter="cn.ecosync.ibms.system.jpa.DictionaryValueJpaConverter"/>
         <attributes>
+            <basic name="value" access="FIELD">
+                <column name="dict_value" nullable="false"/>
+            </basic>
             <embedded name="key" access="FIELD"/>
-            <embedded name="value" access="FIELD"/>
         </attributes>
     </entity>
 
@@ -16,15 +19,6 @@
         <attributes>
             <basic name="dictKey">
                 <column name="dict_key" nullable="false" updatable="false"/>
-            </basic>
-        </attributes>
-    </embeddable>
-
-    <embeddable class="cn.ecosync.ibms.system.model.DictionaryValue" access="FIELD">
-        <attributes>
-            <basic name="dictValue">
-                <column name="dict_value" nullable="false"/>
-                <convert attribute-name="dictValue" converter="cn.ecosync.ibms.jpa.MapJpaConverter"/>
             </basic>
         </attributes>
     </embeddable>

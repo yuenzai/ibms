@@ -1,31 +1,28 @@
 package cn.ecosync.ibms.system.query.handler;
 
+import cn.ecosync.ibms.system.model.DictionaryValue;
 import cn.ecosync.ibms.query.QueryHandler;
-import cn.ecosync.ibms.system.model.QDictionary;
+import cn.ecosync.ibms.system.model.Dictionary;
 import cn.ecosync.ibms.system.query.GetDictionaryQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
+import cn.ecosync.ibms.system.repository.DictionaryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-@ConditionalOnClass(JPAQueryFactory.class)
-public class GetDictionaryQueryJpaHandler implements QueryHandler<GetDictionaryQuery, Map<String, Object>> {
-    private final JPAQueryFactory jpaQueryFactory;
+@ConditionalOnClass(JpaRepository.class)
+public class GetDictionaryQueryJpaHandler implements QueryHandler<GetDictionaryQuery, Optional<DictionaryValue>> {
+    private final DictionaryRepository repository;
 
     @Override
     @Transactional(readOnly = true)
-    public Map<String, Object> handle(GetDictionaryQuery query) {
-        QDictionary dict = QDictionary.dictionary;
-        Map<String, Object> dictValue = jpaQueryFactory.select(dict.value.dictValue)
-                .from(dict)
-                .where(dict.key.dictKey.eq(query.getDictKey()))
-                .fetchOne();
-        return dictValue == null ? Collections.emptyMap() : Collections.unmodifiableMap(dictValue);
+    public Optional<DictionaryValue> handle(GetDictionaryQuery query) {
+        return repository.get(query.getDictKey())
+                .map(Dictionary::getValue);
     }
 }

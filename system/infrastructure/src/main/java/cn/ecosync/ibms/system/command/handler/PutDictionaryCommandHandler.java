@@ -1,10 +1,10 @@
 package cn.ecosync.ibms.system.command.handler;
 
 import cn.ecosync.ibms.command.CommandHandler;
+import cn.ecosync.ibms.system.model.DictionaryValue;
 import cn.ecosync.ibms.system.command.PutDictionaryCommand;
 import cn.ecosync.ibms.system.model.Dictionary;
 import cn.ecosync.ibms.system.model.DictionaryKey;
-import cn.ecosync.ibms.system.model.DictionaryValue;
 import cn.ecosync.ibms.system.repository.DictionaryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -18,8 +18,8 @@ public class PutDictionaryCommandHandler implements CommandHandler<PutDictionary
     @Override
     @Transactional
     public void handle(PutDictionaryCommand command) {
-        DictionaryKey key = new DictionaryKey(command.getDictKey());
-        DictionaryValue value = new DictionaryValue(command.getDictValue());
+        DictionaryKey key = command.getDictKey();
+        DictionaryValue value = command.getDictValue();
         Dictionary dictionary = repository.get(key).orElse(null);
         if (dictionary == null) {
             dictionary = new Dictionary(key, value);

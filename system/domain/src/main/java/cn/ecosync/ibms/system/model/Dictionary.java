@@ -2,8 +2,10 @@ package cn.ecosync.ibms.system.model;
 
 import cn.ecosync.ibms.model.AggregateRoot;
 import cn.ecosync.ibms.model.ConcurrencySafeEntity;
+import lombok.Getter;
 import org.springframework.util.Assert;
 
+@Getter
 public class Dictionary extends ConcurrencySafeEntity implements AggregateRoot {
     private DictionaryKey key;
 

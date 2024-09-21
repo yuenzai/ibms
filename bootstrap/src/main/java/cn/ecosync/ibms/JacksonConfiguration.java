@@ -1,5 +1,6 @@
 package cn.ecosync.ibms;
 
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -10,9 +11,8 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,9 +24,9 @@ import static cn.ecosync.ibms.Constants.*;
 @Slf4j
 @Configuration
 @ConditionalOnClass(ObjectMapper.class)
-public class JacksonConfiguration implements Jackson2ObjectMapperBuilderCustomizer {
-    @Override
-    public void customize(Jackson2ObjectMapperBuilder builder) {
+public class JacksonConfiguration {
+    @Bean
+    public Module javaTimeModule() {
         JavaTimeModule javaTimeModule = new JavaTimeModule();
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATETIME_FORMAT);
@@ -41,6 +41,6 @@ public class JacksonConfiguration implements Jackson2ObjectMapperBuilderCustomiz
         javaTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(timeFormatter));
         javaTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormatter));
 
-        builder.modules(javaTimeModule);
+        return javaTimeModule;
     }
 }
