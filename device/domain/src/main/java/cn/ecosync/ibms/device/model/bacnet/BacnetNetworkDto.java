@@ -1,4 +1,4 @@
-package cn.ecosync.ibms.device.dto;
+package cn.ecosync.ibms.device.model.bacnet;
 
 import lombok.Getter;
 import lombok.ToString;

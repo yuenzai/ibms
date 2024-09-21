@@ -3,23 +3,18 @@ package cn.ecosync.ibms.device.model;
 import cn.ecosync.ibms.model.Entity;
 import cn.ecosync.ibms.util.StringUtils;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.util.Assert;
 
 import java.util.Objects;
 
 @Getter
 public class DevicePoint extends Entity {
+    @Setter
     private Device device;
     private DevicePointId devicePointId;
     private String pointName;
     private DevicePointProperties devicePointProperties;
-
-    public static DevicePoint getReferenceOf(Device device, DevicePointId devicePointId) {
-        DevicePoint devicePoint = new DevicePoint();
-        devicePoint.device = device;
-        devicePoint.devicePointId = devicePointId;
-        return devicePoint;
-    }
 
     protected DevicePoint() {
     }

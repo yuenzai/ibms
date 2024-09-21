@@ -1,6 +1,5 @@
 package cn.ecosync.ibms.device.model;
 
-import cn.ecosync.ibms.device.dto.DevicePointDto;
 import cn.ecosync.ibms.model.AggregateRoot;
 import cn.ecosync.ibms.model.ConcurrencySafeEntity;
 import cn.ecosync.ibms.system.model.SystemDictionaryKey;
@@ -67,21 +66,6 @@ public class Device extends ConcurrencySafeEntity implements AggregateRoot {
         if (enabled != null) {
             this.enabled = enabled;
         }
-    }
-
-    public void addDevicePoint(DevicePointDto<?> dto) {
-        DevicePointId devicePointId = dto.toDevicePointId();
-        DevicePoint devicePoint = this.devicePoints.get(devicePointId);
-        if (devicePoint == null) {
-            devicePoint = new DevicePoint(this, devicePointId, dto.getPointName(), dto.getPointProperties());
-            this.devicePoints.put(devicePointId, devicePoint);
-        } else {
-            devicePoint.setDevicePointProperties(dto.getPointProperties());
-        }
-    }
-
-    public void removeDevicePoint(DevicePointId devicePointId) {
-        this.devicePoints.remove(devicePointId);
     }
 
     @Override

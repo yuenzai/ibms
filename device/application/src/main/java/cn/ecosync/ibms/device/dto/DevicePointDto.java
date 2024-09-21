@@ -19,9 +19,6 @@ public class DevicePointDto<T extends DevicePointProperties> {
     @NotNull
     private T pointProperties;
 
-    public DevicePointDto() {
-    }
-
     public DevicePointId toDevicePointId() {
         return new DevicePointId(pointCode);
     }

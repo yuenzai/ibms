@@ -4,10 +4,14 @@ import cn.ecosync.ibms.command.CommandHandler;
 import cn.ecosync.ibms.device.command.RemoveDevicePointCommand;
 import cn.ecosync.ibms.device.model.Device;
 import cn.ecosync.ibms.device.model.DeviceId;
+import cn.ecosync.ibms.device.model.DevicePoint;
+import cn.ecosync.ibms.device.model.DevicePointId;
 import cn.ecosync.ibms.device.repository.DeviceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -22,7 +26,10 @@ public class RemoveDevicePointCommandHandler implements CommandHandler<RemoveDev
         if (device == null) {
             return;
         }
-        command.toDevicePointIds()
-                .forEach(device::removeDevicePoint);
+        List<DevicePointId> devicePointIds = command.toDevicePointIds();
+        for (DevicePointId devicePointId : devicePointIds) {
+            DevicePoint removed = device.getDevicePoints().remove(devicePointId);
+            removed.setDevice(null);
+        }
     }
 }
