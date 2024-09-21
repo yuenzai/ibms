@@ -1,10 +1,10 @@
 package cn.ecosync.ibms.system.command.handler;
 
 import cn.ecosync.ibms.command.CommandHandler;
-import cn.ecosync.ibms.system.model.DictionaryValue;
 import cn.ecosync.ibms.system.command.PutDictionaryCommand;
 import cn.ecosync.ibms.system.model.Dictionary;
 import cn.ecosync.ibms.system.model.DictionaryKey;
+import cn.ecosync.ibms.system.model.DictionaryValue;
 import cn.ecosync.ibms.system.repository.DictionaryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

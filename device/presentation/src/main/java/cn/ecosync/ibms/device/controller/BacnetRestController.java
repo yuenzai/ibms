@@ -9,7 +9,6 @@ import cn.ecosync.ibms.device.dto.DeviceDto;
 import cn.ecosync.ibms.device.model.bacnet.BacnetNetworkProperties;
 import cn.ecosync.ibms.device.query.GetDeviceQuery;
 import cn.ecosync.ibms.query.QueryBus;
-import cn.ecosync.ibms.system.command.PutDictionaryCommand;
 import cn.ecosync.ibms.system.model.DictionaryKey;
 import cn.ecosync.ibms.system.query.GetDictionaryQuery;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +21,6 @@ import org.springframework.web.bind.annotation.*;
 public class BacnetRestController {
     private final CommandBus commandBus;
     private final QueryBus queryBus;
-
-    @PutMapping("/network")
-    public void putBacnetNetwork(@RequestBody @Validated BacnetNetworkProperties dto) {
-        commandBus.execute(new PutDictionaryCommand(new DictionaryKey(dto.type()), dto));
-    }
 
     @GetMapping("/network")
     public BacnetNetworkProperties getBacnetNetwork() {
