@@ -24,7 +24,7 @@
                 <column name="properties" nullable="false"/>
             </basic>
             <one-to-many name="devicePoints" target-entity="cn.ecosync.ibms.device.model.DevicePoint" mapped-by="device" orphan-removal="true">
-                <map-key name="devicePointId"/>
+                <map-key name="pointId"/>
                 <cascade>
                     <cascade-all/>
                 </cascade>
@@ -39,18 +39,18 @@
     </entity>
 
     <entity class="cn.ecosync.ibms.device.model.DevicePoint" access="FIELD">
-        <convert attribute-name="devicePointProperties" converter="cn.ecosync.ibms.device.jpa.DevicePointPropertiesJpaConverter"/>
+        <convert attribute-name="pointProperties" converter="cn.ecosync.ibms.device.jpa.DevicePointPropertiesJpaConverter"/>
         <attributes>
             <basic name="pointName" access="FIELD">
                 <column name="point_name" nullable="false"/>
             </basic>
-            <basic name="devicePointProperties" access="FIELD">
+            <basic name="pointProperties" access="FIELD">
                 <column name="properties" nullable="false"/>
             </basic>
             <many-to-one name="device" target-entity="cn.ecosync.ibms.device.model.Device" access="FIELD">
                 <join-column name="device_id" nullable="false" updatable="false"/>
             </many-to-one>
-            <embedded name="devicePointId" access="FIELD"/>
+            <embedded name="pointId" access="FIELD"/>
         </attributes>
     </entity>
 

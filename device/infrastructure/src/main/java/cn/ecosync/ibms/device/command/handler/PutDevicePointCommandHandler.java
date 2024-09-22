@@ -25,13 +25,13 @@ public class PutDevicePointCommandHandler implements CommandHandler<PutDevicePoi
             return;
         }
         for (PutDevicePointCommand.Point dto : command.getDevicePoints()) {
-            DevicePointId devicePointId = dto.toDevicePointId();
-            DevicePoint devicePoint = device.getDevicePoints().get(devicePointId);
+            DevicePointId pointId = dto.toDevicePointId();
+            DevicePoint devicePoint = device.getDevicePoints().get(pointId);
             if (devicePoint == null) {
-                devicePoint = new DevicePoint(device, devicePointId, dto.getPointName(), dto.getPointProperties());
-                device.getDevicePoints().put(devicePointId, devicePoint);
+                devicePoint = new DevicePoint(device, pointId, dto.getPointName(), dto.getPointProperties());
+                device.getDevicePoints().put(pointId, devicePoint);
             } else {
-                devicePoint.setDevicePointProperties(dto.getPointProperties());
+                devicePoint.setPointProperties(dto.getPointProperties());
             }
         }
     }

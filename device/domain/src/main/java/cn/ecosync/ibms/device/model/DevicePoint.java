@@ -12,26 +12,26 @@ import java.util.Objects;
 public class DevicePoint extends Entity {
     @Setter
     private Device device;
-    private DevicePointId devicePointId;
+    private DevicePointId pointId;
     private String pointName;
-    private DevicePointProperties devicePointProperties;
+    private DevicePointProperties pointProperties;
 
     protected DevicePoint() {
     }
 
-    public DevicePoint(Device device, DevicePointId devicePointId, String pointName, DevicePointProperties devicePointProperties) {
+    public DevicePoint(Device device, DevicePointId pointId, String pointName, DevicePointProperties pointProperties) {
         Assert.notNull(device, "device must not be null");
-        Assert.notNull(devicePointId, "device point id can't be null");
-        Assert.notNull(devicePointProperties, "device point properties can't be null");
+        Assert.notNull(pointId, "device point id can't be null");
+        Assert.notNull(pointProperties, "device point properties can't be null");
         this.device = device;
-        this.devicePointId = devicePointId;
+        this.pointId = pointId;
         this.pointName = StringUtils.nullSafeOf(pointName);
-        this.devicePointProperties = devicePointProperties;
+        this.pointProperties = pointProperties;
     }
 
-    public void setDevicePointProperties(DevicePointProperties devicePointProperties) {
-        if (devicePointProperties != null) {
-            this.devicePointProperties = devicePointProperties;
+    public void setPointProperties(DevicePointProperties pointProperties) {
+        if (pointProperties != null) {
+            this.pointProperties = pointProperties;
         }
     }
 
@@ -40,11 +40,11 @@ public class DevicePoint extends Entity {
         if (this == o) return true;
         if (!(o instanceof DevicePoint)) return false;
         DevicePoint that = (DevicePoint) o;
-        return Objects.equals(device, that.device) && Objects.equals(devicePointId, that.devicePointId);
+        return Objects.equals(device, that.device) && Objects.equals(pointId, that.pointId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(device, devicePointId);
+        return Objects.hash(device, pointId);
     }
 }

@@ -26,9 +26,9 @@ public class RemoveDevicePointCommandHandler implements CommandHandler<RemoveDev
         if (device == null) {
             return;
         }
-        List<DevicePointId> devicePointIds = command.toDevicePointIds();
-        for (DevicePointId devicePointId : devicePointIds) {
-            DevicePoint removed = device.getDevicePoints().remove(devicePointId);
+        List<DevicePointId> pointIds = command.toDevicePointIds();
+        for (DevicePointId pointId : pointIds) {
+            DevicePoint removed = device.getDevicePoints().remove(pointId);
             if (removed != null) {
                 removed.setDevice(null);
             }
