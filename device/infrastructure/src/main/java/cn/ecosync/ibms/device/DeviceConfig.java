@@ -5,6 +5,7 @@ import cn.ecosync.ibms.device.model.DeviceConstant;
 import cn.ecosync.ibms.device.model.bacnet.BacnetDevicePointProperties;
 import cn.ecosync.ibms.device.model.bacnet.BacnetDeviceProperties;
 import cn.ecosync.ibms.device.model.bacnet.BacnetNetworkProperties;
+import cn.ecosync.ibms.device.query.BacnetReadPropertyMultipleQuery;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
@@ -28,6 +29,8 @@ public class DeviceConfig {
         simpleModule.registerSubtypes(new NamedType(RemoveDeviceCommand.class, "REMOVE_DEVICE"));
         simpleModule.registerSubtypes(new NamedType(PutDevicePointCommand.class, "PUT_DEVICE_POINT"));
         simpleModule.registerSubtypes(new NamedType(RemoveDevicePointCommand.class, "REMOVE_DEVICE_POINT"));
+        // query
+        simpleModule.registerSubtypes(new NamedType(BacnetReadPropertyMultipleQuery.class, "BACNET_READ_PROPERTY_MULTIPLE"));
         return simpleModule;
     }
 }

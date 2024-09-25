@@ -12,9 +12,9 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode
 public class BacnetDevicePointProperties implements DevicePointProperties {
     @NotNull(message = "objectType must not be null")
-    private Integer objectType;
+    private BACnetObjectType objectType;
     @NotNull(message = "objectId must not be null")
     private Integer objectId;
     @NotNull(message = "propertyId must not be null")
-    private Integer propertyId;
+    private BacnetPropertyId propertyId;
 }
