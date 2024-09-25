@@ -22,6 +22,7 @@ CREATE TABLE device_point
     id                 INT AUTO_INCREMENT NOT NULL COMMENT '主键',
     created_date       BIGINT             NOT NULL COMMENT '创建时间',
     last_modified_date BIGINT             NOT NULL COMMENT '修改时间',
+    device_code        VARCHAR(64)        NOT NULL COMMENT '设备编码',
     point_code         VARCHAR(64)        NOT NULL COMMENT '点位编码',
     point_name         VARCHAR(255)       NOT NULL COMMENT '点位名称',
     properties         JSON               NOT NULL COMMENT '其他属性',
@@ -30,7 +31,7 @@ CREATE TABLE device_point
 ) COMMENT '设备点位';
 
 ALTER TABLE device_point
-    ADD CONSTRAINT uk_device_point UNIQUE (point_code);
+    ADD CONSTRAINT uk_device_point UNIQUE (device_code, point_code);
 
 CREATE TABLE dictionary
 (

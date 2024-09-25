@@ -24,7 +24,7 @@ public class RemoveDevicePointCommand implements Command {
 
     public List<DevicePointId> toDevicePointIds() {
         return CollectionUtils.nullSafeOf(this.pointCodes).stream()
-                .map(DevicePointId::new)
+                .map(in -> new DevicePointId(this.deviceCode, in))
                 .collect(Collectors.toList());
     }
 }

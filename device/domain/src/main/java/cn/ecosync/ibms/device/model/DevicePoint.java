@@ -40,11 +40,11 @@ public class DevicePoint extends Entity {
         if (this == o) return true;
         if (!(o instanceof DevicePoint)) return false;
         DevicePoint that = (DevicePoint) o;
-        return Objects.equals(device, that.device) && Objects.equals(pointId, that.pointId);
+        return Objects.equals(pointId, that.pointId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(device, pointId);
+        return Objects.hashCode(pointId);
     }
 }

@@ -41,8 +41,8 @@ public class PutDevicePointCommand implements Command {
         @NotNull
         private DevicePointProperties pointProperties;
 
-        public DevicePointId toDevicePointId() {
-            return new DevicePointId(pointCode);
+        public DevicePointId toDevicePointId(String deviceCode) {
+            return new DevicePointId(deviceCode, pointCode);
         }
     }
 }

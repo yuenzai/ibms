@@ -1,9 +1,6 @@
 package cn.ecosync.ibms.device.query.handler;
 
 import cn.ecosync.ibms.device.dto.DevicePointDto;
-import cn.ecosync.ibms.device.model.Device;
-import cn.ecosync.ibms.device.model.DeviceId;
-import cn.ecosync.ibms.device.model.QDevice;
 import cn.ecosync.ibms.device.model.QDevicePoint;
 import cn.ecosync.ibms.device.query.SearchDevicePointQuery;
 import cn.ecosync.ibms.query.QueryHandler;
@@ -14,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-
 @Component
 @RequiredArgsConstructor
 public class SearchDevicePointQueryHandler implements QueryHandler<SearchDevicePointQuery, Iterable<DevicePointDto>> {
@@ -24,15 +19,6 @@ public class SearchDevicePointQueryHandler implements QueryHandler<SearchDeviceP
     @Override
     @Transactional(readOnly = true)
     public Iterable<DevicePointDto> handle(SearchDevicePointQuery query) {
-        DeviceId deviceId = query.toDeviceId();
-        QDevice dev = QDevice.device;
-        Device device = jpaQueryFactory.select(dev)
-                .from(dev)
-                .where(dev.deviceId.eq(deviceId))
-                .fetchOne();
-        if (device == null) {
-            return Collections.emptyList();
-        }
         QDevicePoint dp = QDevicePoint.devicePoint;
         Expression<DevicePointDto> expression = Projections.fields(
                 DevicePointDto.class,
@@ -42,7 +28,7 @@ public class SearchDevicePointQueryHandler implements QueryHandler<SearchDeviceP
         );
         return jpaQueryFactory.select(expression)
                 .from(dp)
-                .where(dp.device.id.eq(device.getId()))
+                .where(dp.pointId.deviceCode.eq(query.getDeviceCode()))
                 .fetch();
     }
 }

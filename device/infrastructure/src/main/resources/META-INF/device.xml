@@ -64,6 +64,9 @@
 
     <embeddable class="cn.ecosync.ibms.device.model.DevicePointId" access="FIELD">
         <attributes>
+            <basic name="deviceCode">
+                <column name="device_code" nullable="false" updatable="false"/>
+            </basic>
             <basic name="pointCode">
                 <column name="point_code" nullable="false" updatable="false"/>
             </basic>
