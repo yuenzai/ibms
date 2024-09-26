@@ -2,9 +2,9 @@ package cn.ecosync.ibms.device;
 
 import cn.ecosync.ibms.device.command.*;
 import cn.ecosync.ibms.device.model.DeviceConstant;
-import cn.ecosync.ibms.device.model.bacnet.BacnetDevicePointProperties;
 import cn.ecosync.ibms.device.model.bacnet.BacnetDeviceProperties;
 import cn.ecosync.ibms.device.model.bacnet.BacnetNetworkProperties;
+import cn.ecosync.ibms.device.model.bacnet.BacnetObjectProperty;
 import cn.ecosync.ibms.device.query.BacnetReadPropertyMultipleQuery;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,7 +22,7 @@ public class DeviceConfig {
         SimpleModule simpleModule = new SimpleModule();
         simpleModule.registerSubtypes(new NamedType(BacnetNetworkProperties.class, DeviceConstant.BACNET));
         simpleModule.registerSubtypes(new NamedType(BacnetDeviceProperties.class, DeviceConstant.BACNET));
-        simpleModule.registerSubtypes(new NamedType(BacnetDevicePointProperties.class, DeviceConstant.BACNET));
+        simpleModule.registerSubtypes(new NamedType(BacnetObjectProperty.class, DeviceConstant.BACNET));
         // command
         simpleModule.registerSubtypes(new NamedType(AddDeviceCommand.class, "ADD_DEVICE"));
         simpleModule.registerSubtypes(new NamedType(UpdateDeviceCommand.class, "UPDATE_DEVICE"));

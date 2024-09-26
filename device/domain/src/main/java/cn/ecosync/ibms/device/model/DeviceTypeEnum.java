@@ -1,8 +1,8 @@
 package cn.ecosync.ibms.device.model;
 
-import cn.ecosync.ibms.device.model.bacnet.BacnetDevicePointProperties;
 import cn.ecosync.ibms.device.model.bacnet.BacnetDeviceProperties;
 import cn.ecosync.ibms.device.model.bacnet.BacnetNetworkProperties;
+import cn.ecosync.ibms.device.model.bacnet.BacnetObjectProperty;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Getter
 @ToString
 public enum DeviceTypeEnum {
-    DEVICE_TYPE_BACNET(DeviceConstant.BACNET, BacnetNetworkProperties.class, BacnetDeviceProperties.class, BacnetDevicePointProperties.class),
+    DEVICE_TYPE_BACNET(DeviceConstant.BACNET, BacnetNetworkProperties.class, BacnetDeviceProperties.class, BacnetObjectProperty.class),
     ;
 
     private final String type;

@@ -22,6 +22,7 @@ public class SearchDevicePointQueryHandler implements QueryHandler<SearchDeviceP
         QDevicePoint dp = QDevicePoint.devicePoint;
         Expression<DevicePointDto> expression = Projections.fields(
                 DevicePointDto.class,
+                dp.pointId.deviceCode,
                 dp.pointId.pointCode,
                 dp.pointName,
                 dp.pointProperties

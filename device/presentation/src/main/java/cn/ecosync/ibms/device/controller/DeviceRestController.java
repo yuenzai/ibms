@@ -4,7 +4,9 @@ import cn.ecosync.ibms.command.Command;
 import cn.ecosync.ibms.command.CommandBus;
 import cn.ecosync.ibms.device.dto.DeviceDto;
 import cn.ecosync.ibms.device.dto.DevicePointDto;
+import cn.ecosync.ibms.device.dto.DeviceStatusDto;
 import cn.ecosync.ibms.device.query.GetDeviceQuery;
+import cn.ecosync.ibms.device.query.GetDeviceStatusQuery;
 import cn.ecosync.ibms.device.query.SearchDevicePointQuery;
 import cn.ecosync.ibms.device.query.SearchDeviceQuery;
 import cn.ecosync.ibms.query.QueryBus;
@@ -42,5 +44,10 @@ public class DeviceRestController {
     public Iterable<DevicePointDto> searchPoint(@PathVariable String deviceCode) {
         SearchDevicePointQuery query = new SearchDevicePointQuery(deviceCode);
         return queryBus.execute(query);
+    }
+
+    @GetMapping("/{deviceCode}/status")
+    public DeviceStatusDto getDeviceStatus(@PathVariable String deviceCode) {
+        return queryBus.execute(new GetDeviceStatusQuery(deviceCode)).orElse(null);
     }
 }
