@@ -15,6 +15,7 @@ import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.StoreBuilder;
 import org.apache.kafka.streams.state.Stores;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafkaStreams;
 
@@ -23,6 +24,7 @@ import static org.apache.kafka.common.serialization.Serdes.String;
 @Configuration
 @EnableKafkaStreams
 @ConditionalOnClass(KafkaStreams.class)
+@ConditionalOnProperty(prefix = "spring.kafka", name = "bootstrap-servers")
 public class KafkaStreamsConfiguration {
     /**
      * 消费某个主题，构建 GlobalStateStore

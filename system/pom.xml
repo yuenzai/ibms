@@ -19,29 +19,4 @@
         <module>infrastructure</module>
         <module>presentation</module>
     </modules>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>cn.ecosync.ibms.system</groupId>
-                <artifactId>ibms-system-domain</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms.system</groupId>
-                <artifactId>ibms-system-application</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms.system</groupId>
-                <artifactId>ibms-system-infrastructure</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms.system</groupId>
-                <artifactId>ibms-system-presentation</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 </project>

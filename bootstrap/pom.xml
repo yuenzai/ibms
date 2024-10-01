@@ -13,32 +13,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>cn.ecosync.ibms.system</groupId>
-            <artifactId>ibms-system-infrastructure</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.ecosync.ibms.device</groupId>
-            <artifactId>ibms-device-infrastructure</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.ecosync.ibms.device</groupId>
-            <artifactId>ibms-device-presentation</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.ecosync.ibms.common</groupId>
-            <artifactId>ibms-common-infrastructure</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.ecosync.ibms.system</groupId>
-            <artifactId>ibms-system-presentation</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
         </dependency>
@@ -94,6 +68,8 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <mainClass>cn.ecosync.ibms.IntelligentBuildingManagementSystem</mainClass>
+                    <layout>ZIP</layout>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>

@@ -19,29 +19,4 @@
         <module>infrastructure</module>
         <module>presentation</module>
     </modules>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>cn.ecosync.ibms.device</groupId>
-                <artifactId>ibms-device-domain</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms.device</groupId>
-                <artifactId>ibms-device-application</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms.device</groupId>
-                <artifactId>ibms-device-infrastructure</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms.device</groupId>
-                <artifactId>ibms-device-presentation</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 </project>
