@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: bacnet
+server:
+  port: 47808
+
+#logging:
+#  level:
+#    cn.ecosync.ibms.bacnet: debug
