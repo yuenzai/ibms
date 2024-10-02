@@ -10,7 +10,7 @@
     </parent>
 
     <groupId>cn.ecosync.ibms.bacnet</groupId>
-    <artifactId>ibms-bacnet-starter</artifactId>
+    <artifactId>ibms-bacnet</artifactId>
 
     <dependencies>
         <dependency>

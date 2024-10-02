@@ -54,7 +54,7 @@
             <!-- bacnet -->
             <dependency>
                 <groupId>cn.ecosync.ibms.bacnet</groupId>
-                <artifactId>ibms-bacnet-starter</artifactId>
+                <artifactId>ibms-bacnet</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <!-- device -->
