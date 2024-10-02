@@ -4,10 +4,16 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.util.Assert;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
+@Embeddable
 @Getter
 @EqualsAndHashCode
 public class DevicePointId {
+    @Column(name = "device_code", nullable = false, updatable = false)
     private String deviceCode;
+    @Column(name = "point_code", nullable = false, updatable = false)
     private String pointCode;
 
     protected DevicePointId() {

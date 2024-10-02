@@ -11,11 +11,6 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     show-sql: true
-    mapping-resources:
-      - META-INF/common.xml
-      - META-INF/outbox.xml
-      - META-INF/dictionary.xml
-      - META-INF/device.xml
 
 # kafka
 ---

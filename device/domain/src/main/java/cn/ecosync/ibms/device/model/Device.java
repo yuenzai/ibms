@@ -1,5 +1,6 @@
 package cn.ecosync.ibms.device.model;
 
+import cn.ecosync.ibms.device.jpa.DevicePropertiesJpaConverter;
 import cn.ecosync.ibms.model.AggregateRoot;
 import cn.ecosync.ibms.model.ConcurrencySafeEntity;
 import cn.ecosync.ibms.system.model.DictionaryKey;
@@ -7,20 +8,36 @@ import cn.ecosync.ibms.util.StringUtils;
 import lombok.Getter;
 import org.springframework.util.Assert;
 
+import javax.persistence.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
 @Getter
+@Entity
+@Table(name = "device")
 public class Device extends ConcurrencySafeEntity implements AggregateRoot {
+    @Embedded
     private DeviceId deviceId;
+    @Embedded
+    @AttributeOverrides({@AttributeOverride(name = "dictKey", column = @Column(name = "network_id", nullable = false, updatable = false))})
     private DictionaryKey networkId;
+    @Column(name = "device_name", nullable = false)
     private String deviceName;
+    @Column(name = "path", nullable = false)
     private String path;
+    @Column(name = "description", nullable = false)
     private String description;
-    private DeviceProperties deviceProperties;
-    private Map<DevicePointId, DevicePoint> devicePoints = new LinkedHashMap<>();
+    @Column(name = "enabled", nullable = false)
     private Boolean enabled;
+
+    @Convert(converter = DevicePropertiesJpaConverter.class)
+    @Column(name = "properties", nullable = false)
+    private DeviceProperties deviceProperties;
+
+    @MapKey(name = "pointId")
+    @OneToMany(targetEntity = DevicePoint.class, mappedBy = "device", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Map<DevicePointId, DevicePoint> devicePoints = new LinkedHashMap<>();
 
     protected Device() {
     }

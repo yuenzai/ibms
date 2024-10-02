@@ -4,9 +4,14 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.util.Assert;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
+@Embeddable
 @Getter
 @EqualsAndHashCode
 public class DictionaryKey {
+    @Column(name = "dict_key", nullable = false, updatable = false)
     private String dictKey;
 
     protected DictionaryKey() {

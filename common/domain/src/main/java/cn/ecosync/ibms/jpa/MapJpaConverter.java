@@ -4,9 +4,11 @@ import cn.ecosync.ibms.serde.JsonSerde;
 import cn.ecosync.ibms.serde.TypeReference;
 
 import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 import java.util.Collections;
 import java.util.Map;
 
+@Converter
 public class MapJpaConverter implements AttributeConverter<Map<String, Object>, String> {
     private final JsonSerde jsonSerde;
 

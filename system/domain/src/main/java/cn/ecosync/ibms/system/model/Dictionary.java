@@ -2,13 +2,20 @@ package cn.ecosync.ibms.system.model;
 
 import cn.ecosync.ibms.model.AggregateRoot;
 import cn.ecosync.ibms.model.ConcurrencySafeEntity;
+import cn.ecosync.ibms.system.jpa.DictionaryValueJpaConverter;
 import lombok.Getter;
 import org.springframework.util.Assert;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "dictionary")
 @Getter
 public class Dictionary extends ConcurrencySafeEntity implements AggregateRoot {
+    @Embedded
     private DictionaryKey key;
-
+    @Convert(converter = DictionaryValueJpaConverter.class)
+    @Column(name = "dict_value", nullable = false)
     private DictionaryValue value;
 
     protected Dictionary() {

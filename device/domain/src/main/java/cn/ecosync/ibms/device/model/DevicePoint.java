@@ -1,19 +1,29 @@
 package cn.ecosync.ibms.device.model;
 
+import cn.ecosync.ibms.device.jpa.DevicePointPropertiesJpaConverter;
 import cn.ecosync.ibms.model.Entity;
 import cn.ecosync.ibms.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.util.Assert;
 
+import javax.persistence.*;
 import java.util.Objects;
 
 @Getter
+@javax.persistence.Entity
+@Table(name = "device_point")
 public class DevicePoint extends Entity {
+    @JoinColumn(name = "device_id", nullable = false, updatable = false)
+    @ManyToOne(targetEntity = Device.class)
     @Setter
     private Device device;
+    @Embedded
     private DevicePointId pointId;
+    @Column(name = "point_name", nullable = false)
     private String pointName;
+    @Convert(converter = DevicePointPropertiesJpaConverter.class)
+    @Column(name = "properties", nullable = false)
     private DevicePointProperties pointProperties;
 
     protected DevicePoint() {
