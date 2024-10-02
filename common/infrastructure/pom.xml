@@ -26,12 +26,6 @@
             <artifactId>spring-boot-starter-json</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!-- for compile JPADomainExporterRunnable class -->
-        <dependency>
-            <groupId>com.querydsl</groupId>
-            <artifactId>querydsl-jpa-codegen</artifactId>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
     <build>
