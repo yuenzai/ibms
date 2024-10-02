@@ -19,6 +19,8 @@
         <module>common</module>
         <module>system</module>
         <module>device</module>
+        <module>bacnet</module>
+        <module>bootstrap</module>
     </modules>
 
     <properties>
