@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
         @JsonSubTypes.Type(value = BacnetPropertyValue.SIGNED_INT.class, name = "3"),
         @JsonSubTypes.Type(value = BacnetPropertyValue.REAL.class, name = "4"),
         @JsonSubTypes.Type(value = BacnetPropertyValue.DOUBLE.class, name = "5"),
+        @JsonSubTypes.Type(value = BacnetPropertyValue.OBJECT_ID.class, name = "12"),
 })
 public interface BacnetPropertyValue extends DevicePointValue {
     @Getter
@@ -54,6 +55,12 @@ public interface BacnetPropertyValue extends DevicePointValue {
     @ToString
     class DOUBLE implements BacnetPropertyValue {
         private Double value;
+    }
+
+    @Getter
+    @ToString
+    class OBJECT_ID implements BacnetPropertyValue {
+        private BacnetObject value;
     }
 
     @Getter
