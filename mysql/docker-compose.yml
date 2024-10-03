@@ -1,0 +1,16 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: CJVixCszaS+7raa/5326YJDq3xrSBXHg
+    volumes:
+      - ./my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./initdb.d:/docker-entrypoint-initdb.d
+      - ${DATA_DIR:?}/mysql:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "-uroot", "-p$$MYSQL_ROOT_PASSWORD", "ping", "-h", "localhost" ]
+      timeout: 10s
+      interval: 30s
+      retries: 10
+      start_period: 180s
