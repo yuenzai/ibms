@@ -10,7 +10,7 @@ import lombok.ToString;
 public class DevicePointStatusDto extends DevicePointDto {
     private DevicePointValue value;
 
-    protected DevicePointStatusDto() {
+    public DevicePointStatusDto() {
     }
 
     public DevicePointStatusDto(DevicePoint devicePoint, DevicePointValue value) {

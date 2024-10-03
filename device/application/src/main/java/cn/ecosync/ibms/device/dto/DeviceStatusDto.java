@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class DeviceStatusDto extends DeviceDto {
     private List<DevicePointStatusDto> properties;
 
-    protected DeviceStatusDto() {
+    public DeviceStatusDto() {
     }
 
     public DeviceStatusDto(Device device, Map<DevicePoint, DevicePointValue> properties) {

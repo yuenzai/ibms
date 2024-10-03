@@ -16,7 +16,7 @@ public class DeviceDto {
     private Boolean enabled;
     private DeviceProperties deviceProperties;
 
-    protected DeviceDto() {
+    public DeviceDto() {
     }
 
     public DeviceDto(Device device) {
