@@ -2,8 +2,6 @@ package cn.ecosync.ibms.bacnet.query;
 
 import cn.ecosync.ibms.device.model.bacnet.BacnetObject;
 import cn.ecosync.ibms.device.model.bacnet.BacnetProperty;
-import cn.ecosync.ibms.device.model.bacnet.ack.ReadPropertyMultipleAck;
-import cn.ecosync.ibms.query.Query;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -15,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @ToString
-public class BacnetReadPropertyMultipleQuery implements Query<List<ReadPropertyMultipleAck>> {
+public class BacnetReadPropertyMultipleQuery {
     @NotNull
     private Integer deviceInstance;
     @NotEmpty

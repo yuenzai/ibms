@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.bacnet.controller;
 
 import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleQuery;
-import cn.ecosync.ibms.query.QueryBus;
+import cn.ecosync.ibms.bacnet.query.handler.BacnetReadPropertyMultipleQueryHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/bacnet")
 public class BacnetRestController {
-    private final QueryBus queryBus;
+    private final BacnetReadPropertyMultipleQueryHandler readPropertyMultipleQueryHandler;
 
     @PostMapping("/readpropm")
     public Object readpropm(@RequestBody @Validated BacnetReadPropertyMultipleQuery query) {
-        return queryBus.execute(query);
+        return readPropertyMultipleQueryHandler.handle(query);
     }
 }

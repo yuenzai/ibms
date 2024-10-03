@@ -3,9 +3,8 @@ package cn.ecosync.ibms.bacnet.query.handler;
 import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleQuery;
 import cn.ecosync.ibms.device.model.bacnet.BacnetProperty;
 import cn.ecosync.ibms.device.model.bacnet.ack.ReadPropertyMultipleAck;
-import cn.ecosync.ibms.query.QueryHandler;
-import cn.ecosync.ibms.serde.JsonSerde;
-import cn.ecosync.ibms.serde.TypeReference;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -17,15 +16,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class BacnetReadPropertyMultipleQueryHandler implements QueryHandler<BacnetReadPropertyMultipleQuery, List<ReadPropertyMultipleAck>> {
-    private final JsonSerde jsonSerde;
+public class BacnetReadPropertyMultipleQueryHandler {
+    private final ObjectMapper jsonSerde;
 
-    @Override
     public List<ReadPropertyMultipleAck> handle(BacnetReadPropertyMultipleQuery query) {
         try {
             return handleImpl(query);
@@ -56,8 +55,8 @@ public class BacnetReadPropertyMultipleQueryHandler implements QueryHandler<Bacn
         int exitCode = process.waitFor();
         log.debug("command executed: {}, stdout: {}", String.join(" ", commands), stdout);
         if (exitCode == 0) {
-            return jsonSerde.readValue(stdout, new TypeReference<List<ReadPropertyMultipleAck>>() {
-            }).orElse(Collections.emptyList());
+            return Optional.ofNullable(jsonSerde.readValue(stdout, new TypeReference<List<ReadPropertyMultipleAck>>() {
+            })).orElse(Collections.emptyList());
         } else {
             throw new RuntimeException("Bacnet: ReadPropertyMultiple error: " + stdout);
         }
