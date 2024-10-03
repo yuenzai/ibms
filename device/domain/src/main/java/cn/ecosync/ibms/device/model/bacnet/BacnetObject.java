@@ -11,14 +11,14 @@ import java.util.Objects;
 @ToString
 public class BacnetObject {
     @NotNull
-    private BACnetObjectType objectType;
+    private BacnetObjectType objectType;
     @NotNull
     private Integer objectInstance;
 
     protected BacnetObject() {
     }
 
-    public BacnetObject(BACnetObjectType objectType, Integer objectInstance) {
+    public BacnetObject(BacnetObjectType objectType, Integer objectInstance) {
         Assert.notNull(objectType, "objectType must not be null");
         Assert.notNull(objectInstance, "objectInstance must not be null");
         this.objectType = objectType;

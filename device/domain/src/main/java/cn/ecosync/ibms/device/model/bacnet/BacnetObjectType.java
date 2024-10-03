@@ -6,7 +6,7 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public enum BACnetObjectType {
+public enum BacnetObjectType {
     OBJECT_ANALOG_INPUT(0),
     OBJECT_ANALOG_OUTPUT(1),
     OBJECT_ANALOG_VALUE(2),
@@ -76,7 +76,7 @@ public enum BACnetObjectType {
     @JsonValue
     private final int code;
 
-    BACnetObjectType(int code) {
+    BacnetObjectType(int code) {
         this.code = code;
     }
 }

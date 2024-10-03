@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 @Getter
 @ToString
 public class ReadPropertyMultipleAck {
-    private BACnetObjectType objectType;
+    private BacnetObjectType objectType;
     private Integer objectInstance;
     private List<Property> properties;
 
@@ -72,7 +72,7 @@ public class ReadPropertyMultipleAck {
             }
         }
 
-        private Map.Entry<BacnetObjectProperty, BacnetPropertyValue> toEntry(BACnetObjectType objectType, Integer objectInstance) {
+        private Map.Entry<BacnetObjectProperty, BacnetPropertyValue> toEntry(BacnetObjectType objectType, Integer objectInstance) {
             BacnetObjectProperty key = new BacnetObjectProperty(objectType, objectInstance, getPropertyIdentifier(), getPropertyArrayIndex());
             return new AbstractMap.SimpleImmutableEntry<>(key, toValue());
         }

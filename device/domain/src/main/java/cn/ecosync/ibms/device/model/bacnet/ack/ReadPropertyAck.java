@@ -1,6 +1,6 @@
 package cn.ecosync.ibms.device.model.bacnet.ack;
 
-import cn.ecosync.ibms.device.model.bacnet.BACnetObjectType;
+import cn.ecosync.ibms.device.model.bacnet.BacnetObjectType;
 import cn.ecosync.ibms.device.model.bacnet.BacnetError;
 import cn.ecosync.ibms.device.model.bacnet.BacnetPropertyId;
 import cn.ecosync.ibms.device.model.bacnet.BacnetPropertyValue;
@@ -14,7 +14,7 @@ import java.util.Optional;
 @Getter
 @ToString
 public class ReadPropertyAck {
-    private BACnetObjectType objectType;
+    private BacnetObjectType objectType;
     private Integer objectInstance;
     private BacnetPropertyId propertyIdentifier;
     private Integer propertyArrayIndex;

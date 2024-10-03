@@ -12,7 +12,7 @@ import java.util.Optional;
 @ToString
 public class BacnetObjectProperty implements DevicePointProperties {
     @NotNull
-    private BACnetObjectType objectType;
+    private BacnetObjectType objectType;
     @NotNull
     private Integer objectInstance;
     @NotNull
@@ -22,11 +22,11 @@ public class BacnetObjectProperty implements DevicePointProperties {
     protected BacnetObjectProperty() {
     }
 
-    public BacnetObjectProperty(BACnetObjectType objectType, Integer objectInstance, BacnetPropertyId propertyIdentifier) {
+    public BacnetObjectProperty(BacnetObjectType objectType, Integer objectInstance, BacnetPropertyId propertyIdentifier) {
         this(objectType, objectInstance, propertyIdentifier, null);
     }
 
-    public BacnetObjectProperty(BACnetObjectType objectType, Integer objectInstance, BacnetPropertyId propertyIdentifier, Integer propertyArrayIndex) {
+    public BacnetObjectProperty(BacnetObjectType objectType, Integer objectInstance, BacnetPropertyId propertyIdentifier, Integer propertyArrayIndex) {
         this.objectType = objectType;
         this.objectInstance = objectInstance;
         this.propertyIdentifier = propertyIdentifier;
