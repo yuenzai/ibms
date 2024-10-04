@@ -15,7 +15,7 @@ RUN git clone --branch v1.7.18 https://github.com/DaveGamble/cJSON.git && \
     make -C cJSON/build install && \
     rm -rf cJSON
 
-RUN git clone --branch bacnet-stack-1.3 --single-branch https://github.com/80330775/bacnet-stack.git && \
+RUN git clone --branch bacnet-stack-1.3 --single-branch https://github.com/yuenzai/bacnet-stack.git && \
     mkdir -p bacnet-stack/build && \
     cmake -S bacnet-stack -B bacnet-stack/build && \
     make -C bacnet-stack/build clean all && \
