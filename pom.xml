@@ -16,11 +16,12 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>common</module>
-        <module>system</module>
-        <module>device</module>
         <module>bacnet</module>
         <module>bootstrap</module>
+        <module>common</module>
+        <module>device</module>
+        <module>system</module>
+        <module>scheduling</module>
     </modules>
 
     <properties>
@@ -99,6 +100,27 @@
             <dependency>
                 <groupId>cn.ecosync.ibms.system</groupId>
                 <artifactId>ibms-system-presentation</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <!-- scheduling -->
+            <dependency>
+                <groupId>cn.ecosync.ibms.scheduling</groupId>
+                <artifactId>ibms-scheduling-domain</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms.scheduling</groupId>
+                <artifactId>ibms-scheduling-application</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms.scheduling</groupId>
+                <artifactId>ibms-scheduling-infrastructure</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms.scheduling</groupId>
+                <artifactId>ibms-scheduling-presentation</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
         </dependencies>
