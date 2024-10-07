@@ -33,6 +33,7 @@ public class RemoveSchedulingCommandHandler implements CommandHandler<RemoveSche
         if (running != null && running) {
             throw new IllegalStateException("Cannot remove scheduling because it still running...");
         }
+        schedulingApplicationService.cancel(schedulingId);
         schedulingRepository.remove(scheduling);
     }
 }

@@ -8,21 +8,13 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     show-sql: true
-  task:
-    scheduling:
-      pool:
-        size: 1
-      thread-name-prefix: "scheduling-"
-      shutdown:
-        await-termination: true
-        # ns for nanoseconds
-        # us for microseconds
-        # ms for milliseconds
-        # s for seconds
-        # m for minutes
-        # h for hours
-        # d for days
-        await-termination-period: 10s
+  quartz:
+    job-store-type: jdbc
+    auto-startup: true
+    wait-for-jobs-to-complete-on-shutdown: false
+    overwrite-existing-jobs: true
+    jdbc:
+      initialize-schema: never
 
 # kafka
 #---

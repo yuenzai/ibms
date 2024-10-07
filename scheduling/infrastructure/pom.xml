@@ -32,6 +32,11 @@
             <artifactId>spring-boot-starter-json</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

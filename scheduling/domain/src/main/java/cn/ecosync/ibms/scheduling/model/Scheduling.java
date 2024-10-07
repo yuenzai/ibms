@@ -4,7 +4,6 @@ import cn.ecosync.ibms.model.AggregateRoot;
 import cn.ecosync.ibms.model.ConcurrencySafeEntity;
 import cn.ecosync.ibms.scheduling.event.SchedulingDisabledEvent;
 import cn.ecosync.ibms.scheduling.event.SchedulingEnabledEvent;
-import cn.ecosync.ibms.scheduling.jpa.SchedulingTaskAttributeConverter;
 import cn.ecosync.ibms.scheduling.jpa.SchedulingTriggerAttributeConverter;
 import lombok.Getter;
 import org.springframework.util.Assert;
@@ -29,19 +28,18 @@ public class Scheduling extends ConcurrencySafeEntity implements AggregateRoot {
     @Column(name = "scheduling_trigger", nullable = false)
     private SchedulingTrigger schedulingTrigger;
 
-    @Convert(converter = SchedulingTaskAttributeConverter.class)
     @Column(name = "scheduling_task", nullable = false)
-    private SchedulingTask schedulingTask;
+    private String schedulingTask;
 
     private Boolean enabled;
 
     protected Scheduling() {
     }
 
-    public Scheduling(SchedulingId schedulingId, SchedulingTrigger schedulingTrigger, SchedulingTask schedulingTask) {
+    public Scheduling(SchedulingId schedulingId, SchedulingTrigger schedulingTrigger, String schedulingTask) {
         Assert.notNull(schedulingId, "schedulingId must not be null");
         Assert.notNull(schedulingTrigger, "schedulingTrigger must not be null");
-        Assert.notNull(schedulingTask, "schedulingTask must not be null");
+        Assert.hasText(schedulingTask, "schedulingTask must not be empty");
         this.schedulingId = schedulingId;
         this.schedulingTrigger = schedulingTrigger;
         this.schedulingTask = schedulingTask;
