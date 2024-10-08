@@ -2,6 +2,7 @@ package cn.ecosync.ibms.scheduling;
 
 import cn.ecosync.ibms.scheduling.command.AddSchedulingCommand;
 import cn.ecosync.ibms.scheduling.command.EnableOrDisableSchedulingCommand;
+import cn.ecosync.ibms.scheduling.command.UpdateSchedulingCommand;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
@@ -17,6 +18,7 @@ public class SchedulingConfig {
     public Module schedulingTypeModule() {
         SimpleModule simpleModule = new SimpleModule();
         simpleModule.registerSubtypes(new NamedType(AddSchedulingCommand.class, "ADD_SCHEDULING"));
+        simpleModule.registerSubtypes(new NamedType(UpdateSchedulingCommand.class, "UPDATE_SCHEDULING"));
         simpleModule.registerSubtypes(new NamedType(EnableOrDisableSchedulingCommand.class, "ENABLE_OR_DISABLE_SCHEDULING"));
         return simpleModule;
     }

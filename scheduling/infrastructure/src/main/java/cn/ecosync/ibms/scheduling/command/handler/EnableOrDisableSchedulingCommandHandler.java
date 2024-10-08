@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+
 @Component
 @RequiredArgsConstructor
 public class EnableOrDisableSchedulingCommandHandler implements CommandHandler<EnableOrDisableSchedulingCommand> {
@@ -23,8 +25,8 @@ public class EnableOrDisableSchedulingCommandHandler implements CommandHandler<E
         SchedulingId schedulingId = command.toSchedulingId();
         Scheduling scheduling = schedulingRepository.get(schedulingId).orElse(null);
         if (scheduling != null) {
-            Event event = command.getEnabled() ? scheduling.enable() : scheduling.disable();
-            eventBus.publish(event);
+            Collection<Event> events = command.getEnabled() ? scheduling.enable() : scheduling.disable();
+            events.forEach(eventBus::publish);
         }
     }
 }

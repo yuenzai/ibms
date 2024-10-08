@@ -12,6 +12,7 @@ import org.springframework.scheduling.SchedulingException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,9 +37,7 @@ public class SchedulingApplicationQuartzService implements SchedulingApplication
     public void execute(String schedulingTask) {
         try {
             JobKey jobKey = JobKey.jobKey(schedulingTask);
-            if (!scheduler.checkExists(jobKey)) {
-                throw new IllegalArgumentException("Illegal scheduling task: " + schedulingTask);
-            }
+            existsBy(schedulingTask);
             scheduler.triggerJob(jobKey);
         } catch (SchedulerException e) {
             throw new SchedulingException(e.getMessage(), e.getCause());
@@ -46,12 +45,10 @@ public class SchedulingApplicationQuartzService implements SchedulingApplication
     }
 
     @Override
-    public void schedule(SchedulingId schedulingId, SchedulingTrigger schedulingTrigger, String schedulingTask) {
+    public void schedule(SchedulingId schedulingId, SchedulingTrigger schedulingTrigger, String schedulingTask, Map<String, Object> schedulingTaskParams) {
         try {
             JobKey jobKey = JobKey.jobKey(schedulingTask);
-            if (!scheduler.checkExists(jobKey)) {
-                throw new IllegalArgumentException("Illegal scheduling task: " + schedulingTask);
-            }
+            existsBy(schedulingTask);
             TriggerKey triggerKey = toTriggerKey(schedulingId);
             Trigger trigger;
             if (schedulingTrigger instanceof SchedulingTrigger.Cron) {
@@ -60,6 +57,7 @@ public class SchedulingApplicationQuartzService implements SchedulingApplication
                         .withIdentity(triggerKey)
                         .withSchedule(CronScheduleBuilder.cronSchedule(cron.getExpression()).withMisfireHandlingInstructionDoNothing())
                         .forJob(jobKey)
+                        .usingJobData(new JobDataMap(schedulingTaskParams))
                         .build();
             } else {
                 return;
@@ -117,6 +115,18 @@ public class SchedulingApplicationQuartzService implements SchedulingApplication
             }
             Trigger.TriggerState triggerState = scheduler.getTriggerState(triggerKey);
             return triggerState == Trigger.TriggerState.NORMAL;
+        } catch (SchedulerException e) {
+            throw new SchedulingException(e.getMessage(), e.getCause());
+        }
+    }
+
+    @Override
+    public void existsBy(String schedulingTask) {
+        try {
+            JobKey jobKey = JobKey.jobKey(schedulingTask);
+            if (!scheduler.checkExists(jobKey)) {
+                throw new IllegalArgumentException("Illegal scheduling task: " + schedulingTask);
+            }
         } catch (SchedulerException e) {
             throw new SchedulingException(e.getMessage(), e.getCause());
         }

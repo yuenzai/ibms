@@ -1,14 +1,18 @@
 package cn.ecosync.ibms.scheduling.model;
 
+import cn.ecosync.ibms.event.Event;
 import cn.ecosync.ibms.model.AggregateRoot;
 import cn.ecosync.ibms.model.ConcurrencySafeEntity;
 import cn.ecosync.ibms.scheduling.event.SchedulingDisabledEvent;
 import cn.ecosync.ibms.scheduling.event.SchedulingEnabledEvent;
+import cn.ecosync.ibms.scheduling.event.SchedulingRescheduledEvent;
 import cn.ecosync.ibms.scheduling.jpa.SchedulingTriggerAttributeConverter;
 import lombok.Getter;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * 任务计划安排
@@ -46,14 +50,27 @@ public class Scheduling extends ConcurrencySafeEntity implements AggregateRoot {
         this.enabled = Boolean.FALSE;
     }
 
-    public SchedulingEnabledEvent enable() {
+    public Collection<Event> enable() {
         this.enabled = Boolean.TRUE;
-        return new SchedulingEnabledEvent(this.schedulingId, this.schedulingTrigger, this.schedulingTask);
+        return Collections.singletonList(new SchedulingEnabledEvent(this.schedulingId, this.schedulingTrigger, this.schedulingTask));
     }
 
-    public SchedulingDisabledEvent disable() {
+    public Collection<Event> disable() {
         this.enabled = Boolean.FALSE;
-        return new SchedulingDisabledEvent(this.schedulingId);
+        return Collections.singletonList(new SchedulingDisabledEvent(this.schedulingId));
+    }
+
+    public Collection<Event> update(SchedulingTrigger schedulingTrigger, String schedulingTask) {
+        if (schedulingTrigger == null && schedulingTask == null) {
+            return Collections.emptyList();
+        }
+        if (schedulingTrigger != null) {
+            this.schedulingTrigger = schedulingTrigger;
+        }
+        if (schedulingTask != null) {
+            this.schedulingTask = schedulingTask;
+        }
+        return Collections.singletonList(new SchedulingRescheduledEvent(this.schedulingId, this.schedulingTrigger, this.schedulingTask));
     }
 
     @Override
