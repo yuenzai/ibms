@@ -36,7 +36,10 @@ public class SearchSchedulingQueryHandler implements QueryHandler<SearchScheduli
                 SchedulingStatusDto.class,
                 scheduling.schedulingId.schedulingName,
                 scheduling.schedulingTrigger,
-                scheduling.enabled);
+                scheduling.enabled,
+                scheduling.createdDate,
+                scheduling.lastModifiedDate
+        );
         JPAQuery<?> jpaQuery = jpaQueryFactory.from(scheduling);
         Pageable pageable = query.toPageable();
         if (pageable.isPaged()) {
@@ -45,11 +48,13 @@ public class SearchSchedulingQueryHandler implements QueryHandler<SearchScheduli
             List<SchedulingStatusDto> result = jpaQuery.select(selectExpression)
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())
+                    .orderBy(scheduling.id.desc())
                     .fetch();
             setStatusFor(result);
             return new PageImpl<>(result, pageable, Optional.ofNullable(count).orElse(0L));
         } else {
             List<SchedulingStatusDto> result = jpaQuery.select(selectExpression)
+                    .orderBy(scheduling.id.desc())
                     .fetch();
             setStatusFor(result);
             return result;

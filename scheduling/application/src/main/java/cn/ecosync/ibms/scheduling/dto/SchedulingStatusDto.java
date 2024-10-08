@@ -17,7 +17,7 @@ public class SchedulingStatusDto extends SchedulingDto {
     public SchedulingStatusDto() {
     }
 
-    public SchedulingStatusDto(String schedulingName, SchedulingTrigger schedulingTrigger, Boolean enabled) {
-        super(schedulingName, schedulingTrigger, enabled);
+    public SchedulingStatusDto(String schedulingName, SchedulingTrigger schedulingTrigger, Boolean enabled, Long createdDate, Long lastModifiedDate) {
+        super(schedulingName, schedulingTrigger, enabled, createdDate, lastModifiedDate);
     }
 }
