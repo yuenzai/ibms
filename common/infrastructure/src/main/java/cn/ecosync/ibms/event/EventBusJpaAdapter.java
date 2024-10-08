@@ -5,17 +5,19 @@ import cn.ecosync.ibms.repository.OutboxRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Component;
 
 /**
- * @author 覃俊元
+ * @author yuenzai
  * @since 2024
  */
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@ConditionalOnProperty(prefix = "spring.kafka", name = "bootstrap-servers")
 @ConditionalOnClass(name = {"org.springframework.data.jpa.repository.JpaRepository"})
 public class EventBusJpaAdapter implements EventBus, ApplicationEventPublisherAware {
     private final OutboxRepository outboxRepository;

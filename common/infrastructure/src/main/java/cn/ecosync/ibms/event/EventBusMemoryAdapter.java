@@ -2,19 +2,19 @@ package cn.ecosync.ibms.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Component;
 
 /**
- * @author 覃俊元
+ * @author yuenzai
  * @since 2024
  */
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@ConditionalOnMissingClass({"org.springframework.data.jpa.repository.JpaRepository"})
+@ConditionalOnProperty(prefix = "spring.kafka", name = "bootstrap-servers", matchIfMissing = true)
 public class EventBusMemoryAdapter implements EventBus, ApplicationEventPublisherAware {
     private ApplicationEventPublisher applicationEventPublisher;
 
