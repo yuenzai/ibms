@@ -6,6 +6,7 @@ import cn.ecosync.ibms.scheduling.model.SchedulingTrigger;
 import lombok.Getter;
 import lombok.ToString;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -14,6 +15,7 @@ import javax.validation.constraints.NotNull;
 public class AddSchedulingCommand implements Command {
     @NotBlank
     private String schedulingName;
+    @Valid
     @NotNull
     private SchedulingTrigger schedulingTrigger;
     @NotBlank
