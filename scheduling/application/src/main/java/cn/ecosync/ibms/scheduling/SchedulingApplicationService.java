@@ -1,6 +1,7 @@
 package cn.ecosync.ibms.scheduling;
 
 import cn.ecosync.ibms.scheduling.model.SchedulingId;
+import cn.ecosync.ibms.scheduling.model.SchedulingState;
 import cn.ecosync.ibms.scheduling.model.SchedulingTrigger;
 
 import java.util.Collections;
@@ -22,7 +23,7 @@ public interface SchedulingApplicationService {
 
     void pause(SchedulingId schedulingId);
 
-    Boolean isRunning(SchedulingId schedulingId);
+    SchedulingState getSchedulingState(SchedulingId schedulingId);
 
     void existsBy(String schedulingTask);
 }

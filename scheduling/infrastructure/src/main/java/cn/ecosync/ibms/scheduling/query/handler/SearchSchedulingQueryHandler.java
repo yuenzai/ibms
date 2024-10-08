@@ -2,7 +2,7 @@ package cn.ecosync.ibms.scheduling.query.handler;
 
 import cn.ecosync.ibms.query.QueryHandler;
 import cn.ecosync.ibms.scheduling.SchedulingApplicationService;
-import cn.ecosync.ibms.scheduling.dto.SchedulingStatusDto;
+import cn.ecosync.ibms.scheduling.dto.SchedulingStateDto;
 import cn.ecosync.ibms.scheduling.model.QScheduling;
 import cn.ecosync.ibms.scheduling.model.SchedulingId;
 import cn.ecosync.ibms.scheduling.query.SearchSchedulingQuery;
@@ -24,16 +24,16 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 @ConditionalOnClass(JPAQueryFactory.class)
-public class SearchSchedulingQueryHandler implements QueryHandler<SearchSchedulingQuery, Iterable<SchedulingStatusDto>> {
+public class SearchSchedulingQueryHandler implements QueryHandler<SearchSchedulingQuery, Iterable<SchedulingStateDto>> {
     private final JPAQueryFactory jpaQueryFactory;
     private final SchedulingApplicationService schedulingApplicationService;
 
     @Override
     @Transactional(readOnly = true)
-    public Iterable<SchedulingStatusDto> handle(SearchSchedulingQuery query) {
+    public Iterable<SchedulingStateDto> handle(SearchSchedulingQuery query) {
         QScheduling scheduling = QScheduling.scheduling;
-        Expression<SchedulingStatusDto> selectExpression = Projections.fields(
-                SchedulingStatusDto.class,
+        Expression<SchedulingStateDto> selectExpression = Projections.fields(
+                SchedulingStateDto.class,
                 scheduling.schedulingId.schedulingName,
                 scheduling.schedulingTrigger,
                 scheduling.enabled,
@@ -45,26 +45,26 @@ public class SearchSchedulingQueryHandler implements QueryHandler<SearchScheduli
         if (pageable.isPaged()) {
             Long count = jpaQuery.select(Wildcard.count)
                     .fetchOne();
-            List<SchedulingStatusDto> result = jpaQuery.select(selectExpression)
+            List<SchedulingStateDto> result = jpaQuery.select(selectExpression)
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())
                     .orderBy(scheduling.id.desc())
                     .fetch();
-            setStatusFor(result);
+            setStateFor(result);
             return new PageImpl<>(result, pageable, Optional.ofNullable(count).orElse(0L));
         } else {
-            List<SchedulingStatusDto> result = jpaQuery.select(selectExpression)
+            List<SchedulingStateDto> result = jpaQuery.select(selectExpression)
                     .orderBy(scheduling.id.desc())
                     .fetch();
-            setStatusFor(result);
+            setStateFor(result);
             return result;
         }
     }
 
-    private void setStatusFor(List<SchedulingStatusDto> result) {
-        for (SchedulingStatusDto schedulingStatusDto : result) {
+    private void setStateFor(List<SchedulingStateDto> result) {
+        for (SchedulingStateDto schedulingStatusDto : result) {
             SchedulingId schedulingId = new SchedulingId(schedulingStatusDto.getSchedulingName());
-            schedulingStatusDto.setRunning(schedulingApplicationService.isRunning(schedulingId));
+            schedulingStatusDto.setSchedulingState(schedulingApplicationService.getSchedulingState(schedulingId));
         }
     }
 }

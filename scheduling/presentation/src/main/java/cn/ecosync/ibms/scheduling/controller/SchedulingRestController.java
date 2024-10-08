@@ -3,7 +3,7 @@ package cn.ecosync.ibms.scheduling.controller;
 import cn.ecosync.ibms.command.Command;
 import cn.ecosync.ibms.command.CommandBus;
 import cn.ecosync.ibms.query.QueryBus;
-import cn.ecosync.ibms.scheduling.dto.SchedulingStatusDto;
+import cn.ecosync.ibms.scheduling.dto.SchedulingStateDto;
 import cn.ecosync.ibms.scheduling.query.GetSchedulingTasksQuery;
 import cn.ecosync.ibms.scheduling.query.SearchSchedulingQuery;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class SchedulingRestController {
     }
 
     @GetMapping
-    public Iterable<SchedulingStatusDto> search(
+    public Iterable<SchedulingStateDto> search(
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "pagesize", required = false) Integer pageSize
     ) {

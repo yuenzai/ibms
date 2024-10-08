@@ -1,6 +1,7 @@
 package cn.ecosync.ibms.scheduling;
 
 import cn.ecosync.ibms.scheduling.model.SchedulingId;
+import cn.ecosync.ibms.scheduling.model.SchedulingState;
 import cn.ecosync.ibms.scheduling.model.SchedulingTrigger;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -107,14 +108,11 @@ public class SchedulingApplicationQuartzService implements SchedulingApplication
     }
 
     @Override
-    public Boolean isRunning(SchedulingId schedulingId) {
+    public SchedulingState getSchedulingState(SchedulingId schedulingId) {
         try {
             TriggerKey triggerKey = toTriggerKey(schedulingId);
-            if (scheduler.checkExists(triggerKey)) {
-                return null;
-            }
             Trigger.TriggerState triggerState = scheduler.getTriggerState(triggerKey);
-            return triggerState == Trigger.TriggerState.NORMAL;
+            return SchedulingState.valueOf(triggerState.name());
         } catch (SchedulerException e) {
             throw new SchedulingException(e.getMessage(), e.getCause());
         }

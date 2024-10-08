@@ -9,6 +9,7 @@ import cn.ecosync.ibms.scheduling.repository.SchedulingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 @Component
 @RequiredArgsConstructor
@@ -21,17 +22,10 @@ public class RemoveSchedulingCommandHandler implements CommandHandler<RemoveSche
     public void handle(RemoveSchedulingCommand command) {
         SchedulingId schedulingId = command.toSchedulingId();
         Scheduling scheduling = schedulingRepository.get(schedulingId).orElse(null);
-        if (scheduling == null) {
-            return;
-        }
+        Assert.notNull(scheduling, "Scheduling not found");
         // 先从数据库修改为禁用状态
         if (scheduling.getEnabled()) {
             throw new IllegalStateException("Please disable scheduling first");
-        }
-        // 判断定时任务是否已经停止
-        Boolean running = schedulingApplicationService.isRunning(schedulingId);
-        if (running != null && running) {
-            throw new IllegalStateException("Cannot remove scheduling because it still running...");
         }
         schedulingApplicationService.cancel(schedulingId);
         schedulingRepository.remove(scheduling);
