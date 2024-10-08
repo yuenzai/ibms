@@ -1,5 +1,6 @@
 package cn.ecosync.ibms.device.model;
 
+import cn.ecosync.ibms.device.DeviceConstant;
 import cn.ecosync.ibms.device.jpa.DevicePropertiesJpaConverter;
 import cn.ecosync.ibms.model.AggregateRoot;
 import cn.ecosync.ibms.model.ConcurrencySafeEntity;

@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
 @JsonSubTypes({
         @JsonSubTypes.Type(value = SchedulingTrigger.Cron.class, name = "cron"),
+        @JsonSubTypes.Type(value = SchedulingTrigger.None.class, name = "none"),
 })
 public interface SchedulingTrigger {
     @Getter
@@ -17,5 +18,10 @@ public interface SchedulingTrigger {
     class Cron implements SchedulingTrigger {
         @NotBlank
         private String expression;
+    }
+
+    @ToString
+    class None implements SchedulingTrigger {
+        public static final None INSTANCE = new None();
     }
 }

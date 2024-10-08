@@ -1,7 +1,6 @@
 package cn.ecosync.ibms.device;
 
 import cn.ecosync.ibms.device.command.*;
-import cn.ecosync.ibms.device.model.DeviceConstant;
 import cn.ecosync.ibms.device.model.bacnet.BacnetDeviceProperties;
 import cn.ecosync.ibms.device.model.bacnet.BacnetNetworkProperties;
 import cn.ecosync.ibms.device.model.bacnet.BacnetObjectProperty;
