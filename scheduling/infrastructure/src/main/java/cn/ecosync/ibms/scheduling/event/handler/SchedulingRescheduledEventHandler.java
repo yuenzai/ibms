@@ -15,6 +15,6 @@ public class SchedulingRescheduledEventHandler {
     @Transactional
     @EventListener
     public void onEvent(SchedulingRescheduledEvent event) {
-        schedulingApplicationService.schedule(event.getSchedulingId(), event.getSchedulingTrigger(), event.getSchedulingTask());
+        schedulingApplicationService.schedule(event.getSchedulingId(), event.getSchedulingTrigger(), event.getSchedulingTaskParams());
     }
 }

@@ -25,13 +25,13 @@ public class UpdateSchedulingCommandHandler implements CommandHandler<UpdateSche
     @Override
     @Transactional
     public void handle(UpdateSchedulingCommand command) {
-        schedulingApplicationService.existsBy(command.getSchedulingTask());
+        schedulingApplicationService.existsBy(command.getSchedulingTaskParams());
 
         SchedulingId schedulingId = command.toSchedulingId();
         Scheduling scheduling = schedulingRepository.get(schedulingId).orElse(null);
         Assert.notNull(scheduling, "Scheduling doesn't exist");
 
-        Collection<Event> events = scheduling.update(command.getSchedulingTrigger(), command.getSchedulingTask());
+        Collection<Event> events = scheduling.update(command.getSchedulingTrigger(), command.getSchedulingTaskParams());
         events.forEach(eventBus::publish);
     }
 }

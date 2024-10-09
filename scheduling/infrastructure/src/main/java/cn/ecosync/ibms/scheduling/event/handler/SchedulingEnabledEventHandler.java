@@ -15,6 +15,6 @@ public class SchedulingEnabledEventHandler {
     @Transactional
     @EventListener
     public void onEvent(SchedulingEnabledEvent event) {
-        schedulingApplicationService.schedule(event.getSchedulingId(), event.getSchedulingTrigger(), event.getSchedulingTask());
+        schedulingApplicationService.schedule(event.getSchedulingId(), event.getSchedulingTrigger(), event.getSchedulingTaskParams());
     }
 }

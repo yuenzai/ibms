@@ -2,6 +2,7 @@ package cn.ecosync.ibms.scheduling;
 
 import cn.ecosync.ibms.scheduling.model.SchedulingId;
 import cn.ecosync.ibms.scheduling.model.SchedulingState;
+import cn.ecosync.ibms.scheduling.model.SchedulingTaskParams;
 import cn.ecosync.ibms.scheduling.model.SchedulingTrigger;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,6 @@ import org.springframework.scheduling.SchedulingException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -35,10 +35,10 @@ public class SchedulingApplicationQuartzService implements SchedulingApplication
     }
 
     @Override
-    public void execute(String schedulingTask) {
+    public void execute(SchedulingTaskParams schedulingTaskParams) {
         try {
-            JobKey jobKey = JobKey.jobKey(schedulingTask);
-            existsBy(schedulingTask);
+            JobKey jobKey = JobKey.jobKey(schedulingTaskParams.type());
+            existsBy(schedulingTaskParams);
             scheduler.triggerJob(jobKey);
         } catch (SchedulerException e) {
             throw new SchedulingException(e.getMessage(), e.getCause());
@@ -46,10 +46,10 @@ public class SchedulingApplicationQuartzService implements SchedulingApplication
     }
 
     @Override
-    public void schedule(SchedulingId schedulingId, SchedulingTrigger schedulingTrigger, String schedulingTask, Map<String, Object> schedulingTaskParams) {
+    public void schedule(SchedulingId schedulingId, SchedulingTrigger schedulingTrigger, SchedulingTaskParams schedulingTaskParams) {
         try {
-            JobKey jobKey = JobKey.jobKey(schedulingTask);
-            existsBy(schedulingTask);
+            JobKey jobKey = JobKey.jobKey(schedulingTaskParams.type());
+            existsBy(schedulingTaskParams);
             TriggerKey triggerKey = toTriggerKey(schedulingId);
             Trigger trigger;
             if (schedulingTrigger instanceof SchedulingTrigger.Cron) {
@@ -58,7 +58,7 @@ public class SchedulingApplicationQuartzService implements SchedulingApplication
                         .withIdentity(triggerKey)
                         .withSchedule(CronScheduleBuilder.cronSchedule(cron.getExpression()).withMisfireHandlingInstructionDoNothing())
                         .forJob(jobKey)
-                        .usingJobData(new JobDataMap(schedulingTaskParams))
+                        .usingJobData(new JobDataMap(schedulingTaskParams.toParams()))
                         .build();
             } else {
                 return;
@@ -108,6 +108,19 @@ public class SchedulingApplicationQuartzService implements SchedulingApplication
     }
 
     @Override
+    public void resetError(SchedulingId schedulingId) {
+        try {
+            TriggerKey triggerKey = toTriggerKey(schedulingId);
+            if (scheduler.checkExists(triggerKey) && scheduler.getTriggerState(triggerKey) == Trigger.TriggerState.ERROR) {
+                scheduler.resetTriggerFromErrorState(triggerKey);
+                log.info("trigger has been reset: {}", triggerKey);
+            }
+        } catch (SchedulerException e) {
+            throw new SchedulingException(e.getMessage(), e.getCause());
+        }
+    }
+
+    @Override
     public SchedulingState getSchedulingState(SchedulingId schedulingId) {
         try {
             TriggerKey triggerKey = toTriggerKey(schedulingId);
@@ -119,11 +132,11 @@ public class SchedulingApplicationQuartzService implements SchedulingApplication
     }
 
     @Override
-    public void existsBy(String schedulingTask) {
+    public void existsBy(SchedulingTaskParams schedulingTaskParams) {
         try {
-            JobKey jobKey = JobKey.jobKey(schedulingTask);
+            JobKey jobKey = JobKey.jobKey(schedulingTaskParams.type());
             if (!scheduler.checkExists(jobKey)) {
-                throw new IllegalArgumentException("Illegal scheduling task: " + schedulingTask);
+                throw new IllegalArgumentException("Illegal scheduling task: " + schedulingTaskParams);
             }
         } catch (SchedulerException e) {
             throw new SchedulingException(e.getMessage(), e.getCause());

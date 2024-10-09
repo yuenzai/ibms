@@ -71,14 +71,14 @@ ALTER TABLE outbox_processed
 
 CREATE TABLE scheduling
 (
-    id                 INT AUTO_INCREMENT NOT NULL COMMENT '主键',
-    version            INT                NOT NULL COMMENT '乐观锁版本',
-    created_date       BIGINT             NOT NULL COMMENT '创建时间',
-    last_modified_date BIGINT             NOT NULL COMMENT '修改时间',
-    scheduling_name    VARCHAR(64)        NOT NULL COMMENT '计划任务名称',
-    scheduling_trigger JSON               NOT NULL COMMENT '计划任务触发器',
-    scheduling_task    VARCHAR(32)        NOT NULL COMMENT '计划任务任务',
-    enabled            TINYINT            NOT NULL COMMENT '是否启用',
+    id                     INT AUTO_INCREMENT NOT NULL COMMENT '主键',
+    version                INT                NOT NULL COMMENT '乐观锁版本',
+    created_date           BIGINT             NOT NULL COMMENT '创建时间',
+    last_modified_date     BIGINT             NOT NULL COMMENT '修改时间',
+    scheduling_name        VARCHAR(64)        NOT NULL COMMENT '计划任务名称',
+    scheduling_trigger     JSON               NOT NULL COMMENT '计划任务触发器',
+    scheduling_task_params JSON               NOT NULL COMMENT '计划任务参数',
+    enabled                TINYINT            NOT NULL COMMENT '是否启用',
     CONSTRAINT pk_scheduling PRIMARY KEY (id)
 ) COMMENT '计划任务';
 
