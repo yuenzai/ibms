@@ -6,13 +6,17 @@ import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleQuery.BacnetObject
 import cn.ecosync.ibms.device.model.bacnet.*;
 import cn.ecosync.ibms.device.model.bacnet.ack.ReadPropertyMultipleAck;
 import cn.ecosync.ibms.util.CollectionUtils;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -20,15 +24,30 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RequestMapping("/bacnet")
 public class BacnetRestController {
-    private final BacnetApplicationService bacnetApplicationService;
+    private final ObjectMapper jsonSerde;
+    private final File tmpdir = new File(System.getProperty("java.io.tmpdir"));
 
     @PostMapping("/readpropm")
     public List<ReadPropertyMultipleAck> readpropm(@RequestBody @Validated BacnetReadPropertyMultipleQuery query) {
         try {
-            return bacnetApplicationService.readpropm(query);
+            String stdout = BacnetApplicationService.readPropertyMultiple(query);
+            return readValue(jsonSerde, stdout, new TypeReference<List<ReadPropertyMultipleAck>>() {
+            }).orElse(Collections.emptyList());
         } catch (Exception e) {
             log.error("", e);
             return Collections.emptyList();
+        }
+    }
+
+    @PostMapping("/readpropmToFile")
+    public void readpropmToFile(@RequestBody @Validated BacnetReadPropertyMultipleQuery query) {
+        try {
+            int exitCode = BacnetApplicationService.readPropertyMultiple(query, tmpdir);
+            if (exitCode != 0) {
+                log.error("readpropm exit code: {}", exitCode);
+            }
+        } catch (Exception e) {
+            log.error("", e);
         }
     }
 
@@ -39,7 +58,10 @@ public class BacnetRestController {
         BacnetObjectProperties objectProperties = new BacnetObjectProperties(deviceObject, Collections.singletonList(objectIdsProperty));
         BacnetReadPropertyMultipleQuery query = new BacnetReadPropertyMultipleQuery(deviceInstance, Collections.singletonList(objectProperties));
         try {
-            ReadPropertyMultipleAck ack = CollectionUtils.firstElement(bacnetApplicationService.readpropm(query));
+            String stdout = BacnetApplicationService.readPropertyMultiple(query);
+            List<ReadPropertyMultipleAck> acks = readValue(jsonSerde, stdout, new TypeReference<List<ReadPropertyMultipleAck>>() {
+            }).orElse(Collections.emptyList());
+            ReadPropertyMultipleAck ack = CollectionUtils.firstElement(acks);
             if (ack == null) {
                 return Collections.emptyList();
             }
@@ -59,6 +81,15 @@ public class BacnetRestController {
         } catch (Exception e) {
             log.error("", e);
             return Collections.emptyList();
+        }
+    }
+
+    private static <T> Optional<T> readValue(ObjectMapper objectMapper, String json, TypeReference<T> valueTypeRef) {
+        try {
+            return Optional.ofNullable(objectMapper.readValue(json, valueTypeRef));
+        } catch (Exception e) {
+            log.error("", e);
+            return Optional.empty();
         }
     }
 }
