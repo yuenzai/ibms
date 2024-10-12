@@ -1,48 +1,50 @@
 package cn.ecosync.ibms.device.model;
 
-import cn.ecosync.ibms.device.jpa.DevicePointPropertiesJpaConverter;
-import cn.ecosync.ibms.model.Entity;
-import cn.ecosync.ibms.util.StringUtils;
-import lombok.Getter;
-import lombok.Setter;
+import cn.ecosync.ibms.model.IdentifiedValueObject;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
 import java.util.Objects;
 
-@Getter
-@javax.persistence.Entity
+@Entity
 @Table(name = "device_point")
-public class DevicePoint extends Entity {
-    @JoinColumn(name = "device_id", nullable = false, updatable = false)
+public class DevicePoint extends IdentifiedValueObject {
     @ManyToOne(targetEntity = Device.class)
-    @Setter
+    @JoinColumn(name = "device_id", nullable = false, updatable = false)
     private Device device;
     @Embedded
     private DevicePointId pointId;
-    @Column(name = "point_name", nullable = false)
-    private String pointName;
-    @Convert(converter = DevicePointPropertiesJpaConverter.class)
-    @Column(name = "properties", nullable = false)
+    @Embedded
     private DevicePointProperties pointProperties;
 
     protected DevicePoint() {
     }
 
-    public DevicePoint(Device device, DevicePointId pointId, String pointName, DevicePointProperties pointProperties) {
-        Assert.notNull(device, "device must not be null");
-        Assert.notNull(pointId, "device point id can't be null");
-        Assert.notNull(pointProperties, "device point properties can't be null");
+    public DevicePoint(Device device, DevicePointId pointId, DevicePointProperties pointProperties) {
+        Assert.notNull(device, "device can not be null");
+        Assert.notNull(pointId, "pointId can not be null");
+        Assert.notNull(pointProperties, "pointProperties can not be null");
         this.device = device;
         this.pointId = pointId;
-        this.pointName = StringUtils.nullSafeOf(pointName);
         this.pointProperties = pointProperties;
     }
 
-    public void setPointProperties(DevicePointProperties pointProperties) {
+    public void update(DevicePointProperties pointProperties) {
         if (pointProperties != null) {
             this.pointProperties = pointProperties;
         }
+    }
+
+    public void device(Device device) {
+        this.device = device;
+    }
+
+    public DevicePointId pointId() {
+        return pointId;
+    }
+
+    public DevicePointProperties pointProperties() {
+        return pointProperties;
     }
 
     @Override

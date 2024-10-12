@@ -18,7 +18,7 @@ public class SchedulingId {
     }
 
     public SchedulingId(String schedulingName) {
-        Assert.hasText(schedulingName, "schedulingName can't be empty");
+        Assert.hasText(schedulingName, "schedulingName can not be empty");
         this.schedulingName = schedulingName;
     }
 

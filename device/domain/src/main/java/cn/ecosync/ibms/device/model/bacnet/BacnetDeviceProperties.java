@@ -1,6 +1,6 @@
 package cn.ecosync.ibms.device.model.bacnet;
 
-import cn.ecosync.ibms.device.model.DeviceProperties;
+import cn.ecosync.ibms.device.model.DeviceExtra;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @ToString
 @EqualsAndHashCode
-public class BacnetDeviceProperties implements DeviceProperties {
+public class BacnetDeviceProperties implements DeviceExtra {
     @NotNull
     private Integer deviceInstance;
     @NotBlank(message = "networkNumber must not be empty")

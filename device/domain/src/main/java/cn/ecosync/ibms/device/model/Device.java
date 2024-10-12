@@ -1,12 +1,6 @@
 package cn.ecosync.ibms.device.model;
 
-import cn.ecosync.ibms.device.DeviceConstant;
-import cn.ecosync.ibms.device.jpa.DevicePropertiesJpaConverter;
-import cn.ecosync.ibms.model.AggregateRoot;
 import cn.ecosync.ibms.model.ConcurrencySafeEntity;
-import cn.ecosync.ibms.system.model.DictionaryKey;
-import cn.ecosync.ibms.util.StringUtils;
-import lombok.Getter;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
@@ -14,27 +8,17 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
-@Getter
 @Entity
 @Table(name = "device")
-public class Device extends ConcurrencySafeEntity implements AggregateRoot {
+public class Device extends ConcurrencySafeEntity {
     @Embedded
     private DeviceId deviceId;
+
     @Embedded
-    @AttributeOverrides({@AttributeOverride(name = "dictKey", column = @Column(name = "network_id", nullable = false, updatable = false))})
-    private DictionaryKey networkId;
-    @Column(name = "device_name", nullable = false)
-    private String deviceName;
-    @Column(name = "path", nullable = false)
-    private String path;
-    @Column(name = "description", nullable = false)
-    private String description;
+    private DeviceProperties deviceProperties;
+
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
-
-    @Convert(converter = DevicePropertiesJpaConverter.class)
-    @Column(name = "properties", nullable = false)
-    private DeviceProperties deviceProperties;
 
     @MapKey(name = "pointId")
     @OneToMany(targetEntity = DevicePoint.class, mappedBy = "device", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -43,57 +27,42 @@ public class Device extends ConcurrencySafeEntity implements AggregateRoot {
     protected Device() {
     }
 
-    public Device(DeviceId deviceId, DictionaryKey networkId, String deviceName, String path, String description, DeviceProperties deviceProperties) {
-        Assert.notNull(deviceId, "device id must not be null");
-        Assert.notNull(networkId, "network id must not be null");
-        Assert.notNull(deviceProperties, "device properties must not be null");
+    public Device(DeviceId deviceId, DeviceProperties deviceProperties) {
+        Assert.notNull(deviceId, "deviceId can not be null");
+        Assert.notNull(deviceProperties, "deviceProperties can not be null");
         this.deviceId = deviceId;
-        this.networkId = networkId;
-        this.deviceName = StringUtils.nullSafeOf(deviceName);
-        this.path = StringUtils.nullSafeOf(path);
-        this.description = StringUtils.nullSafeOf(description);
         this.deviceProperties = deviceProperties;
         this.enabled = Boolean.TRUE;
     }
 
-    public void setDeviceName(String deviceName) {
-        if (deviceName != null) {
-            this.deviceName = deviceName;
-        }
-    }
-
-    public void setPath(String path) {
-        if (path != null) {
-            this.path = path;
-        }
-    }
-
-    public void setDescription(String description) {
-        if (description != null) {
-            this.description = description;
-        }
-    }
-
-    public void setDeviceProperties(DeviceProperties deviceProperties) {
+    public void update(DeviceProperties deviceProperties) {
         if (deviceProperties != null) {
             this.deviceProperties = deviceProperties;
         }
     }
 
-    public void setEnabled(Boolean enabled) {
-        if (enabled != null) {
-            this.enabled = enabled;
-        }
+    public void enable() {
+        this.enabled = Boolean.TRUE;
     }
 
-    @Override
-    public String aggregateType() {
-        return DeviceConstant.AGGREGATE_TYPE;
+    public void disable() {
+        this.enabled = Boolean.FALSE;
     }
 
-    @Override
-    public String aggregateId() {
-        return deviceId.toString();
+    public DeviceId deviceId() {
+        return deviceId;
+    }
+
+    public DeviceProperties deviceProperties() {
+        return deviceProperties;
+    }
+
+    public Boolean enabled() {
+        return enabled;
+    }
+
+    public Map<DevicePointId, DevicePoint> devicePoints() {
+        return devicePoints;
     }
 
     @Override

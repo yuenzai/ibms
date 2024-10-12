@@ -1,30 +1,30 @@
 package cn.ecosync.ibms.device.dto;
 
-import cn.ecosync.ibms.device.model.DevicePoint;
 import cn.ecosync.ibms.device.model.DevicePointId;
 import cn.ecosync.ibms.device.model.DevicePointProperties;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Getter;
 import lombok.ToString;
 
+import javax.validation.Valid;
 import java.util.Objects;
 
 @Getter
 @ToString
 public class DevicePointDto {
-    private String deviceCode;
-    private String pointCode;
-    private String pointName;
+    @Valid
+    @JsonUnwrapped
+    private DevicePointId pointId;
+    @Valid
+    @JsonUnwrapped
     private DevicePointProperties pointProperties;
 
-    public DevicePointDto() {
+    protected DevicePointDto() {
     }
 
-    public DevicePointDto(DevicePoint devicePoint) {
-        DevicePointId pointId = devicePoint.getPointId();
-        this.deviceCode = pointId.getDeviceCode();
-        this.pointCode = pointId.getPointCode();
-        this.pointName = devicePoint.getPointName();
-        this.pointProperties = devicePoint.getPointProperties();
+    public DevicePointDto(DevicePointId pointId, DevicePointProperties pointProperties) {
+        this.pointId = pointId;
+        this.pointProperties = pointProperties;
     }
 
     @Override
@@ -32,11 +32,11 @@ public class DevicePointDto {
         if (this == o) return true;
         if (!(o instanceof DevicePointDto)) return false;
         DevicePointDto that = (DevicePointDto) o;
-        return Objects.equals(deviceCode, that.deviceCode) && Objects.equals(pointCode, that.pointCode);
+        return Objects.equals(pointId, that.pointId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(deviceCode, pointCode);
+        return Objects.hashCode(pointId);
     }
 }

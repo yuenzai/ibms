@@ -6,11 +6,13 @@ import org.springframework.util.Assert;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.validation.constraints.NotBlank;
 
-@Embeddable
 @Getter
+@Embeddable
 @EqualsAndHashCode
 public class DeviceId {
+    @NotBlank
     @Column(name = "device_code", nullable = false, updatable = false)
     private String deviceCode;
 

@@ -1,14 +1,15 @@
 package cn.ecosync.ibms.device.command.handler;
 
 import cn.ecosync.ibms.command.CommandHandler;
+import cn.ecosync.ibms.device.DeviceMapper;
 import cn.ecosync.ibms.device.command.AddDeviceCommand;
-import cn.ecosync.ibms.device.event.DeviceCreatedEvent;
+import cn.ecosync.ibms.device.dto.DeviceDto;
 import cn.ecosync.ibms.device.model.Device;
 import cn.ecosync.ibms.device.model.DeviceId;
 import cn.ecosync.ibms.device.model.DeviceProperties;
 import cn.ecosync.ibms.device.repository.DeviceRepository;
+import cn.ecosync.ibms.event.AggregateSavedEvent;
 import cn.ecosync.ibms.event.EventBus;
-import cn.ecosync.ibms.system.model.DictionaryKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,13 +24,16 @@ public class AddDeviceCommandHandler implements CommandHandler<AddDeviceCommand>
     @Override
     @Transactional
     public void handle(AddDeviceCommand command) {
-        DeviceId deviceId = command.toDeviceId();
-        DictionaryKey networkId = command.toNetworkId();
-        DeviceProperties deviceProperties = command.getProperties();
+        DeviceId deviceId = command.getDeviceId();
+        DeviceProperties deviceProperties = command.getDeviceProperties();
+
         Device device = deviceRepository.get(deviceId).orElse(null);
         Assert.isNull(device, "Device already exists: " + deviceId.getDeviceCode());
-        device = new Device(deviceId, networkId, command.getDeviceName(), command.getPath(), command.getDescription(), deviceProperties);
+        device = new Device(deviceId, deviceProperties);
         deviceRepository.add(device);
-        eventBus.publish(new DeviceCreatedEvent(deviceId));
+
+        DeviceDto dto = DeviceMapper.mapOf(device);
+        AggregateSavedEvent event = new AggregateSavedEvent(dto);
+        eventBus.publish(event);
     }
 }

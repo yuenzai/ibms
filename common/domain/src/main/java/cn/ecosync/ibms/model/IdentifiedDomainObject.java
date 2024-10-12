@@ -1,11 +1,8 @@
 package cn.ecosync.ibms.model;
 
-import lombok.Getter;
-
 import javax.persistence.*;
 import java.io.Serializable;
 
-@Getter
 @MappedSuperclass
 public abstract class IdentifiedDomainObject implements Serializable {
     /**

@@ -1,6 +1,6 @@
 package cn.ecosync.ibms.device.model.bacnet;
 
-import cn.ecosync.ibms.device.model.DevicePointProperties;
+import cn.ecosync.ibms.device.model.DevicePointExtra;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Getter
 @ToString
-public class BacnetObjectProperty implements DevicePointProperties {
+public class BacnetObjectProperty implements DevicePointExtra {
     @NotNull
     private BacnetObjectType objectType;
     @NotNull

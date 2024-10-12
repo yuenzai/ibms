@@ -1,9 +1,10 @@
 package cn.ecosync.ibms.scheduling.task;
 
-import cn.ecosync.ibms.device.model.Device;
-import cn.ecosync.ibms.device.model.DeviceId;
+import cn.ecosync.ibms.device.dto.DeviceDto;
 import cn.ecosync.ibms.device.model.bacnet.BacnetDeviceProperties;
-import cn.ecosync.ibms.device.repository.DeviceRepository;
+import cn.ecosync.ibms.device.query.GetDeviceQuery;
+import cn.ecosync.ibms.device.query.SearchDeviceQuery;
+import cn.ecosync.ibms.query.QueryBus;
 import cn.ecosync.ibms.scheduling.model.SchedulingTaskParams;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
@@ -39,9 +40,18 @@ public class ReadDeviceStatusTaskConfiguration {
     }
 
     @Bean
+    public JobDetail readAllDeviceStatus() {
+        return JobBuilder.newJob(ReadAllDeviceStatusTask.class)
+                .withIdentity(ReadAllDeviceStatusTask.SCHEDULING_TASK_TYPE)
+                .storeDurably()
+                .build();
+    }
+
+    @Bean
     public Module readDeviceStatusTaskTypeModule() {
         SimpleModule simpleModule = new SimpleModule();
         simpleModule.registerSubtypes(new NamedType(ReadDeviceStatusTaskParams.class, ReadDeviceStatusTask.SCHEDULING_TASK_TYPE));
+        simpleModule.registerSubtypes(new NamedType(ReadAllDeviceStatusTaskParams.class, ReadAllDeviceStatusTask.SCHEDULING_TASK_TYPE));
         return simpleModule;
     }
 
@@ -54,7 +64,7 @@ public class ReadDeviceStatusTaskConfiguration {
     public static class ReadDeviceStatusTask implements Job {
         public static final String SCHEDULING_TASK_TYPE = "ReadDeviceStatus";
 
-        private final DeviceRepository deviceRepository;
+        private final QueryBus queryBus;
         private final BacnetService bacnetService;
         @Setter
         private String deviceCode;
@@ -62,15 +72,34 @@ public class ReadDeviceStatusTaskConfiguration {
         @Override
         @Transactional(readOnly = true)
         public void execute(JobExecutionContext context) {
-            Assert.hasText(this.deviceCode, "Device code is required");
-            DeviceId deviceId = new DeviceId(this.deviceCode);
-            Device device = this.deviceRepository.get(deviceId).orElse(null);
+            Assert.hasText(this.deviceCode, "deviceCode is required");
+            DeviceDto device = queryBus.execute(new GetDeviceQuery(this.deviceCode, true)).orElse(null);
             if (device == null) {
-                log.info("Device not found: {}", deviceId);
+                log.info("Device not found: {}", this.deviceCode);
                 return;
             }
-            if (device.getDeviceProperties() instanceof BacnetDeviceProperties) {
+            if (device.getDeviceProperties().getDeviceExtra() instanceof BacnetDeviceProperties) {
                 this.bacnetService.readPropertiesToFile(device);
+            }
+        }
+    }
+
+    @Slf4j
+    @RequiredArgsConstructor
+    public static class ReadAllDeviceStatusTask implements Job {
+        public static final String SCHEDULING_TASK_TYPE = "ReadAllDeviceStatus";
+
+        private final QueryBus queryBus;
+        private final BacnetService bacnetService;
+
+        @Override
+        @Transactional(readOnly = true)
+        public void execute(JobExecutionContext context) {
+            Iterable<DeviceDto> devices = queryBus.execute(new SearchDeviceQuery(true));
+            for (DeviceDto device : devices) {
+                if (device.getDeviceProperties().getDeviceExtra() instanceof BacnetDeviceProperties) {
+                    this.bacnetService.readPropertiesToFile(device);
+                }
             }
         }
     }
@@ -89,6 +118,20 @@ public class ReadDeviceStatusTaskConfiguration {
         @Override
         public Map<String, Object> toParams() {
             return Collections.singletonMap("deviceCode", this.deviceCode);
+        }
+    }
+
+    @Getter
+    @ToString
+    public static class ReadAllDeviceStatusTaskParams implements SchedulingTaskParams {
+        @Override
+        public String type() {
+            return ReadAllDeviceStatusTask.SCHEDULING_TASK_TYPE;
+        }
+
+        @Override
+        public Map<String, Object> toParams() {
+            return Collections.emptyMap();
         }
     }
 }

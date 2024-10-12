@@ -22,7 +22,7 @@ public class MapJpaConverter implements AttributeConverter<Map<String, Object>, 
 
     @Override
     public String convertToDatabaseColumn(Map<String, Object> attribute) {
-        return jsonSerde.writeValueAsString(attribute).orElse("");
+        return jsonSerde.writeValueAsString(attribute).orElse("{}");
     }
 
     @Override

@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.scheduling.task;
 
-import cn.ecosync.ibms.device.model.Device;
-import cn.ecosync.ibms.device.model.DevicePoint;
+import cn.ecosync.ibms.device.dto.DeviceDto;
+import cn.ecosync.ibms.device.dto.DevicePointDto;
 import cn.ecosync.ibms.device.model.DevicePointValue;
 import cn.ecosync.ibms.device.model.bacnet.*;
 import cn.ecosync.ibms.device.model.bacnet.ack.ReadPropertyMultipleAck;
@@ -42,22 +42,22 @@ public class BacnetService {
         Assert.hasText(this.bacnetServiceUrl, "Environment variable " + ENV_BACNET_SERVICE_URL + " is required");
     }
 
-    public Map<DevicePoint, DevicePointValue> readProperties(Device device, RestTemplate restTemplate, String bacnetServiceUrl) {
+    public Map<DevicePointDto, DevicePointValue> readProperties(DeviceDto device, RestTemplate restTemplate, String bacnetServiceUrl) {
         if (!StringUtils.hasText(bacnetServiceUrl)) {
             return Collections.emptyMap();
         }
         // 设备配置属性
-        BacnetDeviceProperties deviceProperties = (BacnetDeviceProperties) device.getDeviceProperties();
+        BacnetDeviceProperties deviceProperties = (BacnetDeviceProperties) device.getDeviceProperties().getDeviceExtra();
         // 点位配置属性
-        List<DevicePoint> devicePoints = device.getDevicePoints().values().stream()
-                .filter(in -> in.getPointProperties() instanceof BacnetObjectProperty)
+        List<DevicePointDto> devicePoints = device.getDevicePoints().stream()
+                .filter(in -> in.getPointProperties().getPointExtra() instanceof BacnetObjectProperty)
                 .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(devicePoints)) {
             return Collections.emptyMap();
         }
 
         Map<BacnetObject, List<BacnetProperty>> objectProperties = devicePoints.stream()
-                .map(in -> (BacnetObjectProperty) in.getPointProperties())
+                .map(in -> (BacnetObjectProperty) in.getPointProperties().getPointExtra())
                 .collect(Collectors.groupingBy(BacnetObjectProperty::toBacnetObject, Collectors.mapping(BacnetObjectProperty::toBacnetProperty, Collectors.toList())));
 
         BacnetReadPropertyMultipleQuery query = new BacnetReadPropertyMultipleQuery(deviceProperties.getDeviceInstance(), objectProperties);
@@ -65,30 +65,30 @@ public class BacnetService {
         }).getBody();
         Map<BacnetObjectProperty, BacnetPropertyValue> simpleMap = ReadPropertyMultipleAck.toSimpleMap(ack);
         return devicePoints.stream()
-                .collect(Collectors.toMap(Function.identity(), in -> simpleMap.get((BacnetObjectProperty) in.getPointProperties())));// 注意这里没有对 key 去重，如果重复会报错
+                .collect(Collectors.toMap(Function.identity(), in -> simpleMap.get((BacnetObjectProperty) in.getPointProperties().getPointExtra())));// 注意这里没有对 key 去重，如果重复会报错
     }
 
-    public void readPropertiesToFile(Device device) {
+    public void readPropertiesToFile(DeviceDto device) {
         BacnetReadPropertyMultipleQuery query = makeQueryOf(device).orElse(null);
         this.restTemplate.postForLocation(this.bacnetServiceUrl + "/bacnet/readpropmToFile", query);
     }
 
-    public static Optional<BacnetReadPropertyMultipleQuery> makeQueryOf(Device device) {
+    public static Optional<BacnetReadPropertyMultipleQuery> makeQueryOf(DeviceDto device) {
         if (device == null) {
             return Optional.empty();
         }
         // 设备配置属性
-        BacnetDeviceProperties deviceProperties = (BacnetDeviceProperties) device.getDeviceProperties();
+        BacnetDeviceProperties deviceProperties = (BacnetDeviceProperties) device.getDeviceProperties().getDeviceExtra();
         // 点位配置属性
-        List<DevicePoint> devicePoints = device.getDevicePoints().values().stream()
-                .filter(in -> in.getPointProperties() instanceof BacnetObjectProperty)
+        List<DevicePointDto> devicePoints = device.getDevicePoints().stream()
+                .filter(in -> in.getPointProperties().getPointExtra() instanceof BacnetObjectProperty)
                 .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(devicePoints)) {
             return Optional.empty();
         }
 
         Map<BacnetObject, List<BacnetProperty>> objectProperties = devicePoints.stream()
-                .map(in -> (BacnetObjectProperty) in.getPointProperties())
+                .map(in -> (BacnetObjectProperty) in.getPointProperties().getPointExtra())
                 .collect(Collectors.groupingBy(BacnetObjectProperty::toBacnetObject, Collectors.mapping(BacnetObjectProperty::toBacnetProperty, Collectors.toList())));
 
         return Optional.of(new BacnetReadPropertyMultipleQuery(deviceProperties.getDeviceInstance(), objectProperties));

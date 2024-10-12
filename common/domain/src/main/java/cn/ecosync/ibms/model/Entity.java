@@ -1,5 +1,6 @@
 package cn.ecosync.ibms.model;
 
+import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -13,6 +14,7 @@ import javax.persistence.MappedSuperclass;
  * @author 覃俊元
  * @since 2024
  */
+@Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class Entity extends IdentifiedDomainObject {
