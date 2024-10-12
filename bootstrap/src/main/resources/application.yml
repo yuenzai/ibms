@@ -69,4 +69,5 @@ spring:
 
 #logging:
 #  level:
+#    org.springframework.jdbc.core.JdbcTemplate: debug
 #    org.flywaydb: debug
