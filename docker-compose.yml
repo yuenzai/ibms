@@ -25,5 +25,5 @@ services:
     restart: always
     network_mode: host
     volumes:
-      - ./bacnet/target/ibms-bacnet-0.0.1-SNAPSHOT.jar:/opt/app/ibms-bacnet-0.0.1-SNAPSHOT.jar
-    command: ["java", "-Xms32m", "-Xmx32m", "-Xss256k", "-jar", 'ibms-bacnet-0.0.1-SNAPSHOT.jar']
+      - ./bacnet/application/target/ibms-bacnet-application-0.0.1-SNAPSHOT.jar:/opt/app/ibms-bacnet-application-0.0.1-SNAPSHOT.jar
+    command: ["java", "-Xms32m", "-Xmx32m", "-Xss256k", "-jar", 'ibms-bacnet-application-0.0.1-SNAPSHOT.jar']

@@ -57,7 +57,12 @@
             <!-- bacnet -->
             <dependency>
                 <groupId>cn.ecosync.ibms.bacnet</groupId>
-                <artifactId>ibms-bacnet</artifactId>
+                <artifactId>ibms-bacnet-contract</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms.bacnet</groupId>
+                <artifactId>ibms-bacnet-application</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <!-- device -->

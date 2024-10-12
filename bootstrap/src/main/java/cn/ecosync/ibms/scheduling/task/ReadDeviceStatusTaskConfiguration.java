@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.scheduling.task;
 
+import cn.ecosync.ibms.bacnet.model.BacnetDeviceExtra;
 import cn.ecosync.ibms.device.dto.DeviceDto;
-import cn.ecosync.ibms.device.model.bacnet.BacnetDeviceProperties;
 import cn.ecosync.ibms.device.query.GetDeviceQuery;
 import cn.ecosync.ibms.device.query.SearchDeviceQuery;
 import cn.ecosync.ibms.query.QueryBus;
@@ -78,7 +78,7 @@ public class ReadDeviceStatusTaskConfiguration {
                 log.info("Device not found: {}", this.deviceCode);
                 return;
             }
-            if (device.getDeviceProperties().getDeviceExtra() instanceof BacnetDeviceProperties) {
+            if (device.getDeviceProperties().getDeviceExtra() instanceof BacnetDeviceExtra) {
                 this.bacnetService.readPropertiesToFile(device);
             }
         }
@@ -97,7 +97,7 @@ public class ReadDeviceStatusTaskConfiguration {
         public void execute(JobExecutionContext context) {
             Iterable<DeviceDto> devices = queryBus.execute(new SearchDeviceQuery(true));
             for (DeviceDto device : devices) {
-                if (device.getDeviceProperties().getDeviceExtra() instanceof BacnetDeviceProperties) {
+                if (device.getDeviceProperties().getDeviceExtra() instanceof BacnetDeviceExtra) {
                     this.bacnetService.readPropertiesToFile(device);
                 }
             }
