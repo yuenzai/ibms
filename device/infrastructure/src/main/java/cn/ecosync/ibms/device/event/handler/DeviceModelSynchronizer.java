@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.device.event.handler;
 
 import cn.ecosync.ibms.JdbcService;
-import cn.ecosync.ibms.device.dto.DeviceDto;
+import cn.ecosync.ibms.device.model.DeviceDto;
 import cn.ecosync.ibms.event.AggregateRemovedEvent;
 import cn.ecosync.ibms.event.AggregateSavedEvent;
 import cn.ecosync.ibms.serde.JsonSerde;
@@ -56,11 +56,11 @@ public class DeviceModelSynchronizer {
     }
 
     private Object[] args(DeviceDto deviceDto) {
-        String deviceCode = deviceDto.getDeviceId().getDeviceCode();
-        String deviceName = deviceDto.getDeviceProperties().getDeviceName();
-        String path = deviceDto.getDeviceProperties().getPath();
-        String description = deviceDto.getDeviceProperties().getDescription();
-        String deviceExtra = jsonSerde.writeValueAsString(deviceDto.getDeviceProperties().getDeviceExtra()).orElse("{}");
+        String deviceCode = deviceDto.getDeviceCode();
+        String deviceName = deviceDto.getDeviceName();
+        String path = deviceDto.getPath();
+        String description = deviceDto.getDescription();
+        String deviceExtra = jsonSerde.writeValueAsString(deviceDto.getDeviceExtra()).orElse("{}");
         Boolean enabled = deviceDto.getEnabled();
         String devicePoints = jsonSerde.writeValueAsString(deviceDto.getDevicePoints()).orElse("[]");
         String deviceStatus = jsonSerde.writeValueAsString(deviceDto.getDeviceStatus()).orElse("[]");

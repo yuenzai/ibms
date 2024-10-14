@@ -3,9 +3,9 @@ package cn.ecosync.ibms.device.command.handler;
 import cn.ecosync.ibms.command.CommandHandler;
 import cn.ecosync.ibms.device.DeviceMapper;
 import cn.ecosync.ibms.device.command.UpdateDeviceCommand;
-import cn.ecosync.ibms.device.dto.DeviceDto;
 import cn.ecosync.ibms.device.model.Device;
 import cn.ecosync.ibms.device.model.DeviceId;
+import cn.ecosync.ibms.device.model.DeviceDto;
 import cn.ecosync.ibms.device.repository.DeviceRepository;
 import cn.ecosync.ibms.event.AggregateSavedEvent;
 import cn.ecosync.ibms.event.EventBus;
@@ -29,7 +29,7 @@ public class UpdateDeviceCommandHandler implements CommandHandler<UpdateDeviceCo
         Assert.notNull(device, "device does not exist: " + deviceId.getDeviceCode());
         device.update(command.getDeviceProperties());
 
-        DeviceDto dto = DeviceMapper.mapOf(device);
+        DeviceDto dto = DeviceMapper.map(device);
         AggregateSavedEvent event = new AggregateSavedEvent(dto);
         eventBus.publish(event);
     }

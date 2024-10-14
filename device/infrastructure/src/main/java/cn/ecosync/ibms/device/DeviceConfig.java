@@ -1,5 +1,7 @@
 package cn.ecosync.ibms.device;
 
+import cn.ecosync.ibms.bacnet.model.BacnetDeviceExtra;
+import cn.ecosync.ibms.bacnet.model.BacnetDevicePointExtra;
 import cn.ecosync.ibms.device.command.*;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +22,9 @@ public class DeviceConfig {
         simpleModule.registerSubtypes(new NamedType(RemoveDeviceCommand.class, "REMOVE_DEVICE"));
         simpleModule.registerSubtypes(new NamedType(PutDevicePointCommand.class, "PUT_DEVICE_POINT"));
         simpleModule.registerSubtypes(new NamedType(RemoveDevicePointCommand.class, "REMOVE_DEVICE_POINT"));
+
+        simpleModule.registerSubtypes(new NamedType(BacnetDeviceExtra.class, "bacnet"));
+        simpleModule.registerSubtypes(new NamedType(BacnetDevicePointExtra.class, "bacnet"));
         return simpleModule;
     }
 }

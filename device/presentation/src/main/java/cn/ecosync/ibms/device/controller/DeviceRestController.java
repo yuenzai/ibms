@@ -2,11 +2,14 @@ package cn.ecosync.ibms.device.controller;
 
 import cn.ecosync.ibms.command.Command;
 import cn.ecosync.ibms.command.CommandBus;
-import cn.ecosync.ibms.device.dto.DeviceDto;
+import cn.ecosync.ibms.device.model.DeviceDto;
 import cn.ecosync.ibms.device.query.GetDeviceQuery;
-import cn.ecosync.ibms.device.query.SearchDeviceQuery;
+import cn.ecosync.ibms.device.query.SearchDeviceListQuery;
+import cn.ecosync.ibms.device.query.SearchDevicePageQuery;
 import cn.ecosync.ibms.query.QueryBus;
+import cn.ecosync.ibms.util.CollectionUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +27,7 @@ public class DeviceRestController {
 
     @GetMapping("/{deviceCode}")
     public DeviceDto get(@PathVariable String deviceCode, @RequestParam(value = "readonly", defaultValue = "false") Boolean readonly) {
-        return queryBus.execute(new GetDeviceQuery(deviceCode, readonly)).orElse(null);
+        return queryBus.execute(new GetDeviceQuery(deviceCode, readonly));
     }
 
     @GetMapping
@@ -33,6 +36,11 @@ public class DeviceRestController {
             @RequestParam(value = "pagesize", required = false) Integer pageSize,
             @RequestParam(value = "readonly", defaultValue = "false") Boolean readonly
     ) {
-        return queryBus.execute(new SearchDeviceQuery(page, pageSize, readonly));
+        Pageable pageable = CollectionUtils.of(page, pageSize);
+        if (pageable.isPaged()) {
+            return queryBus.execute(new SearchDevicePageQuery(page, pageSize, readonly));
+        } else {
+            return queryBus.execute(new SearchDeviceListQuery(readonly));
+        }
     }
 }

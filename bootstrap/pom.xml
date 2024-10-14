@@ -60,11 +60,6 @@
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-mysql</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>cn.ecosync.ibms.bacnet</groupId>
-            <artifactId>ibms-bacnet-contract</artifactId>
-        </dependency>
     </dependencies>
 
     <build>

@@ -1,8 +1,8 @@
 package cn.ecosync.ibms.device.command;
 
 import cn.ecosync.ibms.command.Command;
-import cn.ecosync.ibms.device.dto.DevicePointDto;
 import cn.ecosync.ibms.device.model.DeviceId;
+import cn.ecosync.ibms.device.model.DevicePointDto;
 import cn.ecosync.ibms.util.CollectionUtils;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Getter;

@@ -3,12 +3,7 @@ package cn.ecosync.ibms.device.command.handler;
 import cn.ecosync.ibms.command.CommandHandler;
 import cn.ecosync.ibms.device.DeviceMapper;
 import cn.ecosync.ibms.device.command.PutDevicePointCommand;
-import cn.ecosync.ibms.device.dto.DeviceDto;
-import cn.ecosync.ibms.device.dto.DevicePointDto;
-import cn.ecosync.ibms.device.model.Device;
-import cn.ecosync.ibms.device.model.DeviceId;
-import cn.ecosync.ibms.device.model.DevicePoint;
-import cn.ecosync.ibms.device.model.DevicePointId;
+import cn.ecosync.ibms.device.model.*;
 import cn.ecosync.ibms.device.repository.DeviceRepository;
 import cn.ecosync.ibms.event.AggregateSavedEvent;
 import cn.ecosync.ibms.event.EventBus;
@@ -34,17 +29,18 @@ public class PutDevicePointCommandHandler implements CommandHandler<PutDevicePoi
 
         Map<DevicePointId, DevicePoint> devicePoints = device.devicePoints();
         for (DevicePointDto dto : command.getDevicePoints()) {
-            DevicePointId pointId = dto.getPointId();
+            DevicePointId pointId = new DevicePointId(dto.getPointCode());
             DevicePoint devicePoint = devicePoints.get(pointId);
+            DevicePointProperties pointProperties = new DevicePointProperties(dto.getPointName(), dto.getPointExtra());
             if (devicePoint == null) {
-                devicePoint = new DevicePoint(device, pointId, dto.getPointProperties());
+                devicePoint = new DevicePoint(device, pointId, pointProperties);
                 devicePoints.put(pointId, devicePoint);
             } else {
-                devicePoint.update(dto.getPointProperties());
+                devicePoint.update(pointProperties);
             }
         }
 
-        DeviceDto dto = DeviceMapper.mapOf(device);
+        DeviceDto dto = DeviceMapper.map(device);
         AggregateSavedEvent event = new AggregateSavedEvent(dto);
         eventBus.publish(event);
     }

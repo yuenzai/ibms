@@ -16,6 +16,10 @@
             <groupId>cn.ecosync.ibms.device</groupId>
             <artifactId>ibms-device-domain</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.ecosync.ibms.device</groupId>
+            <artifactId>ibms-device-contract</artifactId>
+        </dependency>
         <!-- for compile source file -->
         <dependency>
             <groupId>com.querydsl</groupId>
