@@ -1,6 +1,7 @@
 package cn.ecosync.ibms.scheduling.task;
 
 import cn.ecosync.ibms.bacnet.model.BacnetDeviceExtra;
+import cn.ecosync.ibms.bacnet.model.BacnetReadPropertyMultipleService;
 import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleToFileQuery;
 import cn.ecosync.ibms.device.model.DeviceDto;
 import cn.ecosync.ibms.device.query.GetDeviceQuery;
@@ -64,7 +65,8 @@ public class ReadDeviceStatusTaskBean implements SchedulingTask<ReadDeviceStatus
                 return;
             }
             if (device.getDeviceExtra() instanceof BacnetDeviceExtra) {
-                BacnetReadPropertyMultipleToFileQuery.newInstance(device)
+                BacnetReadPropertyMultipleService.newInstance(device)
+                        .map(BacnetReadPropertyMultipleToFileQuery::new)
                         .ifPresent(queryBus::execute);
             }
         }

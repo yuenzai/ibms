@@ -12,32 +12,39 @@ import java.util.Optional;
 
 @Getter
 @ToString
-public class HttpRequestProperties {
+public class HttpRequest {
+    private final String httpMethod;
     private final String hostEnvironmentKey;
     private final String[] pathSegments;
     private final MultiValueMap<String, String> queryParams;
-    private final MultiValueMap<String, String> headers;
+    private final Object requestBody;
 
-    private HttpRequestProperties(String hostEnvironmentKey, String[] pathSegments, MultiValueMap<String, String> queryParams, MultiValueMap<String, String> headers) {
+    private HttpRequest(String httpMethod, String hostEnvironmentKey, String[] pathSegments, MultiValueMap<String, String> queryParams, Object requestBody) {
+        this.httpMethod = httpMethod;
         this.hostEnvironmentKey = hostEnvironmentKey;
         this.pathSegments = pathSegments;
         this.queryParams = queryParams;
-        this.headers = headers;
+        this.requestBody = requestBody;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static Builder getMethod() {
+        return new Builder("GET");
+    }
+
+    public static Builder postMethod() {
+        return new Builder("POST");
     }
 
     public static class Builder {
+        private final String httpMethod;
         private String hostEnvironmentKey;
         private String[] pathSegments;
         private final MultiValueMap<String, String> queryParams;
-        private final MultiValueMap<String, String> headers;
+        private Object requestBody;
 
-        private Builder() {
+        private Builder(String httpMethod) {
+            this.httpMethod = httpMethod;
             this.queryParams = new LinkedMultiValueMap<>();
-            this.headers = new LinkedMultiValueMap<>();
         }
 
         public Builder hostEnvironmentKey(String hostEnvironmentKey) {
@@ -68,13 +75,16 @@ public class HttpRequestProperties {
             return this;
         }
 
-        public Builder header(String name, String value) {
-            this.headers.add(name, value);
+        public Builder requestBody(Object requestBody) {
+            if ("GET".equals(this.httpMethod)) {
+                throw new UnsupportedOperationException("get method should not pass a request body");
+            }
+            this.requestBody = requestBody;
             return this;
         }
 
-        public HttpRequestProperties build() {
-            return new HttpRequestProperties(this.hostEnvironmentKey, this.pathSegments, this.queryParams, this.headers);
+        public HttpRequest build() {
+            return new HttpRequest(this.httpMethod, this.hostEnvironmentKey, this.pathSegments, this.queryParams, this.requestBody);
         }
 
         @Nullable

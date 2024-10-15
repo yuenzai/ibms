@@ -3,7 +3,7 @@ package cn.ecosync.ibms.device.query;
 import cn.ecosync.ibms.device.model.DeviceDto;
 import cn.ecosync.ibms.query.Query;
 import cn.ecosync.ibms.util.CollectionUtils;
-import cn.ecosync.ibms.util.HttpRequestProperties;
+import cn.ecosync.ibms.util.HttpRequest;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.data.domain.Page;
@@ -27,8 +27,8 @@ public class SearchDevicePageQuery implements Query<Page<DeviceDto>> {
     }
 
     @Override
-    public HttpRequestProperties httpRequestProperties() {
-        HttpRequestProperties.Builder builder = HttpRequestProperties.builder()
+    public HttpRequest httpRequest() {
+        HttpRequest.Builder builder = HttpRequest.getMethod()
                 .hostEnvironmentKey(ENV_DEVICE_SERVICE_HOST)
                 .pathSegments("device")
                 .queryParam("readonly", this.readonly)

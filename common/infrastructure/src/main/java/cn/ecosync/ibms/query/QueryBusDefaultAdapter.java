@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.query;
 
 import cn.ecosync.ibms.util.CollectionUtils;
-import cn.ecosync.ibms.util.HttpRequestProperties;
+import cn.ecosync.ibms.util.HttpRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
@@ -9,6 +9,7 @@ import org.springframework.core.ResolvableType;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
@@ -69,21 +70,29 @@ public class QueryBusDefaultAdapter implements QueryBus {
 
     @SuppressWarnings("unchecked")
     private <T extends Query<R>, R> R remoteExecute(T query) {
-        HttpRequestProperties httpUrlProperties = query.httpRequestProperties();
-        Assert.notNull(httpUrlProperties, "query must have queryHandler or httpUrlProperties");
-        String host = environment.getProperty(httpUrlProperties.getHostEnvironmentKey());
-        Assert.hasText(host, "environment required: " + httpUrlProperties.getHostEnvironmentKey());
+        HttpRequest httpUrl = query.httpRequest();
+        Assert.notNull(httpUrl, "query must have queryHandler or httpUrl");
+
+        HttpMethod httpMethod = HttpMethod.resolve(httpUrl.getHttpMethod());
+        Assert.notNull(httpMethod, "unknown http method: " + httpUrl.getHttpMethod());
+
+        String host = environment.getProperty(httpUrl.getHostEnvironmentKey());
+        Assert.hasText(host, "environment required: " + httpUrl.getHostEnvironmentKey());
+
         URI uri = UriComponentsBuilder.fromHttpUrl("http://" + host)
-                .pathSegment(httpUrlProperties.getPathSegments())
-                .queryParams(httpUrlProperties.getQueryParams())
+                .pathSegment(httpUrl.getPathSegments())
+                .queryParams(httpUrl.getQueryParams())
                 .build()
                 .toUri();
+
+        HttpEntity<?> httpEntity = HttpMethod.POST == httpMethod && httpUrl.getRequestBody() != null ?
+                new HttpEntity<>(httpUrl.getRequestBody()) : RequestEntity.EMPTY;
+
         ResolvableType queryReturnType = getQueryReturnType(query);
-        HttpEntity<Object> requestEntity = new HttpEntity<>(httpUrlProperties.getHeaders());
         if (queryReturnType.hasGenerics()) {
-            return (R) this.restTemplate.exchange(uri, HttpMethod.GET, requestEntity, ParameterizedTypeReference.forType(queryReturnType.resolve()));
+            return (R) this.restTemplate.exchange(uri, httpMethod, httpEntity, ParameterizedTypeReference.forType(queryReturnType.resolve()));
         } else {
-            return (R) this.restTemplate.exchange(uri, HttpMethod.GET, requestEntity, queryReturnType.resolve());
+            return (R) this.restTemplate.exchange(uri, httpMethod, httpEntity, queryReturnType.resolve());
         }
     }
 

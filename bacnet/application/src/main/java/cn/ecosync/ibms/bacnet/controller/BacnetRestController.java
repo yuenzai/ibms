@@ -2,14 +2,14 @@ package cn.ecosync.ibms.bacnet.controller;
 
 import cn.ecosync.ibms.bacnet.BacnetConstants;
 import cn.ecosync.ibms.bacnet.model.*;
-import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleQuery;
-import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleQuery.BacnetObjectProperties;
+import cn.ecosync.ibms.bacnet.model.BacnetReadPropertyMultipleService.BacnetObjectProperties;
 import cn.ecosync.ibms.bacnet.service.BacnetApplicationService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -26,10 +26,10 @@ public class BacnetRestController {
     private final ObjectMapper jsonSerde;
     private final File DATA_DIR = new File(System.getProperty("java.io.tmpdir") + "/bacnet");
 
-    @GetMapping("/readpropm")
-    public List<ReadPropertyMultipleAck> readpropm(@RequestHeader("args") String args) {
+    @PostMapping("/readpropm")
+    public List<ReadPropertyMultipleAck> readpropm(@RequestBody @Validated BacnetReadPropertyMultipleService service) {
         try {
-            String stdout = BacnetApplicationService.readPropertyMultiple(args);
+            String stdout = BacnetApplicationService.readPropertyMultiple(service);
             return readValue(jsonSerde, stdout, new TypeReference<List<ReadPropertyMultipleAck>>() {
             }).orElse(Collections.emptyList());
         } catch (Exception e) {
@@ -38,10 +38,10 @@ public class BacnetRestController {
         }
     }
 
-    @GetMapping("/readpropmToFile")
-    public void readpropmToFile(@RequestHeader("args") String args) {
+    @PostMapping("/readpropmToFile")
+    public void readpropmToFile(@RequestBody @Validated BacnetReadPropertyMultipleService service) {
         try {
-            int exitCode = BacnetApplicationService.readPropertyMultiple(args, DATA_DIR);
+            int exitCode = BacnetApplicationService.readPropertyMultiple(service, DATA_DIR);
             if (exitCode != 0) {
                 log.error("readpropm exit code: {}", exitCode);
             }
@@ -55,10 +55,9 @@ public class BacnetRestController {
         BacnetObject deviceObject = new BacnetObject(BacnetObjectType.OBJECT_DEVICE, deviceInstance);
         BacnetProperty objectIdsProperty = new BacnetProperty(BacnetPropertyId.PROP_OBJECT_LIST, null);
         BacnetObjectProperties objectProperties = new BacnetObjectProperties(deviceObject, Collections.singletonList(objectIdsProperty));
-        BacnetReadPropertyMultipleQuery query = new BacnetReadPropertyMultipleQuery(deviceInstance, Collections.singletonList(objectProperties));
+        BacnetReadPropertyMultipleService service = new BacnetReadPropertyMultipleService(deviceInstance, Collections.singletonList(objectProperties));
         try {
-            String args = String.join(" ", query.commandArgs());
-            String stdout = BacnetApplicationService.readPropertyMultiple(args);
+            String stdout = BacnetApplicationService.readPropertyMultiple(service);
             List<ReadPropertyMultipleAck> acks = readValue(jsonSerde, stdout, new TypeReference<List<ReadPropertyMultipleAck>>() {
             }).orElse(Collections.emptyList());
             ReadPropertyMultipleAck ack = CollectionUtils.firstElement(acks);
