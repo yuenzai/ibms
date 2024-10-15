@@ -1,18 +1,27 @@
 package cn.ecosync.ibms.device.model;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Objects;
 
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
-@AllArgsConstructor
 public class DevicePointDto {
     private String pointCode;
     private String pointName;
     private DevicePointExtra pointExtra;
+
+    protected DevicePointDto() {
+    }
+
+    public DevicePointDto(String pointCode, String pointName, DevicePointExtra pointExtra) {
+        this.pointCode = pointCode;
+        this.pointName = pointName;
+        this.pointExtra = pointExtra;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -12,13 +12,13 @@ import java.util.Optional;
 
 @Getter
 @ToString
-public class HttpUrlProperties {
+public class HttpRequestProperties {
     private final String hostEnvironmentKey;
     private final String[] pathSegments;
     private final MultiValueMap<String, String> queryParams;
     private final MultiValueMap<String, String> headers;
 
-    private HttpUrlProperties(String hostEnvironmentKey, String[] pathSegments, MultiValueMap<String, String> queryParams, MultiValueMap<String, String> headers) {
+    private HttpRequestProperties(String hostEnvironmentKey, String[] pathSegments, MultiValueMap<String, String> queryParams, MultiValueMap<String, String> headers) {
         this.hostEnvironmentKey = hostEnvironmentKey;
         this.pathSegments = pathSegments;
         this.queryParams = queryParams;
@@ -73,8 +73,8 @@ public class HttpUrlProperties {
             return this;
         }
 
-        public HttpUrlProperties build() {
-            return new HttpUrlProperties(this.hostEnvironmentKey, this.pathSegments, this.queryParams, this.headers);
+        public HttpRequestProperties build() {
+            return new HttpRequestProperties(this.hostEnvironmentKey, this.pathSegments, this.queryParams, this.headers);
         }
 
         @Nullable

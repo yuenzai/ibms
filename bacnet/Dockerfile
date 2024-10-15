@@ -2,7 +2,7 @@ FROM eclipse-temurin:8-jre-jammy
 
 COPY application/target/ibms-bacnet-application-0.0.1-SNAPSHOT.jar .
 
-RUN mkdir -p /opt/app /opt/lib && \
+RUN mkdir -p /opt/app /opt/lib /tmp/bacnet && \
     apt-get update && \
     apt-get install -y cmake git && \
     mv ibms-bacnet-application-0.0.1-SNAPSHOT.jar /opt/app/

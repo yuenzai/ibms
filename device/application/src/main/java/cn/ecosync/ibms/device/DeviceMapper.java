@@ -19,15 +19,15 @@ public class DeviceMapper {
     }
 
     public static DeviceDto map(Device device) {
-        DeviceDto deviceDto = new DeviceDto();
-        deviceDto.setDeviceCode(device.deviceId().getDeviceCode());
-        deviceDto.setDeviceName(device.deviceProperties().getDeviceName());
-        deviceDto.setPath(device.deviceProperties().getPath());
-        deviceDto.setDescription(device.deviceProperties().getDescription());
-        deviceDto.setDeviceExtra(device.deviceProperties().getDeviceExtra());
-        deviceDto.setEnabled(device.enabled());
-        deviceDto.setDevicePoints(Collections.emptyList());
-        deviceDto.setDeviceStatus(Collections.emptyList());
-        return deviceDto;
+        return new DeviceDto(
+                device.deviceId().getDeviceCode(),
+                device.deviceProperties().getDeviceName(),
+                device.deviceProperties().getPath(),
+                device.deviceProperties().getDescription(),
+                device.enabled(),
+                device.deviceProperties().getDeviceExtra(),
+                Collections.emptyList(),
+                Collections.emptyList()
+        );
     }
 }

@@ -40,7 +40,7 @@ public class PutDevicePointCommandHandler implements CommandHandler<PutDevicePoi
             }
         }
 
-        DeviceDto dto = DeviceMapper.map(device);
+        DeviceDto dto = DeviceMapper.mapWithPoints(device);
         AggregateSavedEvent event = new AggregateSavedEvent(dto);
         eventBus.publish(event);
     }

@@ -40,6 +40,7 @@ public class DeviceModelSynchronizer {
     @Transactional
     @EventListener(condition = "#event.aggregateType() == 'device'")
     public void onEvent(AggregateSavedEvent event) {
+        log.info("onEvent: {}", event);
         Assert.isInstanceOf(DeviceDto.class, event.aggregateRoot(), "");
         DeviceDto deviceDto = (DeviceDto) event.aggregateRoot();
         DataSource dataSource = jdbcTemplate.getDataSource();
@@ -52,6 +53,7 @@ public class DeviceModelSynchronizer {
     @Transactional
     @EventListener(condition = "#event.aggregateType() == 'device'")
     public void onEvent(AggregateRemovedEvent event) {
+        log.info("onEvent: {}", event);
         jdbcTemplate.update("DELETE FROM device_readonly WHERE device_code = ?", event.aggregateId());
     }
 

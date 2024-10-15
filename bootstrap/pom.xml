@@ -98,14 +98,6 @@
                     <artifactId>ibms-device-presentation</artifactId>
                 </dependency>
                 <dependency>
-                    <groupId>cn.ecosync.ibms.system</groupId>
-                    <artifactId>ibms-system-infrastructure</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>cn.ecosync.ibms.system</groupId>
-                    <artifactId>ibms-system-presentation</artifactId>
-                </dependency>
-                <dependency>
                     <groupId>cn.ecosync.ibms.scheduling</groupId>
                     <artifactId>ibms-scheduling-infrastructure</artifactId>
                 </dependency>

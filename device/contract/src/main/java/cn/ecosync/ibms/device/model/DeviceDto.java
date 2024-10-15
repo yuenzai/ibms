@@ -2,29 +2,38 @@ package cn.ecosync.ibms.device.model;
 
 import cn.ecosync.ibms.device.DeviceConstant;
 import cn.ecosync.ibms.model.AggregateRoot;
-import cn.ecosync.ibms.model.IdentifiedValueObject;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.List;
 
 @Getter
 @Setter
 @ToString
-@Entity
-@Table(name = "device_readonly")
-public class DeviceDto extends IdentifiedValueObject implements AggregateRoot {
+public class DeviceDto implements AggregateRoot {
     private String deviceCode;
     private String deviceName;
     private String path;
     private String description;
-    private DeviceExtra deviceExtra;
     private Boolean enabled;
+    private DeviceExtra deviceExtra;
     private List<DevicePointDto> devicePoints;
     private List<DevicePointValueDto> deviceStatus;
+
+    protected DeviceDto() {
+    }
+
+    public DeviceDto(String deviceCode, String deviceName, String path, String description, Boolean enabled, DeviceExtra deviceExtra, List<DevicePointDto> devicePoints, List<DevicePointValueDto> deviceStatus) {
+        this.deviceCode = deviceCode;
+        this.deviceName = deviceName;
+        this.path = path;
+        this.description = description;
+        this.enabled = enabled;
+        this.deviceExtra = deviceExtra;
+        this.devicePoints = devicePoints;
+        this.deviceStatus = deviceStatus;
+    }
 
     @Override
     public String aggregateType() {

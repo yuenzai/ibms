@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/" + BacnetConstants.BACNET)
 public class BacnetRestController {
     private final ObjectMapper jsonSerde;
-    private final File tmpdir = new File(System.getProperty("java.io.tmpdir"));
+    private final File DATA_DIR = new File(System.getProperty("java.io.tmpdir") + "/bacnet");
 
     @GetMapping("/readpropm")
     public List<ReadPropertyMultipleAck> readpropm(@RequestHeader("args") String args) {
@@ -41,7 +41,7 @@ public class BacnetRestController {
     @GetMapping("/readpropmToFile")
     public void readpropmToFile(@RequestHeader("args") String args) {
         try {
-            int exitCode = BacnetApplicationService.readPropertyMultiple(args, tmpdir);
+            int exitCode = BacnetApplicationService.readPropertyMultiple(args, DATA_DIR);
             if (exitCode != 0) {
                 log.error("readpropm exit code: {}", exitCode);
             }

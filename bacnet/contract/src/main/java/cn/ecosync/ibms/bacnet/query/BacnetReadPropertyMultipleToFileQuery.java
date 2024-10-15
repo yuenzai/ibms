@@ -8,7 +8,7 @@ import cn.ecosync.ibms.bacnet.model.BacnetProperty;
 import cn.ecosync.ibms.device.model.DeviceDto;
 import cn.ecosync.ibms.query.Query;
 import cn.ecosync.ibms.util.CollectionUtils;
-import cn.ecosync.ibms.util.HttpUrlProperties;
+import cn.ecosync.ibms.util.HttpRequestProperties;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.util.StringUtils;
@@ -83,9 +83,9 @@ public class BacnetReadPropertyMultipleToFileQuery implements Query<Void> {
     }
 
     @Override
-    public HttpUrlProperties httpUrlProperties() {
-        return HttpUrlProperties.builder()
-                .hostEnvironmentKey(BacnetConstants.ENV_BACNET_SERVICE_URL)
+    public HttpRequestProperties httpRequestProperties() {
+        return HttpRequestProperties.builder()
+                .hostEnvironmentKey(BacnetConstants.ENV_BACNET_SERVICE_HOST)
                 .pathSegments(BacnetConstants.BACNET, "readpropmToFile")
                 .header("args", String.join(" ", this.commandArgs()))
                 .build();

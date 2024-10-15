@@ -13,7 +13,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
-      - BACNET_SERVICE_URL=http://host.docker.internal:47808
+      - BACNET_SERVICE_HOST=host.docker.internal:47808
     volumes:
       - ./target:/opt/app/modules
       - ./bootstrap/target/ibms-bootstrap-0.0.1-SNAPSHOT.jar:/opt/app/ibms-bootstrap-0.0.1-SNAPSHOT.jar

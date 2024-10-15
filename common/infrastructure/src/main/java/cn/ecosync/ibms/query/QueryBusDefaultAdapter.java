@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.query;
 
 import cn.ecosync.ibms.util.CollectionUtils;
-import cn.ecosync.ibms.util.HttpUrlProperties;
+import cn.ecosync.ibms.util.HttpRequestProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
@@ -69,12 +69,11 @@ public class QueryBusDefaultAdapter implements QueryBus {
 
     @SuppressWarnings("unchecked")
     private <T extends Query<R>, R> R remoteExecute(T query) {
-        HttpUrlProperties httpUrlProperties = query.httpUrlProperties();
+        HttpRequestProperties httpUrlProperties = query.httpRequestProperties();
         Assert.notNull(httpUrlProperties, "query must have queryHandler or httpUrlProperties");
         String host = environment.getProperty(httpUrlProperties.getHostEnvironmentKey());
         Assert.hasText(host, "environment required: " + httpUrlProperties.getHostEnvironmentKey());
-        URI uri = UriComponentsBuilder.newInstance()
-                .host(host)
+        URI uri = UriComponentsBuilder.fromHttpUrl("http://" + host)
                 .pathSegment(httpUrlProperties.getPathSegments())
                 .queryParams(httpUrlProperties.getQueryParams())
                 .build()

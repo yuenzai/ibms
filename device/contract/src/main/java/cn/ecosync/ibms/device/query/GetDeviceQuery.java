@@ -2,7 +2,7 @@ package cn.ecosync.ibms.device.query;
 
 import cn.ecosync.ibms.device.model.DeviceDto;
 import cn.ecosync.ibms.query.Query;
-import cn.ecosync.ibms.util.HttpUrlProperties;
+import cn.ecosync.ibms.util.HttpRequestProperties;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -20,8 +20,8 @@ public class GetDeviceQuery implements Query<DeviceDto> {
     }
 
     @Override
-    public HttpUrlProperties httpUrlProperties() {
-        return HttpUrlProperties.builder()
+    public HttpRequestProperties httpRequestProperties() {
+        return HttpRequestProperties.builder()
                 .hostEnvironmentKey(ENVIRONMENT_DEVICE_SERVICE_URL)
                 .pathSegments("device", this.deviceCode)
                 .queryParam("readonly", this.readonly)
