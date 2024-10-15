@@ -9,7 +9,7 @@ import lombok.ToString;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import static cn.ecosync.ibms.device.DeviceConstant.ENVIRONMENT_DEVICE_SERVICE_URL;
+import static cn.ecosync.ibms.device.DeviceConstant.ENV_DEVICE_SERVICE_HOST;
 
 @Getter
 @ToString
@@ -29,7 +29,7 @@ public class SearchDevicePageQuery implements Query<Page<DeviceDto>> {
     @Override
     public HttpRequestProperties httpRequestProperties() {
         HttpRequestProperties.Builder builder = HttpRequestProperties.builder()
-                .hostEnvironmentKey(ENVIRONMENT_DEVICE_SERVICE_URL)
+                .hostEnvironmentKey(ENV_DEVICE_SERVICE_HOST)
                 .pathSegments("device")
                 .queryParam("readonly", this.readonly)
                 .queryParam("page", pageable.getPageNumber())

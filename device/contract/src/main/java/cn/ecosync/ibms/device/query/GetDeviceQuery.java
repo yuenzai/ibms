@@ -6,7 +6,7 @@ import cn.ecosync.ibms.util.HttpRequestProperties;
 import lombok.Getter;
 import lombok.ToString;
 
-import static cn.ecosync.ibms.device.DeviceConstant.ENVIRONMENT_DEVICE_SERVICE_URL;
+import static cn.ecosync.ibms.device.DeviceConstant.ENV_DEVICE_SERVICE_HOST;
 
 @Getter
 @ToString
@@ -22,7 +22,7 @@ public class GetDeviceQuery implements Query<DeviceDto> {
     @Override
     public HttpRequestProperties httpRequestProperties() {
         return HttpRequestProperties.builder()
-                .hostEnvironmentKey(ENVIRONMENT_DEVICE_SERVICE_URL)
+                .hostEnvironmentKey(ENV_DEVICE_SERVICE_HOST)
                 .pathSegments("device", this.deviceCode)
                 .queryParam("readonly", this.readonly)
                 .build();

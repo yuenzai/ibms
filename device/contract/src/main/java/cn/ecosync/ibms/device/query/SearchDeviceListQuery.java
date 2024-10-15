@@ -8,7 +8,7 @@ import lombok.ToString;
 
 import java.util.List;
 
-import static cn.ecosync.ibms.device.DeviceConstant.ENVIRONMENT_DEVICE_SERVICE_URL;
+import static cn.ecosync.ibms.device.DeviceConstant.ENV_DEVICE_SERVICE_HOST;
 
 @Getter
 @ToString
@@ -22,7 +22,7 @@ public class SearchDeviceListQuery implements Query<List<DeviceDto>> {
     @Override
     public HttpRequestProperties httpRequestProperties() {
         HttpRequestProperties.Builder builder = HttpRequestProperties.builder()
-                .hostEnvironmentKey(ENVIRONMENT_DEVICE_SERVICE_URL)
+                .hostEnvironmentKey(ENV_DEVICE_SERVICE_HOST)
                 .pathSegments("device")
                 .queryParam("readonly", this.readonly);
         return builder.build();
