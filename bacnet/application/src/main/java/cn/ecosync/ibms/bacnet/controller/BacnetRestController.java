@@ -8,6 +8,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/" + BacnetConstants.BACNET)
-public class BacnetRestController {
+public class BacnetRestController implements ApplicationRunner {
     private final ObjectMapper jsonSerde;
     private final File DATA_DIR = new File(System.getProperty("java.io.tmpdir") + "/bacnet");
 
@@ -89,6 +91,13 @@ public class BacnetRestController {
         } catch (Exception e) {
             log.error("", e);
             return Optional.empty();
+        }
+    }
+
+    @Override
+    public void run(ApplicationArguments args) {
+        if (!DATA_DIR.exists()) {
+            DATA_DIR.mkdirs();
         }
     }
 }
