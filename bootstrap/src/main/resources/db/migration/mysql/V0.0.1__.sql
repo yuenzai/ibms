@@ -39,7 +39,7 @@ CREATE TABLE device_readonly
     enabled       TINYINT            NOT NULL COMMENT '是否启用',
     device_extra  JSON               NOT NULL COMMENT '其他属性',
     device_points JSON               NOT NULL COMMENT '设备点位',
-    device_status JSON               NOT NULL COMMENT '设备状态',
+    device_status JSON               NULL COMMENT '设备状态',
     CONSTRAINT pk_device_readonly PRIMARY KEY (id)
 ) COMMENT '设备（读模型）';
 

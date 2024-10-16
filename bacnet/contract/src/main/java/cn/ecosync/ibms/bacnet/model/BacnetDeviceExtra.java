@@ -11,7 +11,4 @@ import javax.validation.constraints.NotNull;
 public class BacnetDeviceExtra implements DeviceExtra {
     @NotNull
     private Integer deviceInstance;
-//    private String networkNumber;
-//    private String macAddress;
-//    private String macAddressStyle;
 }

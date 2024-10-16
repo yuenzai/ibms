@@ -1,6 +1,7 @@
 package cn.ecosync.ibms.device.event.handler;
 
 import cn.ecosync.ibms.JdbcService;
+import cn.ecosync.ibms.device.event.DeviceStatusUpdatedEvent;
 import cn.ecosync.ibms.device.model.DeviceDto;
 import cn.ecosync.ibms.event.AggregateRemovedEvent;
 import cn.ecosync.ibms.event.AggregateSavedEvent;
@@ -22,16 +23,15 @@ import javax.sql.DataSource;
 @ConditionalOnClass(JdbcTemplate.class)
 public class DeviceModelSynchronizer {
     private static final String STATEMENT_MYSQL =
-            "INSERT INTO device_readonly (device_code, device_name, path, description, enabled, device_extra, device_points, device_status) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?) AS new " +
+            "INSERT INTO device_readonly (device_code, device_name, path, description, enabled, device_extra, device_points) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?) AS new " +
                     "ON DUPLICATE KEY UPDATE " +
                     "device_name = new.device_name, " +
                     "path = new.path, " +
                     "description = new.description, " +
                     "enabled = new.enabled, " +
                     "device_extra = new.device_extra, " +
-                    "device_points = new.device_points, " +
-                    "device_status = new.device_status";
+                    "device_points = new.device_points";
 
     private final JdbcTemplate jdbcTemplate;
     private final JdbcService jdbcService;
@@ -57,6 +57,17 @@ public class DeviceModelSynchronizer {
         jdbcTemplate.update("DELETE FROM device_readonly WHERE device_code = ?", event.aggregateId());
     }
 
+    @Transactional
+    @EventListener
+    public void onEvent(DeviceStatusUpdatedEvent event) {
+        log.debug("onEvent: {}", event);
+        String deviceStatus = jsonSerde.writeValueAsString(event.getDeviceStatus()).orElse(null);
+        if (deviceStatus == null) {
+            return;
+        }
+        jdbcTemplate.update("UPDATE device_readonly SET device_status = ? WHERE device_code = ?", deviceStatus, event.getDeviceCode());
+    }
+
     private Object[] args(DeviceDto deviceDto) {
         String deviceCode = deviceDto.getDeviceCode();
         String deviceName = deviceDto.getDeviceName();
@@ -65,7 +76,6 @@ public class DeviceModelSynchronizer {
         String deviceExtra = jsonSerde.writeValueAsString(deviceDto.getDeviceExtra()).orElse("{}");
         Boolean enabled = deviceDto.getEnabled();
         String devicePoints = jsonSerde.writeValueAsString(deviceDto.getDevicePoints()).orElse("[]");
-        String deviceStatus = jsonSerde.writeValueAsString(deviceDto.getDeviceStatus()).orElse("[]");
-        return new Object[]{deviceCode, deviceName, path, description, enabled, deviceExtra, devicePoints, deviceStatus};
+        return new Object[]{deviceCode, deviceName, path, description, enabled, deviceExtra, devicePoints};
     }
 }

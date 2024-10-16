@@ -1,14 +1,12 @@
 package cn.ecosync.ibms.bacnet.model;
 
 import lombok.Getter;
-import lombok.ToString;
 import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Getter
-@ToString
 public class BacnetObject {
     @NotNull
     private BacnetObjectType objectType;
@@ -36,5 +34,10 @@ public class BacnetObject {
     @Override
     public int hashCode() {
         return Objects.hash(objectType, objectInstance);
+    }
+
+    @Override
+    public String toString() {
+        return objectType.getName() + "-" + objectInstance;
     }
 }

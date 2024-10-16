@@ -20,10 +20,6 @@ public class BacnetObjectProperty {
     protected BacnetObjectProperty() {
     }
 
-    public BacnetObjectProperty(BacnetObjectType objectType, Integer objectInstance, BacnetPropertyId propertyIdentifier) {
-        this(objectType, objectInstance, propertyIdentifier, null);
-    }
-
     public BacnetObjectProperty(BacnetObjectType objectType, Integer objectInstance, BacnetPropertyId propertyIdentifier, Integer propertyArrayIndex) {
         this.objectType = objectType;
         this.objectInstance = objectInstance;
@@ -42,5 +38,13 @@ public class BacnetObjectProperty {
     @Override
     public int hashCode() {
         return Objects.hash(this.objectType, this.objectInstance, this.propertyIdentifier, this.propertyArrayIndex);
+    }
+
+    public BacnetObject toBacnetObject() {
+        return new BacnetObject(this.objectType, this.objectInstance);
+    }
+
+    public BacnetProperty toBacnetProperty() {
+        return new BacnetProperty(this.propertyIdentifier, this.propertyArrayIndex);
     }
 }

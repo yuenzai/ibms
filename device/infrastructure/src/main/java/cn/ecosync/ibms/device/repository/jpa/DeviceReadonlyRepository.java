@@ -4,7 +4,7 @@ import cn.ecosync.ibms.device.DeviceConstant;
 import cn.ecosync.ibms.device.model.DeviceDto;
 import cn.ecosync.ibms.device.model.DeviceExtra;
 import cn.ecosync.ibms.device.model.DevicePointDto;
-import cn.ecosync.ibms.device.model.DevicePointValueDto;
+import cn.ecosync.ibms.device.model.DeviceStatus;
 import cn.ecosync.ibms.serde.JsonSerde;
 import cn.ecosync.ibms.serde.TypeReference;
 import org.springframework.data.domain.Page;
@@ -30,8 +30,7 @@ public class DeviceReadonlyRepository {
             DeviceExtra deviceExtra = jsonSerde.readValue(resultSet.getString("device_extra"), DeviceExtra.class).orElse(null);
             List<DevicePointDto> devicePoints = jsonSerde.readValue(resultSet.getString("device_points"), new TypeReference<List<DevicePointDto>>() {
             }).orElse(Collections.emptyList());
-            List<DevicePointValueDto> deviceStatus = jsonSerde.readValue(resultSet.getString("device_status"), new TypeReference<List<DevicePointValueDto>>() {
-            }).orElse(Collections.emptyList());
+            DeviceStatus deviceStatus = jsonSerde.readValue(resultSet.getString("device_status"), DeviceStatus.class).orElse(null);
             return new DeviceDto(
                     resultSet.getString("device_code"),
                     resultSet.getString("device_name"),

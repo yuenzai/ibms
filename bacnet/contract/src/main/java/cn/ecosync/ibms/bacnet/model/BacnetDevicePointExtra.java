@@ -1,27 +1,24 @@
 package cn.ecosync.ibms.bacnet.model;
 
 import cn.ecosync.ibms.device.model.DevicePointExtra;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Getter;
 import lombok.ToString;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 
 @Getter
 @ToString
 public class BacnetDevicePointExtra implements DevicePointExtra {
-    @NotNull
-    private BacnetObjectType objectType;
-    @NotNull
-    private Integer objectInstance;
-    @NotNull
-    private BacnetPropertyId propertyIdentifier;
-    private Integer propertyArrayIndex;
+    @Valid
+    @JsonUnwrapped
+    private BacnetObjectProperty bacnetObjectProperty;
 
     public BacnetObject toBacnetObject() {
-        return new BacnetObject(this.objectType, this.objectInstance);
+        return bacnetObjectProperty.toBacnetObject();
     }
 
     public BacnetProperty toBacnetProperty() {
-        return new BacnetProperty(this.propertyIdentifier, this.propertyArrayIndex);
+        return bacnetObjectProperty.toBacnetProperty();
     }
 }

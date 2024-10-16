@@ -1,10 +1,12 @@
 package cn.ecosync.ibms.scheduling.task;
 
 import cn.ecosync.ibms.bacnet.model.BacnetDeviceExtra;
-import cn.ecosync.ibms.bacnet.model.BacnetReadPropertyMultipleService;
-import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleToFileQuery;
+import cn.ecosync.ibms.bacnet.query.GetBacnetDeviceStatusQuery;
+import cn.ecosync.ibms.device.event.DeviceStatusUpdatedEvent;
 import cn.ecosync.ibms.device.model.DeviceDto;
+import cn.ecosync.ibms.device.model.DeviceStatus;
 import cn.ecosync.ibms.device.query.GetDeviceQuery;
+import cn.ecosync.ibms.event.EventBus;
 import cn.ecosync.ibms.query.QueryBus;
 import cn.ecosync.ibms.scheduling.SchedulingTask;
 import cn.ecosync.ibms.scheduling.model.SchedulingTaskParams;
@@ -52,11 +54,12 @@ public class ReadDeviceStatusTaskBean implements SchedulingTask<ReadDeviceStatus
     @RequiredArgsConstructor
     public static class ReadDeviceStatusTask implements Job {
         private final QueryBus queryBus;
+        private final EventBus eventBus;
         @Setter
         private String deviceCode;
 
         @Override
-        @Transactional(readOnly = true)
+        @Transactional
         public void execute(JobExecutionContext context) {
             Assert.hasText(this.deviceCode, "deviceCode is required");
             DeviceDto device = queryBus.execute(new GetDeviceQuery(this.deviceCode, true));
@@ -65,9 +68,10 @@ public class ReadDeviceStatusTaskBean implements SchedulingTask<ReadDeviceStatus
                 return;
             }
             if (device.getDeviceExtra() instanceof BacnetDeviceExtra) {
-                BacnetReadPropertyMultipleService.newInstance(device)
-                        .map(BacnetReadPropertyMultipleToFileQuery::new)
-                        .ifPresent(queryBus::execute);
+                GetBacnetDeviceStatusQuery query = new GetBacnetDeviceStatusQuery(device);
+                DeviceStatus deviceStatus = queryBus.execute(query);
+                DeviceStatusUpdatedEvent event = new DeviceStatusUpdatedEvent(device.getDeviceCode(), deviceStatus);
+                eventBus.publish(event);
             }
         }
     }

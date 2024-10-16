@@ -1,8 +1,8 @@
 package cn.ecosync.ibms.bacnet.model;
 
+import cn.ecosync.ibms.util.CollectionUtils;
 import lombok.Getter;
 import lombok.ToString;
-import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -16,7 +16,7 @@ public class ReadPropertyMultipleAck {
     private List<Property> properties;
 
     public List<Property> getProperties() {
-        return Optional.ofNullable(this.properties).orElse(Collections.emptyList());
+        return CollectionUtils.nullSafeOf(properties);
     }
 
     private Stream<Map.Entry<BacnetObjectProperty, BacnetPropertyValue>> propertiesToEntry() {
@@ -30,7 +30,7 @@ public class ReadPropertyMultipleAck {
      * @param ack ReadPropertyMultiple Ack
      * @return bacnet property and it's value
      */
-    public static Map<BacnetObjectProperty, BacnetPropertyValue> toSimpleMap(List<ReadPropertyMultipleAck> ack) {
+    public static Map<BacnetObjectProperty, BacnetPropertyValue> toMap(List<ReadPropertyMultipleAck> ack) {
         if (CollectionUtils.isEmpty(ack)) {
             return Collections.emptyMap();
         }
@@ -48,7 +48,7 @@ public class ReadPropertyMultipleAck {
         private BacnetError error;
 
         public List<BacnetPropertyValue> getPropertyValues() {
-            return Optional.ofNullable(this.propertyValues).orElse(Collections.emptyList());
+            return CollectionUtils.nullSafeOf(propertyValues);
         }
 
         public Optional<BacnetError> getError() {

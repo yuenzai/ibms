@@ -2,6 +2,7 @@ package cn.ecosync.ibms.device.model;
 
 import cn.ecosync.ibms.device.DeviceConstant;
 import cn.ecosync.ibms.model.AggregateRoot;
+import cn.ecosync.ibms.util.CollectionUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -19,12 +20,12 @@ public class DeviceDto implements AggregateRoot {
     private Boolean enabled;
     private DeviceExtra deviceExtra;
     private List<DevicePointDto> devicePoints;
-    private List<DevicePointValueDto> deviceStatus;
+    private DeviceStatus deviceStatus;
 
     protected DeviceDto() {
     }
 
-    public DeviceDto(String deviceCode, String deviceName, String path, String description, Boolean enabled, DeviceExtra deviceExtra, List<DevicePointDto> devicePoints, List<DevicePointValueDto> deviceStatus) {
+    public DeviceDto(String deviceCode, String deviceName, String path, String description, Boolean enabled, DeviceExtra deviceExtra, List<DevicePointDto> devicePoints, DeviceStatus deviceStatus) {
         this.deviceCode = deviceCode;
         this.deviceName = deviceName;
         this.path = path;
@@ -43,5 +44,9 @@ public class DeviceDto implements AggregateRoot {
     @Override
     public String aggregateId() {
         return deviceCode;
+    }
+
+    public List<DevicePointDto> getDevicePoints() {
+        return CollectionUtils.nullSafeOf(devicePoints);
     }
 }

@@ -1,5 +1,6 @@
 package cn.ecosync.ibms.serde;
 
+import cn.ecosync.ibms.util.StringUtils;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,9 @@ public class JacksonSerde implements JsonSerde {
     @Override
     public <T> Optional<T> readValue(String json, Class<T> valueType) {
         try {
+            if (!StringUtils.hasText(json)) {
+                return Optional.empty();
+            }
             return Optional.ofNullable(objectMapper.readValue(json, valueType));
         } catch (Exception e) {
             log.error("", e);
@@ -37,6 +41,9 @@ public class JacksonSerde implements JsonSerde {
     @Override
     public <T> Optional<T> readValue(String json, TypeReference<T> valueTypeRef) {
         try {
+            if (!StringUtils.hasText(json)) {
+                return Optional.empty();
+            }
             JavaType valueType = objectMapper.getTypeFactory().constructType(valueTypeRef.getType());
             return Optional.ofNullable(objectMapper.readValue(json, valueType));
         } catch (Exception e) {

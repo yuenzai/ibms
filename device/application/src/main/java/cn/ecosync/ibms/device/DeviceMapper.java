@@ -27,7 +27,7 @@ public class DeviceMapper {
                 device.enabled(),
                 device.deviceProperties().getDeviceExtra(),
                 Collections.emptyList(),
-                Collections.emptyList()
+                null
         );
     }
 }

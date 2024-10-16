@@ -4,19 +4,18 @@ import cn.ecosync.ibms.bacnet.BacnetConstants;
 import cn.ecosync.ibms.bacnet.model.*;
 import cn.ecosync.ibms.bacnet.model.BacnetReadPropertyMultipleService.BacnetObjectProperties;
 import cn.ecosync.ibms.bacnet.service.BacnetApplicationService;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import cn.ecosync.ibms.device.model.DeviceDto;
+import cn.ecosync.ibms.device.model.DevicePointDto;
+import cn.ecosync.ibms.device.model.DeviceStatus;
+import cn.ecosync.ibms.util.CollectionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -24,33 +23,49 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/" + BacnetConstants.BACNET)
-public class BacnetRestController implements ApplicationRunner {
-    private final ObjectMapper jsonSerde;
-    private final File DATA_DIR = new File(System.getProperty("java.io.tmpdir") + "/bacnet");
+public class BacnetRestController {
+    private final BacnetApplicationService bacnetApplicationService;
+//    private final File DATA_DIR = new File(System.getProperty("java.io.tmpdir") + "/bacnet");
 
     @PostMapping("/readpropm")
-    public List<ReadPropertyMultipleAck> readpropm(@RequestBody @Validated BacnetReadPropertyMultipleService service) {
-        try {
-            String stdout = BacnetApplicationService.readPropertyMultiple(service);
-            return readValue(jsonSerde, stdout, new TypeReference<List<ReadPropertyMultipleAck>>() {
-            }).orElse(Collections.emptyList());
-        } catch (Exception e) {
-            log.error("", e);
-            return Collections.emptyList();
+    public DeviceStatus readpropm(@RequestBody @Validated DeviceDto deviceDto) {
+        List<ReadPropertyMultipleAck> ack = BacnetReadPropertyMultipleService.newInstance(deviceDto)
+                .map(bacnetApplicationService::readPropertyMultiple)
+                .orElse(Collections.emptyList());
+
+        Map<BacnetObjectProperty, BacnetPropertyValue> valueMap = ReadPropertyMultipleAck.toMap(ack);
+
+        List<DevicePointDto> devicePoints = deviceDto.getDevicePoints();
+        Map<String, Object> deviceStatus = CollectionUtils.newHashMap(devicePoints.size());
+        for (DevicePointDto devicePoint : devicePoints) {
+            if (!(devicePoint.getPointExtra() instanceof BacnetDevicePointExtra)) {
+                continue;
+            }
+            BacnetObjectProperty bop = ((BacnetDevicePointExtra) devicePoint.getPointExtra()).getBacnetObjectProperty();
+            Object pointValue = Optional.ofNullable(valueMap.get(bop))
+                    .map(BacnetPropertyValue::toObject)
+                    .orElse(null);
+            deviceStatus.put(devicePoint.getPointCode(), pointValue);
         }
+        return new DeviceStatus(deviceStatus, System.currentTimeMillis());
     }
 
-    @PostMapping("/readpropmToFile")
-    public void readpropmToFile(@RequestBody @Validated BacnetReadPropertyMultipleService service) {
-        try {
-            int exitCode = BacnetApplicationService.readPropertyMultiple(service, DATA_DIR);
-            if (exitCode != 0) {
-                log.error("readpropm exit code: {}", exitCode);
-            }
-        } catch (Exception e) {
-            log.error("", e);
-        }
-    }
+//    @PostMapping("/readpropm")
+//    public List<ReadPropertyMultipleAck> readpropm(@RequestBody @Validated BacnetReadPropertyMultipleService service) {
+//        return bacnetApplicationService.readPropertyMultiple(service);
+//    }
+//
+//    @PostMapping("/readpropmToFile")
+//    public void readpropmToFile(@RequestBody @Validated BacnetReadPropertyMultipleService service) {
+//        try {
+//            int exitCode = BacnetApplicationService.readPropertyMultiple(service, DATA_DIR);
+//            if (exitCode != 0) {
+//                log.error("readpropm exit code: {}", exitCode);
+//            }
+//        } catch (Exception e) {
+//            log.error("", e);
+//        }
+//    }
 
     @GetMapping("/device/{deviceInstance}/object-ids")
     public List<BacnetObject> getDeviceObjectIds(@PathVariable Integer deviceInstance) {
@@ -59,10 +74,7 @@ public class BacnetRestController implements ApplicationRunner {
         BacnetObjectProperties objectProperties = new BacnetObjectProperties(deviceObject, Collections.singletonList(objectIdsProperty));
         BacnetReadPropertyMultipleService service = new BacnetReadPropertyMultipleService(deviceInstance, Collections.singletonList(objectProperties));
         try {
-            String stdout = BacnetApplicationService.readPropertyMultiple(service);
-            List<ReadPropertyMultipleAck> acks = readValue(jsonSerde, stdout, new TypeReference<List<ReadPropertyMultipleAck>>() {
-            }).orElse(Collections.emptyList());
-            ReadPropertyMultipleAck ack = CollectionUtils.firstElement(acks);
+            ReadPropertyMultipleAck ack = CollectionUtils.firstElement(bacnetApplicationService.readPropertyMultiple(service));
             if (ack == null) {
                 return Collections.emptyList();
             }
@@ -85,19 +97,10 @@ public class BacnetRestController implements ApplicationRunner {
         }
     }
 
-    private static <T> Optional<T> readValue(ObjectMapper objectMapper, String json, TypeReference<T> valueTypeRef) {
-        try {
-            return Optional.ofNullable(objectMapper.readValue(json, valueTypeRef));
-        } catch (Exception e) {
-            log.error("", e);
-            return Optional.empty();
-        }
-    }
-
-    @Override
-    public void run(ApplicationArguments args) {
-        if (!DATA_DIR.exists()) {
-            DATA_DIR.mkdirs();
-        }
-    }
+//    @Override
+//    public void run(ApplicationArguments args) {
+//        if (!DATA_DIR.exists()) {
+//            DATA_DIR.mkdirs();
+//        }
+//    }
 }

@@ -1,12 +1,13 @@
 package cn.ecosync.ibms.bacnet.model;
 
+import cn.ecosync.ibms.util.CollectionUtils;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "valueType", visible = true)
@@ -20,48 +21,85 @@ import java.util.stream.Collectors;
         @JsonSubTypes.Type(value = BacnetPropertyValue.OBJECT_ID.class, name = "12"),
 })
 public interface BacnetPropertyValue {
-    Object getValue();
+    Object toObject();
 
     @Getter
     @ToString
     class NULL implements BacnetPropertyValue {
         private Void value;
+
+        @Override
+        public Void toObject() {
+            return value;
+        }
     }
 
     @Getter
     @ToString
     class BOOLEAN implements BacnetPropertyValue {
         private Boolean value;
+
+        @Override
+        public Boolean toObject() {
+            return value;
+        }
     }
 
     @Getter
     @ToString
     class UNSIGNED_INT implements BacnetPropertyValue {
         private Long value;
+
+        @Override
+        public Long toObject() {
+            return value;
+        }
     }
 
     @Getter
     @ToString
     class SIGNED_INT implements BacnetPropertyValue {
         private Integer value;
+
+        @Override
+        public Integer toObject() {
+            return value;
+        }
     }
 
     @Getter
     @ToString
     class REAL implements BacnetPropertyValue {
         private Float value;
+
+        @Override
+        public Float toObject() {
+            return value;
+        }
     }
 
     @Getter
     @ToString
     class DOUBLE implements BacnetPropertyValue {
         private Double value;
+
+        @Override
+        public Double toObject() {
+            return value;
+        }
     }
 
     @Getter
     @ToString
     class OBJECT_ID implements BacnetPropertyValue {
         private BacnetObject value;
+
+        @Override
+        public String toObject() {
+            return Optional.ofNullable(value)
+                    .map(BacnetObject::toString)
+                    .orElse(null);
+        }
     }
 
     @Getter
@@ -74,6 +112,11 @@ public interface BacnetPropertyValue {
 
         public ERROR(BacnetError value) {
             this.value = value;
+        }
+
+        @Override
+        public BacnetError toObject() {
+            return value;
         }
     }
 
@@ -89,12 +132,10 @@ public interface BacnetPropertyValue {
             this.value = value;
         }
 
-        public List<Object> getValue() {
-            if (this.value == null) {
-                return Collections.emptyList();
-            }
-            return this.value.stream()
-                    .map(BacnetPropertyValue::getValue)
+        @Override
+        public List<Object> toObject() {
+            return CollectionUtils.nullSafeOf(value).stream()
+                    .map(BacnetPropertyValue::toObject)
                     .collect(Collectors.toList());
         }
     }
