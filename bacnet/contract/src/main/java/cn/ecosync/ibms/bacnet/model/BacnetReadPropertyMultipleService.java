@@ -1,9 +1,9 @@
 package cn.ecosync.ibms.bacnet.model;
 
 import cn.ecosync.ibms.device.model.DeviceDto;
-import cn.ecosync.ibms.util.CollectionUtils;
 import lombok.Getter;
 import lombok.ToString;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.NotEmpty;
@@ -11,7 +11,6 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Getter
@@ -76,10 +75,8 @@ public class BacnetReadPropertyMultipleService {
         return prop;
     }
 
-    public static Optional<BacnetReadPropertyMultipleService> newInstance(DeviceDto device) {
-        if (device == null) {
-            return Optional.empty();
-        }
+    public static BacnetReadPropertyMultipleService newInstance(DeviceDto device) {
+        Assert.notNull(device, "deviceDto must not be null");
         // 设备配置属性
         BacnetDeviceExtra deviceProperties = (BacnetDeviceExtra) device.getDeviceExtra();
         // 点位配置属性
@@ -87,13 +84,9 @@ public class BacnetReadPropertyMultipleService {
                 .filter(in -> in.getPointExtra() instanceof BacnetDevicePointExtra)
                 .map(in -> (BacnetDevicePointExtra) in.getPointExtra())
                 .collect(Collectors.toList());
-        if (CollectionUtils.isEmpty(devicePoints)) {
-            return Optional.empty();
-        }
-
+        Assert.notEmpty(devicePoints, "devicePoints must not be empty");
         Map<BacnetObject, List<BacnetProperty>> objectProperties = devicePoints.stream()
                 .collect(Collectors.groupingBy(BacnetDevicePointExtra::toBacnetObject, Collectors.mapping(BacnetDevicePointExtra::toBacnetProperty, Collectors.toList())));
-
-        return Optional.of(new BacnetReadPropertyMultipleService(deviceProperties.getDeviceInstance(), objectProperties));
+        return new BacnetReadPropertyMultipleService(deviceProperties.getDeviceInstance(), objectProperties);
     }
 }

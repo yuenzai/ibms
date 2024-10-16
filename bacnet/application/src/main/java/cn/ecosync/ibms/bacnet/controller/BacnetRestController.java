@@ -28,10 +28,9 @@ public class BacnetRestController {
 //    private final File DATA_DIR = new File(System.getProperty("java.io.tmpdir") + "/bacnet");
 
     @PostMapping("/readpropm")
-    public DeviceStatus readpropm(@RequestBody @Validated DeviceDto deviceDto) {
-        List<ReadPropertyMultipleAck> ack = BacnetReadPropertyMultipleService.newInstance(deviceDto)
-                .map(bacnetApplicationService::readPropertyMultiple)
-                .orElse(Collections.emptyList());
+    public DeviceStatus readpropm(@RequestBody @Validated DeviceDto deviceDto) throws Exception {
+        BacnetReadPropertyMultipleService service = BacnetReadPropertyMultipleService.newInstance(deviceDto);
+        List<ReadPropertyMultipleAck> ack = bacnetApplicationService.readPropertyMultiple(service);
 
         Map<BacnetObjectProperty, BacnetPropertyValue> valueMap = ReadPropertyMultipleAck.toMap(ack);
 

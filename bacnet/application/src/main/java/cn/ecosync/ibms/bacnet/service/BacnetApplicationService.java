@@ -21,24 +21,19 @@ import java.util.List;
 public class BacnetApplicationService {
     private final JsonSerde jsonSerde;
 
-    public List<ReadPropertyMultipleAck> readPropertyMultiple(BacnetReadPropertyMultipleService service) {
-        try {
-            List<String> command = service.toCommand();
-            ProcessBuilder processBuilder = new ProcessBuilder(command);
-            processBuilder.redirectErrorStream(true);
-            Process process = processBuilder.start();
-            String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8);
-            int exitCode = process.waitFor();
-            log.debug("command will be execute: {}{}{}", command, System.lineSeparator(), stdout);
-            if (exitCode != 0) {
-                throw new RuntimeException("bacnet: ReadPropertyMultiple error: " + stdout);
-            }
-            return jsonSerde.readValue(stdout, new TypeReference<List<ReadPropertyMultipleAck>>() {
-            }).orElse(Collections.emptyList());
-        } catch (Exception e) {
-            log.error("", e);
-            return Collections.emptyList();
+    public List<ReadPropertyMultipleAck> readPropertyMultiple(BacnetReadPropertyMultipleService service) throws Exception {
+        List<String> command = service.toCommand();
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
+        processBuilder.redirectErrorStream(true);
+        Process process = processBuilder.start();
+        String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8);
+        int exitCode = process.waitFor();
+        log.debug("command will be execute: {}{}{}", command, System.lineSeparator(), stdout);
+        if (exitCode != 0) {
+            throw new RuntimeException("bacnet: ReadPropertyMultiple error: " + stdout);
         }
+        return jsonSerde.readValue(stdout, new TypeReference<List<ReadPropertyMultipleAck>>() {
+        }).orElse(Collections.emptyList());
     }
 
     public int readPropertyMultiple(BacnetReadPropertyMultipleService service, File dir) throws IOException, InterruptedException {

@@ -10,6 +10,7 @@ import cn.ecosync.ibms.event.EventBus;
 import cn.ecosync.ibms.query.QueryBus;
 import cn.ecosync.ibms.scheduling.SchedulingTask;
 import cn.ecosync.ibms.scheduling.model.SchedulingTaskParams;
+import cn.ecosync.ibms.util.CollectionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -67,7 +68,7 @@ public class ReadDeviceStatusTaskBean implements SchedulingTask<ReadDeviceStatus
                 log.info("Device not found: {}", this.deviceCode);
                 return;
             }
-            if (device.getDeviceExtra() instanceof BacnetDeviceExtra) {
+            if (device.getDeviceExtra() instanceof BacnetDeviceExtra && CollectionUtils.notEmpty(device.getDevicePoints())) {
                 GetBacnetDeviceStatusQuery query = new GetBacnetDeviceStatusQuery(device);
                 DeviceStatus deviceStatus = queryBus.execute(query);
                 DeviceStatusUpdatedEvent event = new DeviceStatusUpdatedEvent(device.getDeviceCode(), deviceStatus);
