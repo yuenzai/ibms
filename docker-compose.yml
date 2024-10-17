@@ -17,6 +17,7 @@ services:
     volumes:
       - ./target:/opt/app/modules
       - ./bootstrap/target/ibms-bootstrap-0.0.1-SNAPSHOT.jar:/opt/app/ibms-bootstrap-0.0.1-SNAPSHOT.jar
+      - ./bootstrap/src/main/resources/application.yml:/opt/app/application.yml
     command: ["java", "-jar", "ibms-bootstrap-0.0.1-SNAPSHOT.jar"]
 
   bacnet:
@@ -27,4 +28,5 @@ services:
     network_mode: host
     volumes:
       - ./bacnet/application/target/ibms-bacnet-application-0.0.1-SNAPSHOT.jar:/opt/app/ibms-bacnet-application-0.0.1-SNAPSHOT.jar
+      - ./bacnet/application/src/main/resources/application.yml:/opt/app/application.yml
     command: ["java", "-Xms32m", "-Xmx32m", "-Xss256k", "-jar", 'ibms-bacnet-application-0.0.1-SNAPSHOT.jar']
