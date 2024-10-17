@@ -43,7 +43,7 @@ public class BacnetApplicationService {
     public List<ReadPropertyMultipleAck> readPropertyMultiple(List<BacnetReadPropertyMultipleService> services) throws Exception {
         String command = services.stream()
                 .map(BacnetReadPropertyMultipleService::toCommandString)
-                .collect(Collectors.joining("; "));
+                .collect(Collectors.joining("; echo; ", "'", "'"));
         List<String> commands = Arrays.asList("/bin/bash", "-c", command);
         ProcessBuilder processBuilder = new ProcessBuilder(commands);
         Process process = processBuilder.start();
