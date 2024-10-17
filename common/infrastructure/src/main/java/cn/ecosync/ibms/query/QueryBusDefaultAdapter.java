@@ -90,7 +90,7 @@ public class QueryBusDefaultAdapter implements QueryBus {
 
         ResolvableType queryReturnType = getQueryReturnType(query);
         if (queryReturnType.hasGenerics()) {
-            return (R) this.restTemplate.exchange(uri, httpMethod, httpEntity, ParameterizedTypeReference.forType(queryReturnType.resolve())).getBody();
+            return (R) this.restTemplate.exchange(uri, httpMethod, httpEntity, ParameterizedTypeReference.forType(queryReturnType.getType())).getBody();
         } else {
             return (R) this.restTemplate.exchange(uri, httpMethod, httpEntity, queryReturnType.resolve()).getBody();
         }

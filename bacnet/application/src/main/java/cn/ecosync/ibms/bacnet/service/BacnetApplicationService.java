@@ -32,7 +32,7 @@ public class BacnetApplicationService {
         String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8);
         String stderr = StreamUtils.copyToString(process.getErrorStream(), StandardCharsets.UTF_8);
         process.waitFor();
-        log.debug("command:\n{}\nstdout:\n{}\nstderr:\n{}", command, stdout, stderr);
+        log.debug("command: {}\nstdout:\n{}\nstderr:\n{}", command, stdout, stderr);
         if (StringUtils.hasText(stderr)) {
             throw new RuntimeException("BacnetReadPropertyMultipleService occurred error: " + stderr);
         }
@@ -50,7 +50,7 @@ public class BacnetApplicationService {
         String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8);
         String stderr = StreamUtils.copyToString(process.getErrorStream(), StandardCharsets.UTF_8);
         process.waitFor();
-        log.debug("command:\n{}\nstdout:\n{}\nstderr:\n{}", command, stdout, stderr);
+        log.debug("command: {}\nstdout:\n{}\nstderr:\n{}", commands, stdout, stderr);
         return Arrays.stream(stdout.split("\n"))
                 .map(in -> jsonSerde.readValue(in, new TypeReference<ReadPropertyMultipleAck>() {
                 }).orElse(null))
