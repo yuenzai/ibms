@@ -1,6 +1,7 @@
 package cn.ecosync.ibms.bacnet.controller;
 
 import cn.ecosync.ibms.bacnet.BacnetConstants;
+import cn.ecosync.ibms.bacnet.exception.BacnetErrorException;
 import cn.ecosync.ibms.bacnet.model.*;
 import cn.ecosync.ibms.bacnet.model.BacnetReadPropertyMultipleService.BacnetObjectProperties;
 import cn.ecosync.ibms.bacnet.service.BacnetApplicationService;
@@ -10,13 +11,9 @@ import cn.ecosync.ibms.device.model.DeviceStatus;
 import cn.ecosync.ibms.util.CollectionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -25,14 +22,48 @@ import java.util.stream.Collectors;
 @RequestMapping("/" + BacnetConstants.BACNET)
 public class BacnetRestController {
     private final BacnetApplicationService bacnetApplicationService;
-//    private final File DATA_DIR = new File(System.getProperty("java.io.tmpdir") + "/bacnet");
 
     @PostMapping("/readpropm")
-    public DeviceStatus readpropm(@RequestBody @Validated DeviceDto deviceDto) throws Exception {
+    public DeviceStatus readpropm(@RequestBody DeviceDto deviceDto) throws Exception {
         BacnetReadPropertyMultipleService service = BacnetReadPropertyMultipleService.newInstance(deviceDto);
-        List<ReadPropertyMultipleAck> ack = bacnetApplicationService.readPropertyMultiple(service);
+        ReadPropertyMultipleAck ack = bacnetApplicationService.readPropertyMultiple(service).orElse(null);
+        if (ack == null) {
+            return null;
+        }
+        return toDeviceStatus(deviceDto, ack);
+    }
 
-        Map<BacnetObjectProperty, BacnetPropertyValue> valueMap = ReadPropertyMultipleAck.toMap(ack);
+    @PostMapping("/readpropm/batch")
+    public List<DeviceStatus> readpropmBatch(@RequestBody List<DeviceDto> deviceDtoList) throws Exception {
+        List<BacnetReadPropertyMultipleService> services = deviceDtoList.stream()
+                .map(BacnetReadPropertyMultipleService::newInstance)
+                .collect(Collectors.toList());
+
+        List<ReadPropertyMultipleAck> acks = bacnetApplicationService.readPropertyMultiple(services);
+
+        Map<Integer, DeviceDto> deviceInstanceMap = CollectionUtils.newHashMap(deviceDtoList.size());
+        for (DeviceDto deviceDto : deviceDtoList) {
+            Integer deviceInstance = deviceInstanceOf(deviceDto).orElse(null);
+            if (deviceInstance == null) {
+                continue;
+            }
+            deviceInstanceMap.put(deviceInstance, deviceDto);
+        }
+
+        List<DeviceStatus> deviceStatusList = new ArrayList<>(deviceDtoList.size());
+        for (ReadPropertyMultipleAck ack : acks) {
+            DeviceDto deviceDto = deviceInstanceMap.get(ack.getDeviceInstance());
+            if (deviceDto == null) {
+                continue;
+            }
+            DeviceStatus deviceStatus = toDeviceStatus(deviceDto, ack);
+            deviceStatusList.add(deviceStatus);
+        }
+        return deviceStatusList;
+    }
+
+    private DeviceStatus toDeviceStatus(DeviceDto deviceDto, ReadPropertyMultipleAck ack) {
+        Map<BacnetObjectProperty, BacnetPropertyValue> valueMap = ack.flatMap();
 
         List<DevicePointDto> devicePoints = deviceDto.getDevicePoints();
         Map<String, Object> deviceStatus = CollectionUtils.newHashMap(devicePoints.size());
@@ -46,7 +77,14 @@ public class BacnetRestController {
                     .orElse(null);
             deviceStatus.put(devicePoint.getPointCode(), pointValue);
         }
-        return new DeviceStatus(deviceStatus, System.currentTimeMillis());
+        return new DeviceStatus(deviceDto.getDeviceCode(), deviceStatus, System.currentTimeMillis());
+    }
+
+    private Optional<Integer> deviceInstanceOf(DeviceDto deviceDto) {
+        return Optional.ofNullable(deviceDto)
+                .filter(in -> in.getDeviceExtra() instanceof BacnetDeviceExtra)
+                .map(in -> (BacnetDeviceExtra) in.getDeviceExtra())
+                .map(BacnetDeviceExtra::getDeviceInstance);
     }
 
 //    @PostMapping("/readpropm")
@@ -73,18 +111,16 @@ public class BacnetRestController {
         BacnetObjectProperties objectProperties = new BacnetObjectProperties(deviceObject, Collections.singletonList(objectIdsProperty));
         BacnetReadPropertyMultipleService service = new BacnetReadPropertyMultipleService(deviceInstance, Collections.singletonList(objectProperties));
         try {
-            ReadPropertyMultipleAck ack = CollectionUtils.firstElement(bacnetApplicationService.readPropertyMultiple(service));
-            if (ack == null) {
-                return Collections.emptyList();
-            }
-            ReadPropertyMultipleAck.Property objectIdsPropertyValue = CollectionUtils.firstElement(ack.getProperties());
+            ReadPropertyMultipleAck.Property objectIdsPropertyValue = bacnetApplicationService.readPropertyMultiple(service)
+                    .map(in -> CollectionUtils.firstElement(in.getValues()))
+                    .map(in -> CollectionUtils.firstElement(in.getProperties()))
+                    .orElse(null);
             if (objectIdsPropertyValue == null) {
                 return Collections.emptyList();
             }
             BacnetError bacnetError = objectIdsPropertyValue.getError().orElse(null);
             if (bacnetError != null) {
-                log.info("find bacnet error: {}", bacnetError);
-                return Collections.emptyList();
+                throw new BacnetErrorException(bacnetError);
             }
             return objectIdsPropertyValue.getPropertyValues().stream()
                     .filter(in -> in instanceof BacnetPropertyValue.OBJECT_ID)
@@ -95,11 +131,4 @@ public class BacnetRestController {
             return Collections.emptyList();
         }
     }
-
-//    @Override
-//    public void run(ApplicationArguments args) {
-//        if (!DATA_DIR.exists()) {
-//            DATA_DIR.mkdirs();
-//        }
-//    }
 }

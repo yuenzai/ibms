@@ -3,16 +3,21 @@ package cn.ecosync.ibms.device.event;
 import cn.ecosync.ibms.device.DeviceConstant;
 import cn.ecosync.ibms.device.model.DeviceStatus;
 import cn.ecosync.ibms.event.AbstractEvent;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.springframework.util.Assert;
 
 @Getter
 @ToString
-@RequiredArgsConstructor
 public class DeviceStatusUpdatedEvent extends AbstractEvent {
-    private final String deviceCode;
+    @JsonUnwrapped
     private final DeviceStatus deviceStatus;
+
+    public DeviceStatusUpdatedEvent(DeviceStatus deviceStatus) {
+        Assert.notNull(deviceStatus, "deviceStatus can not be null");
+        this.deviceStatus = deviceStatus;
+    }
 
     @Override
     public String aggregateType() {
@@ -21,7 +26,7 @@ public class DeviceStatusUpdatedEvent extends AbstractEvent {
 
     @Override
     public String aggregateId() {
-        return deviceCode;
+        return deviceStatus.getDeviceCode();
     }
 
     @Override

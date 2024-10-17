@@ -65,7 +65,7 @@ public class DeviceModelSynchronizer {
         if (deviceStatus == null) {
             return;
         }
-        jdbcTemplate.update("UPDATE device_readonly SET device_status = ? WHERE device_code = ?", deviceStatus, event.getDeviceCode());
+        jdbcTemplate.update("UPDATE device_readonly SET device_status = ? WHERE device_code = ?", deviceStatus, event.getDeviceStatus().getDeviceCode());
     }
 
     private Object[] args(DeviceDto deviceDto) {

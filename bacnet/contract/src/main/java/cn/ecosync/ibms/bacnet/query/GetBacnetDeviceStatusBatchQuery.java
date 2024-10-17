@@ -8,21 +8,23 @@ import cn.ecosync.ibms.util.HttpRequest;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Getter
 @ToString
-public class GetBacnetDeviceStatusQuery implements Query<DeviceStatus> {
-    private final DeviceDto deviceDto;
+public class GetBacnetDeviceStatusBatchQuery implements Query<List<DeviceStatus>> {
+    private final List<DeviceDto> deviceDtoList;
 
-    public GetBacnetDeviceStatusQuery(DeviceDto deviceDto) {
-        this.deviceDto = deviceDto;
+    public GetBacnetDeviceStatusBatchQuery(List<DeviceDto> deviceDtoList) {
+        this.deviceDtoList = deviceDtoList;
     }
 
     @Override
     public HttpRequest httpRequest() {
         return HttpRequest.postMethod()
                 .hostEnvironmentKey(BacnetConstants.ENV_BACNET_SERVICE_HOST)
-                .pathSegments(BacnetConstants.BACNET, "readpropm")
-                .requestBody(deviceDto)
+                .pathSegments(BacnetConstants.BACNET, "readpropm", "batch")
+                .requestBody(deviceDtoList)
                 .build();
     }
 }

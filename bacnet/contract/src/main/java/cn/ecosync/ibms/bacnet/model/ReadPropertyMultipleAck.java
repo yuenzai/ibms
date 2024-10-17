@@ -4,39 +4,44 @@ import cn.ecosync.ibms.util.CollectionUtils;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Getter
 @ToString
 public class ReadPropertyMultipleAck {
-    private BacnetObjectType objectType;
-    private Integer objectInstance;
-    private List<Property> properties;
+    private Integer deviceInstance;
+    private List<BacnetObjectProperties> values;
 
-    public List<Property> getProperties() {
-        return CollectionUtils.nullSafeOf(properties);
+    public List<BacnetObjectProperties> getValues() {
+        return CollectionUtils.nullSafeOf(values);
     }
 
-    private Stream<Map.Entry<BacnetObjectProperty, BacnetPropertyValue>> propertiesToEntry() {
-        return getProperties().stream()
-                .map(in -> in.toEntry(this.objectType, this.objectInstance));
-    }
-
-    /**
-     * 将 ReadPropertyMultiple Ack 转换成简单的数据结构
-     *
-     * @param ack ReadPropertyMultiple Ack
-     * @return bacnet property and it's value
-     */
-    public static Map<BacnetObjectProperty, BacnetPropertyValue> toMap(List<ReadPropertyMultipleAck> ack) {
-        if (CollectionUtils.isEmpty(ack)) {
-            return Collections.emptyMap();
-        }
-        return ack.stream()
-                .flatMap(ReadPropertyMultipleAck::propertiesToEntry)
+    public Map<BacnetObjectProperty, BacnetPropertyValue> flatMap() {
+        return getValues().stream()
+                .flatMap(BacnetObjectProperties::toEntries)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));// 注意这里没有对 key 去重，如果重复会报错
+    }
+
+    @Getter
+    @ToString
+    public static class BacnetObjectProperties {
+        private BacnetObjectType objectType;
+        private Integer objectInstance;
+        private List<Property> properties;
+
+        public List<Property> getProperties() {
+            return CollectionUtils.nullSafeOf(properties);
+        }
+
+        private Stream<Map.Entry<BacnetObjectProperty, BacnetPropertyValue>> toEntries() {
+            return getProperties().stream()
+                    .map(in -> in.toEntry(this.objectType, this.objectInstance));
+        }
     }
 
     @Getter

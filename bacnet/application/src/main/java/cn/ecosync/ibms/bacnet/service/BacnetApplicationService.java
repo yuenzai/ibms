@@ -4,6 +4,7 @@ import cn.ecosync.ibms.bacnet.model.BacnetReadPropertyMultipleService;
 import cn.ecosync.ibms.bacnet.model.ReadPropertyMultipleAck;
 import cn.ecosync.ibms.serde.JsonSerde;
 import cn.ecosync.ibms.serde.TypeReference;
+import cn.ecosync.ibms.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,8 +13,11 @@ import org.springframework.util.StreamUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -21,19 +25,37 @@ import java.util.List;
 public class BacnetApplicationService {
     private final JsonSerde jsonSerde;
 
-    public List<ReadPropertyMultipleAck> readPropertyMultiple(BacnetReadPropertyMultipleService service) throws Exception {
+    public Optional<ReadPropertyMultipleAck> readPropertyMultiple(BacnetReadPropertyMultipleService service) throws Exception {
         List<String> command = service.toCommand();
         ProcessBuilder processBuilder = new ProcessBuilder(command);
-        processBuilder.redirectErrorStream(true);
         Process process = processBuilder.start();
         String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8);
-        int exitCode = process.waitFor();
-        log.debug("command will be execute: {}{}{}", command, System.lineSeparator(), stdout);
-        if (exitCode != 0) {
-            throw new RuntimeException("bacnet: ReadPropertyMultiple error: " + stdout);
+        String stderr = StreamUtils.copyToString(process.getErrorStream(), StandardCharsets.UTF_8);
+        process.waitFor();
+        log.debug("command:\n{}\nstdout:\n{}\nstderr:\n{}", command, stdout, stderr);
+        if (StringUtils.hasText(stderr)) {
+            throw new RuntimeException("BacnetReadPropertyMultipleService occurred error: " + stderr);
         }
-        return jsonSerde.readValue(stdout, new TypeReference<List<ReadPropertyMultipleAck>>() {
-        }).orElse(Collections.emptyList());
+        return jsonSerde.readValue(stdout, new TypeReference<ReadPropertyMultipleAck>() {
+        });
+    }
+
+    public List<ReadPropertyMultipleAck> readPropertyMultiple(List<BacnetReadPropertyMultipleService> services) throws Exception {
+        String command = services.stream()
+                .map(BacnetReadPropertyMultipleService::toCommandString)
+                .collect(Collectors.joining("; "));
+        List<String> commands = Arrays.asList("/bin/bash", "-c", command);
+        ProcessBuilder processBuilder = new ProcessBuilder(commands);
+        Process process = processBuilder.start();
+        String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8);
+        String stderr = StreamUtils.copyToString(process.getErrorStream(), StandardCharsets.UTF_8);
+        process.waitFor();
+        log.debug("command:\n{}\nstdout:\n{}\nstderr:\n{}", command, stdout, stderr);
+        return Arrays.stream(stdout.split("\n"))
+                .map(in -> jsonSerde.readValue(in, new TypeReference<ReadPropertyMultipleAck>() {
+                }).orElse(null))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     public int readPropertyMultiple(BacnetReadPropertyMultipleService service, File dir) throws IOException, InterruptedException {

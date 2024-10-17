@@ -66,6 +66,10 @@ public class BacnetReadPropertyMultipleService {
         return commands;
     }
 
+    public String toCommandString() {
+        return String.join(" ", toCommand());
+    }
+
     private String commandArgOf(BacnetProperty property) {
         String prop = String.valueOf(property.getPropertyIdentifier().getCode());
         Integer index = property.getPropertyArrayIndex().orElse(null);
