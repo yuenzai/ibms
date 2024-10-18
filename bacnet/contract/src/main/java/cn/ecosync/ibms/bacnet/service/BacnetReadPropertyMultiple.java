@@ -1,5 +1,9 @@
-package cn.ecosync.ibms.bacnet.model;
+package cn.ecosync.ibms.bacnet.service;
 
+import cn.ecosync.ibms.bacnet.model.BacnetDeviceExtra;
+import cn.ecosync.ibms.bacnet.model.BacnetDevicePointExtra;
+import cn.ecosync.ibms.bacnet.model.BacnetObject;
+import cn.ecosync.ibms.bacnet.model.BacnetProperty;
 import cn.ecosync.ibms.device.model.DeviceDto;
 import lombok.Getter;
 import lombok.ToString;
@@ -15,22 +19,22 @@ import java.util.stream.Collectors;
 
 @Getter
 @ToString
-public class BacnetReadPropertyMultipleService {
+public class BacnetReadPropertyMultiple {
     @NotNull
     private Integer deviceInstance;
     @NotEmpty
     private List<BacnetObjectProperties> objectProperties;
 
-    protected BacnetReadPropertyMultipleService() {
+    protected BacnetReadPropertyMultiple() {
     }
 
-    public BacnetReadPropertyMultipleService(Integer deviceInstance, Map<BacnetObject, List<BacnetProperty>> objectProperties) {
+    public BacnetReadPropertyMultiple(Integer deviceInstance, Map<BacnetObject, List<BacnetProperty>> objectProperties) {
         this(deviceInstance, objectProperties.entrySet().stream()
                 .map(in -> new BacnetObjectProperties(in.getKey(), in.getValue()))
                 .collect(Collectors.toList()));
     }
 
-    public BacnetReadPropertyMultipleService(Integer deviceInstance, List<BacnetObjectProperties> objectProperties) {
+    public BacnetReadPropertyMultiple(Integer deviceInstance, List<BacnetObjectProperties> objectProperties) {
         this.deviceInstance = deviceInstance;
         this.objectProperties = objectProperties;
     }
@@ -54,7 +58,7 @@ public class BacnetReadPropertyMultipleService {
         List<String> commands = new ArrayList<>();
         commands.add("readpropm");
         commands.add(String.valueOf(getDeviceInstance()));
-        for (BacnetReadPropertyMultipleService.BacnetObjectProperties bacnetObject : getObjectProperties()) {
+        for (BacnetReadPropertyMultiple.BacnetObjectProperties bacnetObject : getObjectProperties()) {
             commands.add(String.valueOf(bacnetObject.getObjectType().getCode()));
             commands.add(bacnetObject.getObjectInstance().toString());
             String propCmdArg = bacnetObject.getProperties().stream()
@@ -79,7 +83,7 @@ public class BacnetReadPropertyMultipleService {
         return prop;
     }
 
-    public static BacnetReadPropertyMultipleService newInstance(DeviceDto device) {
+    public static BacnetReadPropertyMultiple newInstance(DeviceDto device) {
         Assert.notNull(device, "deviceDto must not be null");
         // 设备配置属性
         BacnetDeviceExtra deviceProperties = (BacnetDeviceExtra) device.getDeviceExtra();
@@ -91,6 +95,6 @@ public class BacnetReadPropertyMultipleService {
         Assert.notEmpty(devicePoints, "devicePoints must not be empty");
         Map<BacnetObject, List<BacnetProperty>> objectProperties = devicePoints.stream()
                 .collect(Collectors.groupingBy(BacnetDevicePointExtra::toBacnetObject, Collectors.mapping(BacnetDevicePointExtra::toBacnetProperty, Collectors.toList())));
-        return new BacnetReadPropertyMultipleService(deviceProperties.getDeviceInstance(), objectProperties);
+        return new BacnetReadPropertyMultiple(deviceProperties.getDeviceInstance(), objectProperties);
     }
 }

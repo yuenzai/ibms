@@ -3,8 +3,10 @@ package cn.ecosync.ibms.bacnet.controller;
 import cn.ecosync.ibms.bacnet.BacnetConstants;
 import cn.ecosync.ibms.bacnet.exception.BacnetErrorException;
 import cn.ecosync.ibms.bacnet.model.*;
-import cn.ecosync.ibms.bacnet.model.BacnetReadPropertyMultipleService.BacnetObjectProperties;
 import cn.ecosync.ibms.bacnet.service.BacnetApplicationService;
+import cn.ecosync.ibms.bacnet.service.BacnetReadPropertyMultiple;
+import cn.ecosync.ibms.bacnet.service.BacnetReadPropertyMultiple.BacnetObjectProperties;
+import cn.ecosync.ibms.bacnet.service.BacnetWhoIs;
 import cn.ecosync.ibms.device.model.DeviceDto;
 import cn.ecosync.ibms.device.model.DevicePointDto;
 import cn.ecosync.ibms.device.model.DeviceStatus;
@@ -25,8 +27,8 @@ public class BacnetRestController {
 
     @PostMapping("/readpropm")
     public DeviceStatus readpropm(@RequestBody DeviceDto deviceDto) throws Exception {
-        BacnetReadPropertyMultipleService service = BacnetReadPropertyMultipleService.newInstance(deviceDto);
-        ReadPropertyMultipleAck ack = bacnetApplicationService.readPropertyMultiple(service).orElse(null);
+        BacnetReadPropertyMultiple service = BacnetReadPropertyMultiple.newInstance(deviceDto);
+        ReadPropertyMultipleAck ack = bacnetApplicationService.execute(service).orElse(null);
         if (ack == null) {
             return null;
         }
@@ -35,11 +37,11 @@ public class BacnetRestController {
 
     @PostMapping("/readpropm/batch")
     public List<DeviceStatus> readpropmBatch(@RequestBody List<DeviceDto> deviceDtoList) throws Exception {
-        List<BacnetReadPropertyMultipleService> services = deviceDtoList.stream()
-                .map(BacnetReadPropertyMultipleService::newInstance)
+        List<BacnetReadPropertyMultiple> services = deviceDtoList.stream()
+                .map(BacnetReadPropertyMultiple::newInstance)
                 .collect(Collectors.toList());
 
-        List<ReadPropertyMultipleAck> acks = bacnetApplicationService.readPropertyMultiple(services);
+        List<ReadPropertyMultipleAck> acks = bacnetApplicationService.execute(services);
 
         Map<Integer, DeviceDto> deviceInstanceMap = CollectionUtils.newHashMap(deviceDtoList.size());
         for (DeviceDto deviceDto : deviceDtoList) {
@@ -87,31 +89,14 @@ public class BacnetRestController {
                 .map(BacnetDeviceExtra::getDeviceInstance);
     }
 
-//    @PostMapping("/readpropm")
-//    public List<ReadPropertyMultipleAck> readpropm(@RequestBody @Validated BacnetReadPropertyMultipleService service) {
-//        return bacnetApplicationService.readPropertyMultiple(service);
-//    }
-//
-//    @PostMapping("/readpropmToFile")
-//    public void readpropmToFile(@RequestBody @Validated BacnetReadPropertyMultipleService service) {
-//        try {
-//            int exitCode = BacnetApplicationService.readPropertyMultiple(service, DATA_DIR);
-//            if (exitCode != 0) {
-//                log.error("readpropm exit code: {}", exitCode);
-//            }
-//        } catch (Exception e) {
-//            log.error("", e);
-//        }
-//    }
-
     @GetMapping("/device/{deviceInstance}/object-ids")
     public List<BacnetObject> getDeviceObjectIds(@PathVariable Integer deviceInstance) {
         BacnetObject deviceObject = new BacnetObject(BacnetObjectType.OBJECT_DEVICE, deviceInstance);
         BacnetProperty objectIdsProperty = new BacnetProperty(BacnetPropertyId.PROP_OBJECT_LIST, null);
         BacnetObjectProperties objectProperties = new BacnetObjectProperties(deviceObject, Collections.singletonList(objectIdsProperty));
-        BacnetReadPropertyMultipleService service = new BacnetReadPropertyMultipleService(deviceInstance, Collections.singletonList(objectProperties));
+        BacnetReadPropertyMultiple service = new BacnetReadPropertyMultiple(deviceInstance, Collections.singletonList(objectProperties));
         try {
-            ReadPropertyMultipleAck.Property objectIdsPropertyValue = bacnetApplicationService.readPropertyMultiple(service)
+            ReadPropertyMultipleAck.Property objectIdsPropertyValue = bacnetApplicationService.execute(service)
                     .map(in -> CollectionUtils.firstElement(in.getValues()))
                     .map(in -> CollectionUtils.firstElement(in.getProperties()))
                     .orElse(null);
@@ -130,5 +115,11 @@ public class BacnetRestController {
             log.error("", e);
             return Collections.emptyList();
         }
+    }
+
+    @GetMapping("/service/who-is")
+    public List<BacnetDeviceAddress> whoIs() throws Exception {
+        BacnetWhoIs whoIs = new BacnetWhoIs();
+        return bacnetApplicationService.execute(whoIs);
     }
 }

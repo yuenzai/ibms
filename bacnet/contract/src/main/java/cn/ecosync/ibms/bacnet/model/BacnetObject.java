@@ -23,6 +23,10 @@ public class BacnetObject {
         this.objectInstance = objectInstance;
     }
 
+    public String getObjectTypeName() {
+        return objectType.getName();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

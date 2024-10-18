@@ -1,6 +1,6 @@
 package cn.ecosync.ibms.bacnet.service;
 
-import cn.ecosync.ibms.bacnet.model.BacnetReadPropertyMultipleService;
+import cn.ecosync.ibms.bacnet.model.BacnetDeviceAddress;
 import cn.ecosync.ibms.bacnet.model.ReadPropertyMultipleAck;
 import cn.ecosync.ibms.serde.JsonSerde;
 import cn.ecosync.ibms.serde.TypeReference;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class BacnetApplicationService {
     private final JsonSerde jsonSerde;
 
-    public Optional<ReadPropertyMultipleAck> readPropertyMultiple(BacnetReadPropertyMultipleService service) throws Exception {
+    public Optional<ReadPropertyMultipleAck> execute(BacnetReadPropertyMultiple service) throws Exception {
         List<String> command = service.toCommand();
         ProcessBuilder processBuilder = new ProcessBuilder(command);
         Process process = processBuilder.start();
@@ -34,15 +34,15 @@ public class BacnetApplicationService {
         process.waitFor();
         log.debug("command: {}\nstdout:\n{}\nstderr:\n{}", command, stdout, stderr);
         if (StringUtils.hasText(stderr)) {
-            throw new RuntimeException("BacnetReadPropertyMultipleService occurred error: " + stderr);
+            throw new RuntimeException("ReadPropertyMultiple occurred error: " + stderr);
         }
         return jsonSerde.readValue(stdout, new TypeReference<ReadPropertyMultipleAck>() {
         });
     }
 
-    public List<ReadPropertyMultipleAck> readPropertyMultiple(List<BacnetReadPropertyMultipleService> services) throws Exception {
+    public List<ReadPropertyMultipleAck> execute(List<BacnetReadPropertyMultiple> services) throws Exception {
         String command = services.stream()
-                .map(BacnetReadPropertyMultipleService::toCommandString)
+                .map(BacnetReadPropertyMultiple::toCommandString)
                 .collect(Collectors.joining("; echo; "));
         List<String> commands = Arrays.asList("/bin/bash", "-c", command);
         ProcessBuilder processBuilder = new ProcessBuilder(commands);
@@ -58,7 +58,22 @@ public class BacnetApplicationService {
                 .collect(Collectors.toList());
     }
 
-    public int readPropertyMultiple(BacnetReadPropertyMultipleService service, File dir) throws IOException, InterruptedException {
+    public List<BacnetDeviceAddress> execute(BacnetWhoIs service) throws Exception {
+        List<String> command = service.toCommand();
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
+        Process process = processBuilder.start();
+        String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8);
+        String stderr = StreamUtils.copyToString(process.getErrorStream(), StandardCharsets.UTF_8);
+        process.waitFor();
+        File workingDirectory = processBuilder.directory();
+        log.debug("command: {}, workingDirectory: {}\nstdout:\n{}\nstderr:\n{}", command, workingDirectory.getAbsolutePath(), stdout, stderr);
+        if (StringUtils.hasText(stderr)) {
+            throw new RuntimeException("Who-Is occurred error: " + stderr);
+        }
+        return BacnetWhoIs.parseDeviceAddresses(stdout);
+    }
+
+    public int readPropertyMultiple(BacnetReadPropertyMultiple service, File dir) throws IOException, InterruptedException {
         if (!dir.exists()) {
             throw new IllegalArgumentException("dir does not exist: " + dir.getAbsolutePath());
         }
