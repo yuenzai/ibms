@@ -1,0 +1,16 @@
+services:
+  nginx:
+    image: nginx:1.27-bookworm
+    container_name: nginx
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./templates:/etc/nginx/templates
+      - ${DATA_DIR:?}/nginx:/var/log/nginx
+    depends_on:
+      ibms:
+        condition: service_started

@@ -1,0 +1,27 @@
+server {
+    listen       80;
+    listen  [::]:80;
+    server_name  localhost;
+
+    location /bacnet {
+        proxy_pass http://host.docker.internal:47808;
+    }
+
+    location /device {
+        proxy_pass http://ibms:8080;
+    }
+
+    location /scheduling {
+        proxy_pass http://ibms:8080;
+    }
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}

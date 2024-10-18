@@ -1,5 +1,6 @@
 include:
   - mysql/docker-compose.yml
+  - nginx/docker-compose.yml
 
 services:
   ibms:
