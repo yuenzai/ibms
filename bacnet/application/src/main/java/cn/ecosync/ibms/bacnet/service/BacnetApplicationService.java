@@ -65,8 +65,10 @@ public class BacnetApplicationService {
         String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8);
         String stderr = StreamUtils.copyToString(process.getErrorStream(), StandardCharsets.UTF_8);
         process.waitFor();
-        File workingDirectory = processBuilder.directory();
-        log.debug("command: {}, workingDirectory: {}\nstdout:\n{}\nstderr:\n{}", command, workingDirectory.getAbsolutePath(), stdout, stderr);
+        String workingDirectory = Optional.ofNullable(processBuilder.directory())
+                .map(File::getAbsolutePath)
+                .orElseGet(() -> System.getProperty("user.dir"));
+        log.debug("command: {}, workingDirectory: {}\nstdout:\n{}\nstderr:\n{}", command, workingDirectory, stdout, stderr);
         if (StringUtils.hasText(stderr)) {
             throw new RuntimeException("Who-Is occurred error: " + stderr);
         }
