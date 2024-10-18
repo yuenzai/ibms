@@ -59,8 +59,9 @@ public class BacnetApplicationService {
     }
 
     public List<BacnetDeviceAddress> execute(BacnetWhoIs service) throws Exception {
-        List<String> command = service.toCommand();
-        ProcessBuilder processBuilder = new ProcessBuilder(command);
+        String command = service.toCommandString();
+        List<String> commands = Arrays.asList("/bin/bash", "-c", command);
+        ProcessBuilder processBuilder = new ProcessBuilder(commands);
         Process process = processBuilder.start();
         String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8);
         String stderr = StreamUtils.copyToString(process.getErrorStream(), StandardCharsets.UTF_8);
@@ -68,7 +69,7 @@ public class BacnetApplicationService {
         String workingDirectory = Optional.ofNullable(processBuilder.directory())
                 .map(File::getAbsolutePath)
                 .orElseGet(() -> System.getProperty("user.dir"));
-        log.debug("command: {}, workingDirectory: {}\nstdout:\n{}\nstderr:\n{}", command, workingDirectory, stdout, stderr);
+        log.debug("command: {}, workingDirectory: {}\nstdout:\n{}\nstderr:\n{}", commands, workingDirectory, stdout, stderr);
         if (StringUtils.hasText(stderr)) {
             throw new RuntimeException("Who-Is occurred error: " + stderr);
         }

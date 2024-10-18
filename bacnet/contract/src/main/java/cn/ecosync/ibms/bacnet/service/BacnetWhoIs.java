@@ -29,6 +29,10 @@ public class BacnetWhoIs {
         return commands;
     }
 
+    public String toCommandString() {
+        return String.join(" ", toCommand());
+    }
+
     private static final String HEX = "[0-9A-Fa-f]{2}";
     private static final String MAC = "(?:" + HEX + "[:-]" + ")" + "{0,5}" + HEX;
     private static final Pattern PATTERN = Pattern.compile("\\s+(\\d+)\\s+(" + MAC + ")\\s+(\\d+)\\s+(" + MAC + ")\\s+(\\d+)");
