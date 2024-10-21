@@ -1,0 +1,73 @@
+### 新增设备
+POST http://localhost/device
+Content-Type: application/json
+
+{
+  "commandType": "ADD_DEVICE",
+  "deviceCode": "B831",
+  "deviceName": "B831",
+  "deviceExtra": {
+    "type": "BACNET",
+    "deviceInstance": 7601
+  }
+}
+
+### 修改设备
+POST http://localhost/device
+Content-Type: application/json
+
+{
+  "commandType": "UPDATE_DEVICE",
+  "deviceCode": "B831",
+  "deviceName": "B831",
+  "path": "/foo/bar",
+  "description": "测试设备1",
+  "deviceExtra": {
+    "type": "BACNET",
+    "deviceInstance": 7609
+  }
+}
+
+
+### 删除设备
+POST http://localhost/device
+Content-Type: application/json
+
+{
+  "commandType": "REMOVE_DEVICE",
+  "deviceCode": "B831"
+}
+
+### 保存设备点位
+POST http://localhost/device
+Content-Type: application/json
+
+{
+  "commandType": "PUT_DEVICE_POINT",
+  "deviceCode": "B831",
+  "devicePoints": [
+    {
+      "pointCode": "2",
+      "pointName": "2",
+      "pointExtra": {
+        "type": "BACNET",
+        "objectType": 2,
+        "objectInstance": 2,
+        "propertyIdentifier": 85
+      }
+    }
+  ]
+}
+
+### 删除设备点位
+POST http://localhost/device
+Content-Type: application/json
+
+{
+  "commandType": "REMOVE_DEVICE_POINT",
+  "deviceCode": "B831",
+  "pointCodes": [
+    "1",
+    "2"
+  ]
+}
