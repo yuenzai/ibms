@@ -16,8 +16,8 @@ public class BacnetConfig {
     @Bean
     public Module bacnetTypeModule() {
         SimpleModule simpleModule = new SimpleModule();
-        simpleModule.registerSubtypes(new NamedType(BacnetDeviceExtra.class, "bacnet"));
-        simpleModule.registerSubtypes(new NamedType(BacnetDevicePointExtra.class, "bacnet"));
+        simpleModule.registerSubtypes(new NamedType(BacnetDeviceExtra.class, "BACNET"));
+        simpleModule.registerSubtypes(new NamedType(BacnetDevicePointExtra.class, "BACNET"));
         return simpleModule;
     }
 }

@@ -23,8 +23,8 @@ public class DeviceConfig {
         simpleModule.registerSubtypes(new NamedType(PutDevicePointCommand.class, "PUT_DEVICE_POINT"));
         simpleModule.registerSubtypes(new NamedType(RemoveDevicePointCommand.class, "REMOVE_DEVICE_POINT"));
 
-        simpleModule.registerSubtypes(new NamedType(BacnetDeviceExtra.class, "bacnet"));
-        simpleModule.registerSubtypes(new NamedType(BacnetDevicePointExtra.class, "bacnet"));
+        simpleModule.registerSubtypes(new NamedType(BacnetDeviceExtra.class, "BACNET"));
+        simpleModule.registerSubtypes(new NamedType(BacnetDevicePointExtra.class, "BACNET"));
         return simpleModule;
     }
 }
