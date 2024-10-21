@@ -9,8 +9,8 @@ import javax.validation.constraints.NotBlank;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = SchedulingTrigger.Cron.class, name = "cron"),
-        @JsonSubTypes.Type(value = SchedulingTrigger.None.class, name = "none"),
+        @JsonSubTypes.Type(value = SchedulingTrigger.Cron.class, name = "CRON"),
+        @JsonSubTypes.Type(value = SchedulingTrigger.None.class, name = "NONE"),
 })
 public interface SchedulingTrigger {
     @Getter
