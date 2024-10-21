@@ -1,22 +1,22 @@
-# 设备变更操作
+## 设备变更操作
 
 `POST` `/device`
 
-## Parameters
+### Parameters
 
-### Headers
+#### Headers
 
 > `Content-Type`: `application/json`
 
-### Path parameters
+#### Path parameters
 
 > None
 
-### Query parameters
+#### Query parameters
 
 > None
 
-### Request body parameters
+#### Request body parameters
 
 > commandType<br><br>
 > `string` `enum` `required`<br><br>
@@ -31,72 +31,68 @@
 > `string` `required`<br><br>
 > 设备编码，全局唯一
 
-### Response body parameters
+#### Response body parameters
 
 > None
 
-### [Request example](device-command.http)
+#### [Request example](device-command.http)
 
----
-
-# 根据设备编码查询设备
+## 根据设备编码查询设备
 
 `GET` `/device/{deviceCode}`
 
-## Parameters
+### Parameters
 
-### Headers
+#### Headers
 
 > None
 
-### Path parameters
+#### Path parameters
 
 > deviceCode<br><br>
 > `string` `required`<br><br>
 > 设备编码
 
-### Query parameters
+#### Query parameters
 
 > [readonly](../README.md#查询参数)<br><br>
 > 只有为`true`时才会返回`deviceStatus`字段
 
-### Request body parameters
+#### Request body parameters
 
 > None
 
-### Response body parameters
+#### Response body parameters
 
-> [设备属性](#设备属性)
+> [设备属性和状态](#设备属性和状态)
 
-## Example
+### Example
 
-### Request example
+#### Request example
 
 ```shell
 curl http://localhost/device/B830
 ```
 
-### Response example
+#### Response example
 
     None
 
-----
-
-# 查询设备
+## 查询设备
 
 `GET` `/device`
 
-## Parameters
+### Parameters
 
-### Headers
-
-> None
-
-### Path parameters
+#### Headers
 
 > None
 
-### Query parameters
+#### Path parameters
+
+> None
+
+#### Query parameters
 
 > [readonly](../README.md#查询参数)<br><br>
 > 只有为`true`时才会返回`deviceStatus`字段
@@ -105,23 +101,23 @@ curl http://localhost/device/B830
 
 > [pagesize](../README.md#查询参数)
 
-### Request body parameters
+#### Request body parameters
 
 > None
 
-### Response body parameters
+#### Response body parameters
 
-> [设备属性](#设备属性)
+> [设备属性和状态](#设备属性和状态)
 
-## Example
+### Example
 
-### Request example
+#### Request example
 
 ```shell
 curl http://localhost/device
 ```
 
-### Response example
+#### Response example
 
 ```json
 [
@@ -163,8 +159,6 @@ curl http://localhost/device
 ]
 ```
 
-----
-
 ## 数据结构
 
 ### 新增设备命令
@@ -186,8 +180,6 @@ curl http://localhost/device
 > 设备的其他属性<br>
 > - [BACnet设备属性](#BACnet设备属性)
 
----
-
 ### 保存设备点位命令
 
 > devicePoints<br><br>
@@ -207,15 +199,11 @@ curl http://localhost/device
 > > 点位的其他属性
 > > - [BACnet点位属性](#BACnet点位属性)
 
----
-
 ### 删除设备点位命令
 
 > pointCodes<br><br>
 > `array` `string`<br><br>
 > 点位编码
-
----
 
 ### BACnet设备属性
 
@@ -227,8 +215,6 @@ curl http://localhost/device
 > deviceInstance<br><br>
 > `integer` `required`<br><br>
 > BACnet设备ID
-
----
 
 ### BACnet点位属性
 
@@ -249,9 +235,7 @@ curl http://localhost/device
 > `integer` `required`<br><br>
 > BACnet属性ID（通常用 85 表示 BACnet 属性当前值）
 
----
-
-### 设备属性
+### 设备属性和状态
 
 > deviceCode<br><br>
 > `string`<br><br>

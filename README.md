@@ -15,10 +15,10 @@ cd ibms
 
 项目包含几个模块：
 
-* **ibms** - 包含本项目核心功能，基于 [SpringBoot] 开发
-* **bacnet** - 负责 bacnet 协议栈实现并提供 http 接口调用，依赖 [bacnet-stack] 项目实现设备通信
-* **database** - 一个关系型数据库，本项目使用 MySQL
-* **nginx** - http 反向代理
+- **ibms** - 包含本项目核心功能，基于 [SpringBoot] 开发
+- **bacnet** - 负责 bacnet 协议栈实现并提供 http 接口调用，依赖 [bacnet-stack] 项目实现设备通信
+- **database** - 一个关系型数据库，本项目使用 MySQL
+- **nginx** - http 反向代理
 
 ## 构建
 
