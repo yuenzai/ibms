@@ -1,0 +1,60 @@
+###
+POST http://localhost/scheduling
+Content-Type: application/json
+
+{
+  "commandType": "ADD_SCHEDULING",
+  "schedulingName": "example",
+  "schedulingTrigger": {
+    "type": "cron",
+    "expression": "0 0/1 * * * ?"
+  },
+  "schedulingTaskParams": {
+    "type": "ReadDeviceStatus",
+    "deviceCode": "B830"
+  }
+}
+
+###
+POST http://localhost/scheduling
+Content-Type: application/json
+
+{
+  "commandType": "ADD_SCHEDULING",
+  "schedulingName": "example_batch",
+  "schedulingTrigger": {
+    "type": "cron",
+    "expression": "0 0/1 * * * ?"
+  },
+  "schedulingTaskParams": {
+    "type": "ReadDeviceStatusBatch"
+  }
+}
+
+###
+POST http://localhost/scheduling
+Content-Type: application/json
+
+{
+  "commandType": "REMOVE_SCHEDULING",
+  "schedulingName": "example"
+}
+
+###
+POST http://localhost/scheduling
+Content-Type: application/json
+
+{
+  "commandType": "ENABLE_OR_DISABLE_SCHEDULING",
+  "schedulingName": "example_batch",
+  "enabled": false
+}
+
+###
+POST http://localhost/scheduling
+Content-Type: application/json
+
+{
+  "commandType": "RESET_SCHEDULING",
+  "schedulingName": "example"
+}
