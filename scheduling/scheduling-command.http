@@ -1,4 +1,4 @@
-###
+### 新增定时任务（读取设备状态任务）
 POST http://localhost/scheduling
 Content-Type: application/json
 
@@ -15,7 +15,7 @@ Content-Type: application/json
   }
 }
 
-###
+### 新增定时任务（读取所有设备状态任务）
 POST http://localhost/scheduling
 Content-Type: application/json
 
@@ -31,7 +31,7 @@ Content-Type: application/json
   }
 }
 
-###
+### 删除定时任务
 POST http://localhost/scheduling
 Content-Type: application/json
 
@@ -40,7 +40,7 @@ Content-Type: application/json
   "schedulingName": "example"
 }
 
-###
+### 启动/停止定时任务
 POST http://localhost/scheduling
 Content-Type: application/json
 
@@ -50,7 +50,7 @@ Content-Type: application/json
   "enabled": false
 }
 
-###
+### 重置定时任务状态
 POST http://localhost/scheduling
 Content-Type: application/json
 
