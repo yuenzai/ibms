@@ -17,7 +17,7 @@ public class SearchDevicePageQuery implements Query<Page<DeviceDto>> {
     private final Pageable pageable;
     private final Boolean readonly;
 
-    public SearchDevicePageQuery(Integer pageSize, Integer page, Boolean readonly) {
+    public SearchDevicePageQuery(Integer page, Integer pageSize, Boolean readonly) {
         this(CollectionUtils.of(page, pageSize), readonly);
     }
 
@@ -31,7 +31,7 @@ public class SearchDevicePageQuery implements Query<Page<DeviceDto>> {
         HttpRequest.Builder builder = HttpRequest.getMethod()
                 .hostEnvironmentKey(ENV_DEVICE_SERVICE_HOST)
                 .pathSegments("device")
-                .queryParam("readonly", this.readonly)
+                .queryParam("readonly", readonly)
                 .queryParam("page", pageable.getPageNumber())
                 .queryParam("pagesize", pageable.getPageSize());
         return builder.build();

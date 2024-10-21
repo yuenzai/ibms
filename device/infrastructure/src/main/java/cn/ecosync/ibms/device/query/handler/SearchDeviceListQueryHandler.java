@@ -2,32 +2,32 @@ package cn.ecosync.ibms.device.query.handler;
 
 import cn.ecosync.ibms.device.DeviceMapper;
 import cn.ecosync.ibms.device.model.DeviceDto;
-import cn.ecosync.ibms.device.query.SearchDevicePageQuery;
+import cn.ecosync.ibms.device.query.SearchDeviceListQuery;
 import cn.ecosync.ibms.device.repository.jpa.DeviceJpaRepository;
 import cn.ecosync.ibms.device.repository.jpa.DeviceReadonlyRepository;
 import cn.ecosync.ibms.query.QueryHandler;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-@ConditionalOnClass(EntityManager.class)
-public class SearchDeviceQueryPageJpaHandler implements QueryHandler<SearchDevicePageQuery, Page<DeviceDto>> {
+public class SearchDeviceListQueryHandler implements QueryHandler<SearchDeviceListQuery, List<DeviceDto>> {
     private final DeviceJpaRepository deviceRepository;
     private final DeviceReadonlyRepository deviceReadonlyRepository;
 
     @Override
     @Transactional(readOnly = true)
-    public Page<DeviceDto> handle(SearchDevicePageQuery query) {
+    public List<DeviceDto> handle(SearchDeviceListQuery query) {
         if (query.getReadonly()) {
-            return deviceReadonlyRepository.findAll(query.getPageable());
+            return deviceReadonlyRepository.findAll();
         } else {
-            return deviceRepository.findAll(query.getPageable()).map(DeviceMapper::map);
+            return deviceRepository.findAll().stream()
+                    .map(DeviceMapper::map)
+                    .collect(Collectors.toList());
         }
     }
 }

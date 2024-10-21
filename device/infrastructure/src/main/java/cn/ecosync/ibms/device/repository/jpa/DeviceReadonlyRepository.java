@@ -56,9 +56,9 @@ public class DeviceReadonlyRepository {
     }
 
     public Page<DeviceDto> findAll(Pageable pageable) {
-        String sqlStatement = SQL_SELECT + " OFFSET ? LIMIT ?";
+        String sqlStatement = SQL_SELECT + " LIMIT ? OFFSET ?";
         Long total = jdbcTemplate.queryForObject("SELECT count(*) FROM device_readonly", Long.class);
-        List<DeviceDto> deviceDtos = jdbcTemplate.query(sqlStatement, rowMapper, pageable.getOffset(), pageable.getPageSize());
+        List<DeviceDto> deviceDtos = jdbcTemplate.query(sqlStatement, rowMapper, pageable.getPageSize(), pageable.getOffset());
         return new PageImpl<>(deviceDtos, pageable, Optional.ofNullable(total).orElse(0L));
     }
 }
