@@ -24,19 +24,24 @@
 
 ### Response body parameters
 
-> `deviceInstance` `integer`<br><br>
+> deviceInstance<br><br>
+> `integer`<br><br>
 > BACnet设备ID
 
-> `macAddress` `string`<br><br>
+> macAddress<br><br>
+> `string`<br><br>
 > macAddress
 
-> `snet` `integer`<br><br>
+> snet<br><br>
+> `integer`<br><br>
 > snet
 
-> `sadr` `string`<br><br>
+> sadr<br><br>
+> `string`<br><br>
 > sadr
 
-> `apdu` `integer`<br><br>
+> apdu<br><br>
+> `integer`<br><br>
 > apdu
 
 ## Example
@@ -89,7 +94,8 @@ curl http://localhost/bacnet/service/who-is
 
 ### Path parameters
 
-> `deviceInstance` `integer` `required`<br><br>
+> deviceInstance<br><br>
+> `integer` `required`<br><br>
 > BACnet设备ID
 
 ### Query parameters
@@ -102,13 +108,16 @@ curl http://localhost/bacnet/service/who-is
 
 ### Response body parameters
 
-> `objectType` `integer`<br><br>
+> objectType<br><br>
+> `integer`<br><br>
 > BACnet对象类型
 
-> `objectInstance` `integer`<br><br>
+> objectInstance<br><br>
+> `integer`<br><br>
 > BACnet对象号
 
-> `objectTypeName` `string`<br><br>
+> objectTypeName<br><br>
+> `string`<br><br>
 > BACnet类型名称
 
 ## Example
@@ -121,22 +130,22 @@ curl http://localhost/bacnet/device/7602/object-ids
 
 ### Response example
 
-    [
-      {
-        "objectType": 0,
-        "objectInstance": 0,
-        "objectTypeName": "ANALOG_INPUT"
-      },
-      {
-        "objectType": 1,
-        "objectInstance": 0,
-        "objectTypeName": "ANALOG_OUTPUT"
-      },
-      {
-        "objectType": 2,
-        "objectInstance": 0,
-        "objectTypeName": "ANALOG_VALUE"
-      }
-    ]
-
----
+```json
+[
+  {
+    "objectType": 0,
+    "objectInstance": 0,
+    "objectTypeName": "ANALOG_INPUT"
+  },
+  {
+    "objectType": 1,
+    "objectInstance": 0,
+    "objectTypeName": "ANALOG_OUTPUT"
+  },
+  {
+    "objectType": 2,
+    "objectInstance": 0,
+    "objectTypeName": "ANALOG_VALUE"
+  }
+]
+```

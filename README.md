@@ -17,7 +17,7 @@ cd ibms
 
 * **ibms** - 包含本项目核心功能，基于 [SpringBoot] 开发
 * **bacnet** - 负责 bacnet 协议栈实现并提供 http 接口调用，依赖 [bacnet-stack] 项目实现设备通信
-* **database** - 一个关系型数据库，本项目使用 MySQL（理论上支持所有关系型数据库，详情请看开发文档）
+* **database** - 一个关系型数据库，本项目使用 MySQL
 * **nginx** - http 反向代理
 
 ## 构建
@@ -74,14 +74,14 @@ API接口没有按照 RESTful 风格来设计，而是按照 [CQRS] 将接口划
 
 > readonly<br><br>
 > type:`boolean` default:`false`<br><br>
-> 是否查询[读模型](#读模型)的数据，默认值为`false`。
-> * `true` - 表示查询`读模型`的数据
-> * `false` - 表示查询`写模型`的数据
-> ---
+> 是否查询[读模型](#读模型)的数据，默认值为`false`
+> - `true` - 表示查询`读模型`的数据
+> - `false` - 表示查询`写模型`的数据
+
 > page<br><br>
 > type:`integer`<br><br>
 > 页码，从1开始，和`pagesize`同时传递
-> ---
+
 > pagesize<br><br>
 > type:`integer`<br><br>
 > 分页大小，和`page`同时传递
@@ -126,6 +126,7 @@ API接口没有按照 RESTful 风格来设计，而是按照 [CQRS] 将接口划
 ```
 
 ### 接口文档
+
 - [BACnet](bacnet/README.md)
 - [设备](device/README.md)
 - [定时任务](scheduling/README.md)

@@ -26,10 +26,10 @@
 > * **REMOVE_DEVICE** - 删除设备<br>
 > * **PUT_DEVICE_POINT** - [保存设备点位](#保存设备点位命令)<br>
 > * **REMOVE_DEVICE_POINT** - [删除设备点位](#删除设备点位命令)<br>
-> ---
+
 > deviceCode<br><br>
 > `string` `required`<br><br>
-> 设备编码，全局唯一<br>
+> 设备编码，全局唯一
 
 ### Response body parameters
 
@@ -37,7 +37,7 @@
 
 ### [Request example](device-command.http)
 
-----
+---
 
 # 根据设备编码查询设备
 
@@ -100,13 +100,9 @@ curl http://localhost/device/B830
 
 > [readonly](../README.md#查询参数)<br><br>
 > 只有为`true`时才会返回`deviceStatus`字段
->
-> ___
->
+
 > [page](../README.md#查询参数)
->
-> ___
->
+
 > [pagesize](../README.md#查询参数)
 
 ### Request body parameters
@@ -176,15 +172,15 @@ curl http://localhost/device
 > deviceName<br><br>
 > `string`<br><br>
 > 设备名称
-> ---
+
 > path<br><br>
 > `string`<br><br>
 > 目录路径
-> ---
+
 > description<br><br>
 > `string`<br><br>
 > 描述
-> ---
+
 > deviceExtra<br><br>
 > `object` `required`<br><br>
 > 设备的其他属性<br>
@@ -197,18 +193,19 @@ curl http://localhost/device
 > devicePoints<br><br>
 > `array` `required`<br><br>
 > 设备点位
->> devicePoints.pointCode<br><br>
+>
+> > devicePoints.pointCode<br><br>
 > > `string` `required`<br><br>
 > > 点位编码
->> ---
->> devicePoints.pointName<br><br>
+>
+> > devicePoints.pointName<br><br>
 > > `string`<br><br>
 > > 点位名称
->> ---
->> devicePoints.pointExtra<br><br>
+>
+> > devicePoints.pointExtra<br><br>
 > > `object` `required`<br><br>
 > > 点位的其他属性
->> - [BACnet点位属性](#BACnet点位属性)
+> > - [BACnet点位属性](#BACnet点位属性)
 
 ---
 
@@ -226,7 +223,7 @@ curl http://localhost/device
 > `string` `enum` `required`<br><br>
 > Enum options:<br><br>
 > `BACNET` - 表示设备是一个 BACnet 设备
-> ---
+
 > deviceInstance<br><br>
 > `integer` `required`<br><br>
 > BACnet设备ID
@@ -239,15 +236,15 @@ curl http://localhost/device
 > `string` `enum` `required`<br><br>
 > Enum options:<br><br>
 > `BACNET` - 表示点位是一个 BACnet 设备的点位
-> ---
+
 > objectType<br><br>
 > `integer` `required`<br><br>
 > BACnet对象类型
-> ---
+
 > objectInstance<br><br>
 > `integer` `required`<br><br>
 > BACnet对象ID
-> ---
+
 > propertyIdentifier<br><br>
 > `integer` `required`<br><br>
 > BACnet属性ID（通常用 85 表示 BACnet 属性当前值）
@@ -259,51 +256,52 @@ curl http://localhost/device
 > deviceCode<br><br>
 > `string`<br><br>
 > 设备编码
-> ---
+
 > deviceName<br><br>
 > `string`<br><br>
 > 设备名称
-> ---
+
 > path<br><br>
 > `string`<br><br>
 > 目录路径
-> ---
+
 > description<br><br>
 > `string`<br><br>
 > 描述
-> ---
+
 > deviceExtra<br><br>
 > `object`<br><br>
 > 设备的其他属性<br>
 > - [BACnet设备属性](#BACnet设备属性)
-> ---
+
 > devicePoints<br><br>
 > `array`<br><br>
 > 设备点位
->> devicePoints.pointCode<br><br>
+>
+> > devicePoints.pointCode<br><br>
 > > `string`<br><br>
 > > 点位编码
->> ---
->> devicePoints.pointName<br><br>
+>
+> > devicePoints.pointName<br><br>
 > > `string`<br><br>
 > > 点位名称
->> ---
->> devicePoints.pointExtra<br><br>
+>
+> > devicePoints.pointExtra<br><br>
 > > `object`<br><br>
 > > 点位的其他属性
->> - [BACnet点位属性](#BACnet点位属性)
-> ---
+> > - [BACnet点位属性](#BACnet点位属性)
+
 > deviceStatus<br><br>
 > `object` `nullable`<br><br>
 > 设备状态，表示设备最后一次上报的数据，`null`表示设备未上报数据
->> deviceStatus.deviceCode<br><br>
+> > deviceStatus.deviceCode<br><br>
 > > `string`<br><br>
 > > 设备编码
->> ---
->> deviceStatus.values<br><br>
+>
+> > deviceStatus.values<br><br>
 > > `object`<br><br>
 > > 设备状态值，key是点位编码，value是点位值
->> ---
->> deviceStatus.timestamp<br><br>
+>
+> > deviceStatus.timestamp<br><br>
 > > `integer`<br><br>
 > > 设备最后一次上报数据时的时间戳（毫秒）
