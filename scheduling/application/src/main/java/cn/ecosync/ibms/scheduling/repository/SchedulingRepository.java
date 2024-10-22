@@ -4,7 +4,6 @@ import cn.ecosync.ibms.scheduling.model.Scheduling;
 import cn.ecosync.ibms.scheduling.model.SchedulingId;
 import org.springframework.data.repository.NoRepositoryBean;
 
-import java.util.Collection;
 import java.util.Optional;
 
 @NoRepositoryBean
@@ -18,6 +17,4 @@ public interface SchedulingRepository {
     }
 
     Optional<Scheduling> get(SchedulingId schedulingId);
-
-    Collection<Scheduling> list(Boolean enabled);
 }

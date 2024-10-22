@@ -8,12 +8,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
+import org.quartz.spi.OperableTrigger;
 import org.quartz.utils.Key;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.scheduling.SchedulingException;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -38,7 +42,7 @@ public class SchedulingApplicationQuartzService implements SchedulingApplication
     public void execute(SchedulingTaskParams schedulingTaskParams) {
         try {
             JobKey jobKey = JobKey.jobKey(schedulingTaskParams.type());
-            existsBy(schedulingTaskParams);
+            checkExists(schedulingTaskParams);
             scheduler.triggerJob(jobKey);
         } catch (SchedulerException e) {
             throw new SchedulingException(e.getMessage(), e.getCause());
@@ -49,7 +53,7 @@ public class SchedulingApplicationQuartzService implements SchedulingApplication
     public void schedule(SchedulingId schedulingId, SchedulingTrigger schedulingTrigger, SchedulingTaskParams schedulingTaskParams) {
         try {
             JobKey jobKey = JobKey.jobKey(schedulingTaskParams.type());
-            existsBy(schedulingTaskParams);
+            checkExists(schedulingTaskParams);
             TriggerKey triggerKey = toTriggerKey(schedulingId);
             Trigger trigger;
             if (schedulingTrigger instanceof SchedulingTrigger.Cron) {
@@ -61,7 +65,7 @@ public class SchedulingApplicationQuartzService implements SchedulingApplication
                         .usingJobData(new JobDataMap(schedulingTaskParams.toParams()))
                         .build();
             } else {
-                return;
+                throw new IllegalArgumentException("unsupported scheduling trigger type: " + schedulingTrigger.getClass().getName());
             }
             if (scheduler.checkExists(triggerKey)) {
                 Trigger.TriggerState triggerState = scheduler.getTriggerState(triggerKey);
@@ -132,12 +136,39 @@ public class SchedulingApplicationQuartzService implements SchedulingApplication
     }
 
     @Override
-    public void existsBy(SchedulingTaskParams schedulingTaskParams) {
+    public void checkExists(SchedulingTaskParams schedulingTaskParams) {
         try {
             JobKey jobKey = JobKey.jobKey(schedulingTaskParams.type());
             if (!scheduler.checkExists(jobKey)) {
                 throw new IllegalArgumentException("Illegal scheduling task: " + schedulingTaskParams);
             }
+        } catch (SchedulerException e) {
+            throw new SchedulingException(e.getMessage(), e.getCause());
+        }
+    }
+
+    @Override
+    public List<Date> computeNextFireTimes(SchedulingId schedulingId, int maxCount) {
+        if (maxCount < 1) {
+            throw new IllegalArgumentException("maxCount must be greater than 0");
+        }
+        try {
+            TriggerKey triggerKey = toTriggerKey(schedulingId);
+            return Optional.ofNullable(scheduler.getTrigger(triggerKey))
+                    .filter(OperableTrigger.class::isInstance)
+                    .map(in -> TriggerUtils.computeFireTimes((OperableTrigger) in, null, maxCount))
+                    .orElse(Collections.emptyList());
+        } catch (SchedulerException e) {
+            throw new SchedulingException(e.getMessage(), e.getCause());
+        }
+    }
+
+    @Override
+    public Optional<Date> getPreviousFireTime(SchedulingId schedulingId) {
+        try {
+            TriggerKey triggerKey = toTriggerKey(schedulingId);
+            return Optional.ofNullable(scheduler.getTrigger(triggerKey))
+                    .map(Trigger::getPreviousFireTime);
         } catch (SchedulerException e) {
             throw new SchedulingException(e.getMessage(), e.getCause());
         }

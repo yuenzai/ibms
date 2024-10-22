@@ -5,8 +5,6 @@ import cn.ecosync.ibms.scheduling.model.SchedulingId;
 import cn.ecosync.ibms.scheduling.repository.SchedulingRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 public interface SchedulingJpaRepository extends JpaRepository<Scheduling, Integer>, SchedulingRepository {
@@ -25,12 +23,5 @@ public interface SchedulingJpaRepository extends JpaRepository<Scheduling, Integ
         return findBySchedulingId(schedulingId);
     }
 
-    @Override
-    default Collection<Scheduling> list(Boolean enabled) {
-        return findByEnabled(enabled);
-    }
-
     Optional<Scheduling> findBySchedulingId(SchedulingId schedulingId);
-
-    List<Scheduling> findByEnabled(Boolean enabled);
 }

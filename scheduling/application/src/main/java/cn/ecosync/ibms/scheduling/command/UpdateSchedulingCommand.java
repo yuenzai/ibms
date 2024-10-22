@@ -19,6 +19,7 @@ public class UpdateSchedulingCommand implements Command {
     private SchedulingTrigger schedulingTrigger;
     @Valid
     private SchedulingTaskParams schedulingTaskParams;
+    private String description;
 
     public SchedulingId toSchedulingId() {
         return new SchedulingId(this.schedulingName);

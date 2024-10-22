@@ -14,6 +14,7 @@ import lombok.ToString;
 @RequiredArgsConstructor
 public class SchedulingRescheduledEvent extends AbstractEvent {
     public static final String TYPE = "scheduling-rescheduled";
+
     private final SchedulingId schedulingId;
     private final SchedulingTrigger schedulingTrigger;
     private final SchedulingTaskParams schedulingTaskParams;

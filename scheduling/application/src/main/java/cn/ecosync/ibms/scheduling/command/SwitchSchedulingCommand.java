@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @ToString
-public class EnableOrDisableSchedulingCommand implements Command {
+public class SwitchSchedulingCommand implements Command {
     @NotBlank
     private String schedulingName;
     @NotNull

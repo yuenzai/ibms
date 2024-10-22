@@ -3,7 +3,7 @@ package cn.ecosync.ibms.scheduling.controller;
 import cn.ecosync.ibms.command.Command;
 import cn.ecosync.ibms.command.CommandBus;
 import cn.ecosync.ibms.query.QueryBus;
-import cn.ecosync.ibms.scheduling.dto.SchedulingStateDto;
+import cn.ecosync.ibms.scheduling.dto.SchedulingDto;
 import cn.ecosync.ibms.scheduling.query.GetSchedulingTasksQuery;
 import cn.ecosync.ibms.scheduling.query.SearchSchedulingQuery;
 import lombok.RequiredArgsConstructor;
@@ -30,11 +30,12 @@ public class SchedulingRestController {
     }
 
     @GetMapping
-    public Iterable<SchedulingStateDto> search(
+    public Iterable<SchedulingDto> search(
             @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "pagesize", required = false) Integer pageSize
+            @RequestParam(value = "pagesize", required = false) Integer pageSize,
+            @RequestParam(value = "max-count", defaultValue = "5") Integer maxCount
     ) {
-        SearchSchedulingQuery query = new SearchSchedulingQuery(page, pageSize);
+        SearchSchedulingQuery query = new SearchSchedulingQuery(page, pageSize, maxCount);
         return queryBus.execute(query);
     }
 }

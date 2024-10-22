@@ -5,7 +5,9 @@ import cn.ecosync.ibms.scheduling.model.SchedulingState;
 import cn.ecosync.ibms.scheduling.model.SchedulingTaskParams;
 import cn.ecosync.ibms.scheduling.model.SchedulingTrigger;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public interface SchedulingApplicationService {
     List<String> getSchedulingTasks();
@@ -22,5 +24,9 @@ public interface SchedulingApplicationService {
 
     SchedulingState getSchedulingState(SchedulingId schedulingId);
 
-    void existsBy(SchedulingTaskParams schedulingTaskParams);
+    void checkExists(SchedulingTaskParams schedulingTaskParams);
+
+    List<Date> computeNextFireTimes(SchedulingId schedulingId, int maxCount);
+
+    Optional<Date> getPreviousFireTime(SchedulingId schedulingId);
 }

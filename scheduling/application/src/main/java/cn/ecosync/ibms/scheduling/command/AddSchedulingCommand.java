@@ -22,6 +22,7 @@ public class AddSchedulingCommand implements Command {
     @Valid
     @NotNull
     private SchedulingTaskParams schedulingTaskParams;
+    private String description;
 
     public SchedulingId toSchedulingId() {
         return new SchedulingId(this.schedulingName);

@@ -20,13 +20,13 @@ public class AddSchedulingCommandHandler implements CommandHandler<AddScheduling
     @Override
     @Transactional
     public void handle(AddSchedulingCommand command) {
-        schedulingApplicationService.existsBy(command.getSchedulingTaskParams());
+        schedulingApplicationService.checkExists(command.getSchedulingTaskParams());
 
         SchedulingId schedulingId = command.toSchedulingId();
         Scheduling scheduling = schedulingRepository.get(schedulingId).orElse(null);
-        Assert.isNull(scheduling, "Scheduling name already exists");
+        Assert.isNull(scheduling, "schedulingName already exists");
 
-        scheduling = new Scheduling(schedulingId, command.getSchedulingTrigger(), command.getSchedulingTaskParams());
+        scheduling = new Scheduling(schedulingId, command.getSchedulingTrigger(), command.getSchedulingTaskParams(), command.getDescription());
         schedulingRepository.add(scheduling);
     }
 }
