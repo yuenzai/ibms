@@ -7,15 +7,15 @@ import cn.ecosync.ibms.bacnet.service.BacnetApplicationService;
 import cn.ecosync.ibms.bacnet.service.BacnetReadPropertyMultiple;
 import cn.ecosync.ibms.bacnet.service.BacnetReadPropertyMultiple.BacnetObjectProperties;
 import cn.ecosync.ibms.bacnet.service.BacnetWhoIs;
-import cn.ecosync.ibms.device.model.DeviceDto;
-import cn.ecosync.ibms.device.model.DevicePointDto;
-import cn.ecosync.ibms.device.model.DeviceStatus;
+import cn.ecosync.ibms.bacnet.service.BacnetWriteProperty;
 import cn.ecosync.ibms.util.CollectionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -25,68 +25,24 @@ import java.util.stream.Collectors;
 public class BacnetRestController {
     private final BacnetApplicationService bacnetApplicationService;
 
-    @PostMapping("/readpropm")
-    public DeviceStatus readpropm(@RequestBody DeviceDto deviceDto) throws Exception {
-        BacnetReadPropertyMultiple service = BacnetReadPropertyMultiple.newInstance(deviceDto);
-        ReadPropertyMultipleAck ack = bacnetApplicationService.execute(service).orElse(null);
-        if (ack == null) {
-            return null;
-        }
-        return toDeviceStatus(deviceDto, ack);
+    @PostMapping("/service/who-is")
+    public List<BacnetDeviceAddress> execute(@RequestBody @Validated BacnetWhoIs service) throws Exception {
+        return bacnetApplicationService.execute(service);
     }
 
-    @PostMapping("/readpropm/batch")
-    public List<DeviceStatus> readpropmBatch(@RequestBody List<DeviceDto> deviceDtoList) throws Exception {
-        List<BacnetReadPropertyMultiple> services = deviceDtoList.stream()
-                .map(BacnetReadPropertyMultiple::newInstance)
-                .collect(Collectors.toList());
-
-        List<ReadPropertyMultipleAck> acks = bacnetApplicationService.execute(services);
-
-        Map<Integer, DeviceDto> deviceInstanceMap = CollectionUtils.newHashMap(deviceDtoList.size());
-        for (DeviceDto deviceDto : deviceDtoList) {
-            Integer deviceInstance = deviceInstanceOf(deviceDto).orElse(null);
-            if (deviceInstance == null) {
-                continue;
-            }
-            deviceInstanceMap.put(deviceInstance, deviceDto);
-        }
-
-        List<DeviceStatus> deviceStatusList = new ArrayList<>(deviceDtoList.size());
-        for (ReadPropertyMultipleAck ack : acks) {
-            DeviceDto deviceDto = deviceInstanceMap.get(ack.getDeviceInstance());
-            if (deviceDto == null) {
-                continue;
-            }
-            DeviceStatus deviceStatus = toDeviceStatus(deviceDto, ack);
-            deviceStatusList.add(deviceStatus);
-        }
-        return deviceStatusList;
+    @PostMapping("/service/read-property-multiple")
+    public ReadPropertyMultipleAck execute(@RequestBody @Validated BacnetReadPropertyMultiple service) throws Exception {
+        return bacnetApplicationService.execute(service).orElse(null);
     }
 
-    private DeviceStatus toDeviceStatus(DeviceDto deviceDto, ReadPropertyMultipleAck ack) {
-        Map<BacnetObjectProperty, BacnetPropertyValue> valueMap = ack.flatMap();
-
-        List<DevicePointDto> devicePoints = deviceDto.getDevicePoints();
-        Map<String, Object> deviceStatus = CollectionUtils.newHashMap(devicePoints.size());
-        for (DevicePointDto devicePoint : devicePoints) {
-            if (!(devicePoint.getPointExtra() instanceof BacnetDevicePointExtra)) {
-                continue;
-            }
-            BacnetObjectProperty bop = ((BacnetDevicePointExtra) devicePoint.getPointExtra()).getBacnetObjectProperty();
-            Object pointValue = Optional.ofNullable(valueMap.get(bop))
-                    .map(BacnetPropertyValue::toObject)
-                    .orElse(null);
-            deviceStatus.put(devicePoint.getPointCode(), pointValue);
-        }
-        return new DeviceStatus(deviceDto.getDeviceCode(), deviceStatus, System.currentTimeMillis());
+    @PostMapping("/service/read-property-multiple/batch")
+    public List<ReadPropertyMultipleAck> execute(@RequestBody @Validated List<BacnetReadPropertyMultiple> services) throws Exception {
+        return bacnetApplicationService.execute(services);
     }
 
-    private Optional<Integer> deviceInstanceOf(DeviceDto deviceDto) {
-        return Optional.ofNullable(deviceDto)
-                .filter(in -> in.getDeviceExtra() instanceof BacnetDeviceExtra)
-                .map(in -> (BacnetDeviceExtra) in.getDeviceExtra())
-                .map(BacnetDeviceExtra::getDeviceInstance);
+    @PostMapping("/service/write-property")
+    public void execute(@RequestBody @Validated BacnetWriteProperty service) throws Exception {
+        bacnetApplicationService.execute(service);
     }
 
     @GetMapping("/device/{deviceInstance}/object-ids")
@@ -115,11 +71,5 @@ public class BacnetRestController {
             log.error("", e);
             return Collections.emptyList();
         }
-    }
-
-    @GetMapping("/service/who-is")
-    public List<BacnetDeviceAddress> whoIs() throws Exception {
-        BacnetWhoIs whoIs = new BacnetWhoIs();
-        return bacnetApplicationService.execute(whoIs);
     }
 }

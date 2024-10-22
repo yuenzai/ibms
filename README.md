@@ -62,7 +62,7 @@ docker compose up -d
 
 ### 设计规范
 
-API接口没有按照 RESTful 风格来设计，而是按照 [CQRS] 将接口划分为`Command`和`Query`两种类型。
+API接口没有完全按照 RESTful 风格来设计，而是按照 [CQRS] 将接口划分为`Command`和`Query`两种类型。
 
 - **Command** - 表示写操作，使用`POST`方法，命令的执行结果通过`Status Code`表示：
     - **2xx** - 表示命令执行成功，`ResponseBody`不会返回任何内容

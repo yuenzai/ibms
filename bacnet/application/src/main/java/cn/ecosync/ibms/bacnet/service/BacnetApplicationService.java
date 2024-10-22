@@ -76,6 +76,19 @@ public class BacnetApplicationService {
         return BacnetWhoIs.parseDeviceAddresses(stdout);
     }
 
+    public void execute(BacnetWriteProperty service) throws Exception {
+        List<String> command = service.toCommand();
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
+        Process process = processBuilder.start();
+        String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8);
+        String stderr = StreamUtils.copyToString(process.getErrorStream(), StandardCharsets.UTF_8);
+        process.waitFor();
+        log.debug("command: {}\nstdout:\n{}\nstderr:\n{}", command, stdout, stderr);
+        if (StringUtils.hasText(stderr)) {
+            throw new RuntimeException("WriteProperty occurred error: " + stderr);
+        }
+    }
+
     public int readPropertyMultiple(BacnetReadPropertyMultiple service, File dir) throws IOException, InterruptedException {
         if (!dir.exists()) {
             throw new IllegalArgumentException("dir does not exist: " + dir.getAbsolutePath());

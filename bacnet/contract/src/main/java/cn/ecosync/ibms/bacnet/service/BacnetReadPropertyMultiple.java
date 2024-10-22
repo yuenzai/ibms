@@ -1,15 +1,12 @@
 package cn.ecosync.ibms.bacnet.service;
 
-import cn.ecosync.ibms.bacnet.model.BacnetDeviceExtra;
-import cn.ecosync.ibms.bacnet.model.BacnetDevicePointExtra;
 import cn.ecosync.ibms.bacnet.model.BacnetObject;
 import cn.ecosync.ibms.bacnet.model.BacnetProperty;
-import cn.ecosync.ibms.device.model.DeviceDto;
 import lombok.Getter;
 import lombok.ToString;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -22,6 +19,7 @@ import java.util.stream.Collectors;
 public class BacnetReadPropertyMultiple {
     @NotNull
     private Integer deviceInstance;
+    @Valid
     @NotEmpty
     private List<BacnetObjectProperties> objectProperties;
 
@@ -42,6 +40,7 @@ public class BacnetReadPropertyMultiple {
     @Getter
     @ToString
     public static class BacnetObjectProperties extends BacnetObject {
+        @Valid
         @NotEmpty
         private List<BacnetProperty> properties;
 
@@ -81,20 +80,5 @@ public class BacnetReadPropertyMultiple {
             prop += "[" + index + "]";
         }
         return prop;
-    }
-
-    public static BacnetReadPropertyMultiple newInstance(DeviceDto device) {
-        Assert.notNull(device, "deviceDto must not be null");
-        // 设备配置属性
-        BacnetDeviceExtra deviceProperties = (BacnetDeviceExtra) device.getDeviceExtra();
-        // 点位配置属性
-        List<BacnetDevicePointExtra> devicePoints = device.getDevicePoints().stream()
-                .filter(in -> in.getPointExtra() instanceof BacnetDevicePointExtra)
-                .map(in -> (BacnetDevicePointExtra) in.getPointExtra())
-                .collect(Collectors.toList());
-        Assert.notEmpty(devicePoints, "devicePoints must not be empty");
-        Map<BacnetObject, List<BacnetProperty>> objectProperties = devicePoints.stream()
-                .collect(Collectors.groupingBy(BacnetDevicePointExtra::toBacnetObject, Collectors.mapping(BacnetDevicePointExtra::toBacnetProperty, Collectors.toList())));
-        return new BacnetReadPropertyMultiple(deviceProperties.getDeviceInstance(), objectProperties);
     }
 }

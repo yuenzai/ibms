@@ -1,8 +1,8 @@
-## 查找 BACnet 设备
+## 发送 Who-Is
 
-`GET` `/bacnet/service/who-is`
+`POST` `/bacnet/service/who-is`
 
-发送 Who-Is 请求
+发送 Who-Is
 
 ### Parameters
 
@@ -49,7 +49,7 @@
 #### Request example
 
 ```shell
-curl http://localhost/bacnet/service/who-is
+curl -X POST -H 'Content-Type: application/json' http://localhost/bacnet/service/who-is
 ```
 
 #### Response example
@@ -80,7 +80,177 @@ curl http://localhost/bacnet/service/who-is
 ]
 ```
 
-## 查询Bacnet设备属性
+## 发送 ReadPropertyMultiple
+
+`POST` `/bacnet/service/read-property-multiple`
+
+发送 ReadPropertyMultiple
+
+### Parameters
+
+#### Headers
+
+> None
+
+#### Path parameters
+
+> None
+
+#### Query parameters
+
+> None
+
+#### Request body parameters
+
+> deviceInstance<br><br>
+> `integer` `required`<br><br>
+> BACnet设备ID
+
+> objectProperties<br><br>
+> `array`<br><br>
+> 要读取的 Bacnet 对象和对象的属性
+> > objectType<br><br>
+> > `integer` `required`<br><br>
+> > BACnet对象类型
+>
+> > objectInstance<br><br>
+> > `integer` `required`<br><br>
+> > BACnet对象ID
+>
+> > properties<br><br>
+> > `array`<br><br>
+> > BACnet对象的属性
+> > > propertyIdentifier<br><br>
+> > > `integer` `required`<br><br>
+> > > BACnet属性ID（通常用 85 表示 BACnet 属性当前值）
+> >
+> > > propertyArrayIndex<br><br>
+> > > `integer`<br><br>
+> > > 数组索引
+
+#### Response body parameters
+
+> deviceInstance<br><br>
+> `integer`<br><br>
+> BACnet设备ID
+
+> values<br><br>
+> `array`<br><br>
+> 读取的数据
+> > objectType<br><br>
+> > `integer`<br><br>
+> > BACnet对象类型
+>
+> > objectInstance<br><br>
+> > `integer`<br><br>
+> > BACnet对象ID
+>
+> > properties<br><br>
+> > `array`<br><br>
+> > 属性值
+> > > propertyIdentifier<br><br>
+> > > `integer`<br><br>
+> > > BACnet属性ID（通常用 85 表示 BACnet 属性当前值）
+> >
+> > > propertyArrayIndex<br><br>
+> > > `integer`<br><br>
+> > > 数组索引
+> >
+> > > propertyValues<br><br>
+> > > `array`<br><br>
+> > > 属性值
+> >
+> > > error<br><br>
+> > > `object` `nullable`<br><br>
+> > > 错误
+
+### Example
+
+#### Request example
+
+```shell
+curl -X POST -H 'Content-Type: application/json' -d '{}' http://localhost/bacnet/service/read-property-multiple
+```
+
+#### Response example
+
+```
+None
+```
+
+## 发送 WriteProperty
+
+`POST` `/bacnet/service/write-property`
+
+发送 WriteProperty
+
+### Parameters
+
+#### Headers
+
+> None
+
+#### Path parameters
+
+> None
+
+#### Query parameters
+
+> None
+
+#### Request body parameters
+
+> deviceInstance<br><br>
+> `integer` `required`<br><br>
+> BACnet设备ID
+
+> objectType<br><br>
+> `integer` `required`<br><br>
+> BACnet对象类型
+
+> objectInstance<br><br>
+> `integer` `required`<br><br>
+> BACnet对象ID
+
+> propertyIdentifier<br><br>
+> `integer` `required`<br><br>
+> BACnet属性ID（通常用 85 表示 BACnet 属性当前值）
+
+> propertyArrayIndex<br><br>
+> `integer`<br><br>
+> 数组索引
+
+> priority<br><br>
+> `integer`<br><br>
+> 优先级
+
+> valueType<br><br>
+> `integer` `required`<br><br>
+> 要写入的值类型
+
+> value<br><br>
+> `any` `required`<br><br>
+> 要写入的值
+
+#### Response body parameters
+
+> None
+
+### Example
+
+#### Request example
+
+```shell
+curl -X POST -H 'Content-Type: application/json' -d '{}' http://localhost/bacnet/service/write-property
+```
+
+#### Response example
+
+```
+None
+```
+
+## 查询Bacnet设备的对象列表
 
 `GET` `/bacnet/device/{deviceInstance}/object-ids`
 
@@ -114,7 +284,7 @@ curl http://localhost/bacnet/service/who-is
 
 > objectInstance<br><br>
 > `integer`<br><br>
-> BACnet对象号
+> BACnet对象ID
 
 > objectTypeName<br><br>
 > `string`<br><br>

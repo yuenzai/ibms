@@ -8,21 +8,23 @@ import cn.ecosync.ibms.util.HttpRequest;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Getter
 @ToString
-public class BacnetReadPropertyMultipleQuery implements Query<ReadPropertyMultipleAck> {
-    private final BacnetReadPropertyMultiple service;
+public class BacnetReadPropertyMultipleBatchQuery implements Query<List<ReadPropertyMultipleAck>> {
+    private final List<BacnetReadPropertyMultiple> services;
 
-    public BacnetReadPropertyMultipleQuery(BacnetReadPropertyMultiple service) {
-        this.service = service;
+    public BacnetReadPropertyMultipleBatchQuery(List<BacnetReadPropertyMultiple> services) {
+        this.services = services;
     }
 
     @Override
     public HttpRequest httpRequest() {
         return HttpRequest.postMethod()
                 .hostEnvironmentKey(BacnetConstants.ENV_BACNET_SERVICE_HOST)
-                .pathSegments(BacnetConstants.BACNET, "service", "read-property-multiple")
-                .requestBody(service)
+                .pathSegments(BacnetConstants.BACNET, "service", "read-property-multiple", "batch")
+                .requestBody(services)
                 .build();
     }
 }

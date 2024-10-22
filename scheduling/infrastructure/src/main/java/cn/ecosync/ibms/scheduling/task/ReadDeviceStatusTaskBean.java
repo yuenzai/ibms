@@ -1,10 +1,11 @@
 package cn.ecosync.ibms.scheduling.task;
 
+import cn.ecosync.ibms.bacnet.BacnetMapper;
 import cn.ecosync.ibms.bacnet.model.BacnetDeviceExtra;
-import cn.ecosync.ibms.bacnet.query.GetBacnetDeviceStatusQuery;
+import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleQuery;
+import cn.ecosync.ibms.bacnet.service.BacnetReadPropertyMultiple;
 import cn.ecosync.ibms.device.event.DeviceStatusUpdatedEvent;
 import cn.ecosync.ibms.device.model.DeviceDto;
-import cn.ecosync.ibms.device.model.DeviceStatus;
 import cn.ecosync.ibms.device.query.GetDeviceQuery;
 import cn.ecosync.ibms.event.EventBus;
 import cn.ecosync.ibms.query.QueryBus;
@@ -70,9 +71,10 @@ public class ReadDeviceStatusTaskBean implements SchedulingTask<ReadDeviceStatus
                 return;
             }
             if (device.getDeviceExtra() instanceof BacnetDeviceExtra && CollectionUtils.notEmpty(device.getDevicePoints())) {
-                GetBacnetDeviceStatusQuery query = new GetBacnetDeviceStatusQuery(device);
-                DeviceStatus deviceStatus = queryBus.execute(query);
-                Optional.ofNullable(deviceStatus)
+                BacnetReadPropertyMultiple readPropertyMultipleService = BacnetMapper.toReadPropertyMultipleService(device);
+                BacnetReadPropertyMultipleQuery query = new BacnetReadPropertyMultipleQuery(readPropertyMultipleService);
+                Optional.ofNullable(queryBus.execute(query))
+                        .map(ack -> BacnetMapper.toDeviceStatus(device, ack))
                         .map(DeviceStatusUpdatedEvent::new)
                         .ifPresent(eventBus::publish);
             }
