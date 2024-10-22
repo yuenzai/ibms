@@ -1,4 +1,4 @@
-## 定时任务变更操作
+## 定时任务变更
 
 `POST` `/scheduling`
 
@@ -232,10 +232,6 @@ curl http://localhost/scheduling?page=1&pagesize=10&max-count=5
 > schedulingTrigger<br><br>
 > `object`<br><br>
 > 定时任务触发器
-
-> enabled<br><br>
-> `boolean`<br><br>
-> 是否启用
 
 > createdDate<br><br>
 > `integer`<br><br>
