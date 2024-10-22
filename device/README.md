@@ -23,13 +23,9 @@
 > Enum options:<br>
 > * **ADD_DEVICE** - [新增设备](#新增设备命令)<br>
 > * **UPDATE_DEVICE** - [修改设备（暂时和新增设备命令结构一致）](#新增设备命令)<br>
-> * **REMOVE_DEVICE** - 删除设备<br>
+> * **REMOVE_DEVICE** - [删除设备](#删除设备命令)<br>
 > * **PUT_DEVICE_POINT** - [保存设备点位](#保存设备点位命令)<br>
 > * **REMOVE_DEVICE_POINT** - [删除设备点位](#删除设备点位命令)<br>
-
-> deviceCode<br><br>
-> `string` `required`<br><br>
-> 设备编码，全局唯一
 
 #### Response body parameters
 
@@ -153,15 +149,17 @@ curl http://localhost/device
       "timestamp": 1729505828314
     }
   },
-  {
-    ...
-  }
+  ...
 ]
 ```
 
 ## 数据结构
 
 ### 新增设备命令
+
+> deviceCode<br><br>
+> `string` `required`<br><br>
+> 设备编码，全局唯一
 
 > deviceName<br><br>
 > `string`<br><br>
@@ -180,7 +178,17 @@ curl http://localhost/device
 > 设备的其他属性<br>
 > - [BACnet设备属性](#BACnet设备属性)
 
+### 删除设备命令
+
+> deviceCode<br><br>
+> `string` `required`<br><br>
+> 设备编码，全局唯一
+
 ### 保存设备点位命令
+
+> deviceCode<br><br>
+> `string` `required`<br><br>
+> 设备编码，全局唯一
 
 > devicePoints<br><br>
 > `array` `required`<br><br>
@@ -200,6 +208,10 @@ curl http://localhost/device
 > > - [BACnet点位属性](#BACnet点位属性)
 
 ### 删除设备点位命令
+
+> deviceCode<br><br>
+> `string` `required`<br><br>
+> 设备编码，全局唯一
 
 > pointCodes<br><br>
 > `array` `string`<br><br>

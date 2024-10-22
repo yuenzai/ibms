@@ -22,13 +22,9 @@
 > `string` `enum` `required`<br><br>
 > Enum options:<br>
 > * **ADD_SCHEDULING** - [新增定时任务](#新增定时任务命令)
-> * **REMOVE_SCHEDULING** - 删除定时任务
+> * **REMOVE_SCHEDULING** - [删除定时任务](#删除定时任务命令)
 > * **ENABLE_OR_DISABLE_SCHEDULING** - [启停定时任务](#启停定时任务命令)
-> * **RESET_SCHEDULING** - 当定时任务处于错误状态时，将状态重置
-
-> schedulingName<br><br>
-> `string` `required`<br><br>
-> 定时任务名称，全局唯一
+> * **RESET_SCHEDULING** - [重置定时任务状态](#重置定时任务状态命令)
 
 #### Response body parameters
 
@@ -124,6 +120,10 @@ curl http://localhost/scheduling
 
 ### 新增定时任务命令
 
+> schedulingName<br><br>
+> `string` `required`<br><br>
+> 定时任务名称，全局唯一
+
 > schedulingTrigger<br><br>
 > `object` `required`<br><br>
 > 定时任务触发器<br>
@@ -147,11 +147,27 @@ curl http://localhost/scheduling
 > > `string` `literal` `required`<br><br>
 > > ReadDeviceStatusBatch
 
+### 删除定时任务命令
+
+> schedulingName<br><br>
+> `string` `required`<br><br>
+> 定时任务名称，全局唯一
+
 ### 启停定时任务命令
+
+> schedulingName<br><br>
+> `string` `required`<br><br>
+> 定时任务名称，全局唯一
 
 > enabled<br><br>
 > `boolean` `required`<br><br>
 > 启动或停止定时任务
+
+### 重置定时任务状态命令
+
+> schedulingName<br><br>
+> `string` `required`<br><br>
+> 定时任务名称，全局唯一
 
 ### cron触发器
 
