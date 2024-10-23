@@ -42,7 +42,7 @@ Content-Type: application/json
   "schedulingName": "example_batch",
   "schedulingTrigger": {
     "type": "CRON",
-    "expression": "0/30 * * * * ?"
+    "expression": "0/15 * * * * ?"
   }
 }
 

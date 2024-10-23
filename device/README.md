@@ -67,12 +67,45 @@
 #### Request example
 
 ```shell
-curl http://localhost/device/B830
+curl http://localhost/device/B831
+curl http://localhost/device/B831?readonly=true
 ```
 
 #### Response example
 
-    None
+```json
+{
+  "deviceCode": "B831",
+  "deviceName": "B831",
+  "path": "/foo/bar",
+  "description": "测试设备1",
+  "enabled": true,
+  "deviceExtra": {
+    "type": "BACNET",
+    "deviceInstance": 7609
+  },
+  "devicePoints": [
+    {
+      "pointCode": "2",
+      "pointName": "2",
+      "pointExtra": {
+        "type": "BACNET",
+        "objectType": 2,
+        "objectInstance": 2,
+        "propertyIdentifier": 85,
+        "propertyArrayIndex": null
+      }
+    }
+  ],
+  "deviceStatus": {
+    "deviceCode": "B831",
+    "values": {
+      "2": 12.0
+    },
+    "timestamp": 1729672545123
+  }
+}
+```
 
 ## 查询设备
 
@@ -111,6 +144,7 @@ curl http://localhost/device/B830
 
 ```shell
 curl http://localhost/device
+curl http://localhost/device?readonly=true
 ```
 
 #### Response example
@@ -118,14 +152,14 @@ curl http://localhost/device
 ```json
 [
   {
-    "deviceCode": "B830",
-    "deviceName": "B830",
+    "deviceCode": "B831",
+    "deviceName": "B831",
     "path": "/foo/bar",
     "description": "测试设备1",
     "enabled": true,
     "deviceExtra": {
       "type": "BACNET",
-      "deviceInstance": 7602
+      "deviceInstance": 7609
     },
     "devicePoints": [
       {
@@ -141,15 +175,13 @@ curl http://localhost/device
       }
     ],
     "deviceStatus": {
-      "deviceCode": "B830",
+      "deviceCode": "B831",
       "values": {
-        "foo": "bar",
-        "baz": 1
+        "2": 12.0
       },
-      "timestamp": 1729505828314
+      "timestamp": 1729672650127
     }
-  },
-  ...
+  }
 ]
 ```
 

@@ -49,7 +49,7 @@
 #### Request example
 
 ```shell
-curl -X POST -H 'Content-Type: application/json' http://localhost/bacnet/service/who-is
+curl -X POST -H 'Content-Type: application/json' -d '{}' http://localhost/bacnet/service/who-is
 ```
 
 #### Response example
@@ -159,6 +159,13 @@ curl -X POST -H 'Content-Type: application/json' http://localhost/bacnet/service
 > > > propertyValues<br><br>
 > > > `array` `nullable`<br><br>
 > > > 属性值，不会和`error`属性同时存在
+> > > > valueType<br><br>
+> > > > `string`<br><br>
+> > > > 值类型
+> > >
+> > > > value<br><br>
+> > > > `any`<br><br>
+> > > > 值
 > >
 > > > error<br><br>
 > > > `object` `nullable`<br><br>
@@ -169,13 +176,52 @@ curl -X POST -H 'Content-Type: application/json' http://localhost/bacnet/service
 #### Request example
 
 ```shell
-curl -X POST -H 'Content-Type: application/json' -d '{}' http://localhost/bacnet/service/read-property-multiple
+curl -X POST -H 'Content-Type: application/json' \
+-d '
+{
+  "deviceInstance": 7602,
+  "objectProperties": [
+    {
+      "objectType": 2,
+      "objectInstance": 2,
+      "properties": [
+        {
+          "propertyIdentifier": 85,
+          "propertyArrayIndex": null
+        }
+      ]
+    }
+  ]
+}
+' \
+http://localhost/bacnet/service/read-property-multiple
 ```
 
 #### Response example
 
-```
-None
+```json
+{
+  "deviceInstance": 7602,
+  "values": [
+    {
+      "objectType": 2,
+      "objectInstance": 2,
+      "properties": [
+        {
+          "propertyIdentifier": 85,
+          "propertyArrayIndex": null,
+          "propertyValues": [
+            {
+              "value": 15.0,
+              "valueType": "4"
+            }
+          ],
+          "error": null
+        }
+      ]
+    }
+  ]
+}
 ```
 
 ## 发送 WriteProperty
@@ -246,7 +292,20 @@ None
 #### Request example
 
 ```shell
-curl -X POST -H 'Content-Type: application/json' -d '{}' http://localhost/bacnet/service/write-property
+curl -X POST -H 'Content-Type: application/json' \
+-d '
+{
+  "deviceInstance": 7602,
+  "objectType": 2,
+  "objectInstance": 2,
+  "propertyIdentifier": 85,
+  "propertyArrayIndex": null,
+  "priority": null,
+  "valueType": "4",
+  "value": 15.0
+}
+' \
+http://localhost/bacnet/service/write-property
 ```
 
 #### Response example

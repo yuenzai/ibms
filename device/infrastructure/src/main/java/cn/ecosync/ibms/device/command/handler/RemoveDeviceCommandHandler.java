@@ -22,6 +22,7 @@ public class RemoveDeviceCommandHandler implements CommandHandler<RemoveDeviceCo
     private final DeviceRepository deviceRepository;
     private final EventBus eventBus;
 
+    //todo hibernate 执行的 sql 过多需要优化
     @Override
     @Transactional
     public void handle(RemoveDeviceCommand command) {
