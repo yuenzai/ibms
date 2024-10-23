@@ -3,7 +3,7 @@ package cn.ecosync.ibms.bacnet.model;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "valueType", visible = true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "valueType", visible = true)
 @JsonSubTypes({
         @JsonSubTypes.Type(value = BacnetPropertyValue.NULL.class, name = "0"),
         @JsonSubTypes.Type(value = BacnetPropertyValue.BOOLEAN.class, name = "1"),
@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 public interface BacnetPropertyValue {
     Object getValue();
 
-    Integer getTag();
+    String getValueType();
 
     class NULL implements BacnetPropertyValue {
         private Void value;
@@ -27,8 +27,8 @@ public interface BacnetPropertyValue {
         }
 
         @Override
-        public Integer getTag() {
-            return 0;
+        public String getValueType() {
+            return "0";
         }
 
         @Override
@@ -46,8 +46,8 @@ public interface BacnetPropertyValue {
         }
 
         @Override
-        public Integer getTag() {
-            return 1;
+        public String getValueType() {
+            return "1";
         }
 
         @Override
@@ -65,8 +65,8 @@ public interface BacnetPropertyValue {
         }
 
         @Override
-        public Integer getTag() {
-            return 2;
+        public String getValueType() {
+            return "2";
         }
 
         @Override
@@ -84,8 +84,8 @@ public interface BacnetPropertyValue {
         }
 
         @Override
-        public Integer getTag() {
-            return 3;
+        public String getValueType() {
+            return "3";
         }
 
         @Override
@@ -103,8 +103,8 @@ public interface BacnetPropertyValue {
         }
 
         @Override
-        public Integer getTag() {
-            return 4;
+        public String getValueType() {
+            return "4";
         }
 
         @Override
@@ -122,8 +122,8 @@ public interface BacnetPropertyValue {
         }
 
         @Override
-        public Integer getTag() {
-            return 5;
+        public String getValueType() {
+            return "5";
         }
 
         @Override
@@ -141,8 +141,8 @@ public interface BacnetPropertyValue {
         }
 
         @Override
-        public Integer getTag() {
-            return 12;
+        public String getValueType() {
+            return "12";
         }
 
         @Override

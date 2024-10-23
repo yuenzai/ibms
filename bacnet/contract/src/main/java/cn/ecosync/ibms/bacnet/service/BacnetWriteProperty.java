@@ -39,7 +39,7 @@ public class BacnetWriteProperty {
                 .map(Object::toString)
                 .orElse("-1");
         commands.add(index);
-        commands.add(bacnetValue.getTag().toString());
+        commands.add(bacnetValue.getValueType());
         commands.add(bacnetValue.getValue().toString());
 
         return commands;
