@@ -7,6 +7,7 @@ import cn.ecosync.ibms.device.model.DevicePointDto;
 import cn.ecosync.ibms.device.model.DeviceStatus;
 import cn.ecosync.ibms.serde.JsonSerde;
 import cn.ecosync.ibms.serde.TypeReference;
+import cn.ecosync.ibms.util.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -46,7 +47,7 @@ public class DeviceReadonlyRepository {
 
     public Optional<DeviceDto> findByDeviceCode(String deviceCode) {
         String sqlStatement = SQL_SELECT + " WHERE device_code = ?";
-        DeviceDto deviceDto = jdbcTemplate.queryForObject(sqlStatement, rowMapper, deviceCode);
+        DeviceDto deviceDto = CollectionUtils.firstElement(jdbcTemplate.query(sqlStatement, rowMapper, deviceCode));
         return Optional.ofNullable(deviceDto);
     }
 
