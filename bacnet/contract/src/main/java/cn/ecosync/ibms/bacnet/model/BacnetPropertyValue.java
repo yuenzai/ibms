@@ -1,14 +1,7 @@
 package cn.ecosync.ibms.bacnet.model;
 
-import cn.ecosync.ibms.util.CollectionUtils;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.Getter;
-import lombok.ToString;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "valueType", visible = true)
 @JsonSubTypes({
@@ -21,122 +14,140 @@ import java.util.stream.Collectors;
         @JsonSubTypes.Type(value = BacnetPropertyValue.OBJECT_ID.class, name = "12"),
 })
 public interface BacnetPropertyValue {
-    Object toObject();
+    Object getValue();
 
-    @Getter
-    @ToString
+    Integer getTag();
+
     class NULL implements BacnetPropertyValue {
         private Void value;
 
         @Override
-        public Void toObject() {
+        public Void getValue() {
             return value;
+        }
+
+        @Override
+        public Integer getTag() {
+            return 0;
+        }
+
+        @Override
+        public String toString() {
+            return "0";
         }
     }
 
-    @Getter
-    @ToString
     class BOOLEAN implements BacnetPropertyValue {
         private Boolean value;
 
         @Override
-        public Boolean toObject() {
+        public Boolean getValue() {
             return value;
+        }
+
+        @Override
+        public Integer getTag() {
+            return 1;
+        }
+
+        @Override
+        public String toString() {
+            return value.toString();
         }
     }
 
-    @Getter
-    @ToString
     class UNSIGNED_INT implements BacnetPropertyValue {
         private Long value;
 
         @Override
-        public Long toObject() {
+        public Long getValue() {
             return value;
+        }
+
+        @Override
+        public Integer getTag() {
+            return 2;
+        }
+
+        @Override
+        public String toString() {
+            return value.toString();
         }
     }
 
-    @Getter
-    @ToString
     class SIGNED_INT implements BacnetPropertyValue {
         private Integer value;
 
         @Override
-        public Integer toObject() {
+        public Integer getValue() {
             return value;
+        }
+
+        @Override
+        public Integer getTag() {
+            return 3;
+        }
+
+        @Override
+        public String toString() {
+            return value.toString();
         }
     }
 
-    @Getter
-    @ToString
     class REAL implements BacnetPropertyValue {
         private Float value;
 
         @Override
-        public Float toObject() {
+        public Float getValue() {
             return value;
+        }
+
+        @Override
+        public Integer getTag() {
+            return 4;
+        }
+
+        @Override
+        public String toString() {
+            return value.toString();
         }
     }
 
-    @Getter
-    @ToString
     class DOUBLE implements BacnetPropertyValue {
         private Double value;
 
         @Override
-        public Double toObject() {
+        public Double getValue() {
             return value;
+        }
+
+        @Override
+        public Integer getTag() {
+            return 5;
+        }
+
+        @Override
+        public String toString() {
+            return value.toString();
         }
     }
 
-    @Getter
-    @ToString
     class OBJECT_ID implements BacnetPropertyValue {
         private BacnetObject value;
 
         @Override
-        public String toObject() {
-            return Optional.ofNullable(value)
-                    .map(BacnetObject::toString)
-                    .orElse(null);
-        }
-    }
-
-    @Getter
-    @ToString
-    class ERROR implements BacnetPropertyValue {
-        private BacnetError value;
-
-        protected ERROR() {
-        }
-
-        public ERROR(BacnetError value) {
-            this.value = value;
-        }
-
-        @Override
-        public BacnetError toObject() {
+        public BacnetObject getValue() {
             return value;
         }
-    }
 
-    @Getter
-    @ToString
-    class ARRAY implements BacnetPropertyValue {
-        private List<BacnetPropertyValue> value;
-
-        protected ARRAY() {
-        }
-
-        public ARRAY(List<BacnetPropertyValue> value) {
-            this.value = value;
+        @Override
+        public Integer getTag() {
+            return 12;
         }
 
         @Override
-        public List<Object> toObject() {
-            return CollectionUtils.nullSafeOf(value).stream()
-                    .map(BacnetPropertyValue::toObject)
-                    .collect(Collectors.toList());
+        public String toString() {
+            return value.toString();
         }
     }
 }

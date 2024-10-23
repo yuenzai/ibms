@@ -24,30 +24,28 @@ public class BacnetWriteProperty {
     private Integer priority;
     @NotNull
     @JsonUnwrapped
-    private BacnetPropertyValue value;
+    private BacnetPropertyValue bacnetValue;
 
     public List<String> toCommand() {
         List<String> commands = new ArrayList<>();
+
         commands.add("writeprop");
-        commands.add(String.valueOf(getDeviceInstance()));
-        commands.add(String.valueOf(objectProperty.getObjectType().getCode()));
+        commands.add(deviceInstance.toString());
+        commands.add(objectProperty.getObjectType().getCode().toString());
         commands.add(objectProperty.getObjectInstance().toString());
-
-        String prop = String.valueOf(objectProperty.getPropertyIdentifier().getCode());
-        commands.add(prop);
-
-        commands.add(String.valueOf(getPriority()));
-
+        commands.add(objectProperty.getPropertyIdentifier().getCode().toString());
+        commands.add(getPriority().toString());
         String index = Optional.ofNullable(objectProperty.getPropertyArrayIndex())
-                .map(String::valueOf)
+                .map(Object::toString)
                 .orElse("-1");
         commands.add(index);
+        commands.add(bacnetValue.getTag().toString());
+        commands.add(bacnetValue.getValue().toString());
 
-        //todo add tag and value to command
         return commands;
     }
 
     public Integer getPriority() {
-        return priority != null ? priority : 16;
+        return priority != null ? priority : 0;
     }
 }

@@ -7,10 +7,12 @@ import cn.ecosync.ibms.device.model.DevicePointDto;
 import cn.ecosync.ibms.device.model.DeviceStatus;
 import cn.ecosync.ibms.util.CollectionUtils;
 import org.springframework.util.Assert;
+import org.springframework.util.MultiValueMap;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class BacnetMapper {
@@ -24,13 +26,13 @@ public class BacnetMapper {
                 .map(in -> (BacnetDevicePointExtra) in.getPointExtra())
                 .collect(Collectors.toList());
         Assert.notEmpty(devicePoints, "devicePoints must not be empty");
-        Map<BacnetObject, List<BacnetProperty>> objectProperties = devicePoints.stream()
-                .collect(Collectors.groupingBy(BacnetDevicePointExtra::toBacnetObject, Collectors.mapping(BacnetDevicePointExtra::toBacnetProperty, Collectors.toList())));
+        Map<BacnetObject, Set<BacnetProperty>> objectProperties = devicePoints.stream()
+                .collect(Collectors.groupingBy(BacnetDevicePointExtra::toBacnetObject, Collectors.mapping(BacnetDevicePointExtra::toBacnetProperty, Collectors.toSet())));
         return new BacnetReadPropertyMultiple(deviceProperties.getDeviceInstance(), objectProperties);
     }
 
     public static DeviceStatus toDeviceStatus(DeviceDto deviceDto, ReadPropertyMultipleAck ack) {
-        Map<BacnetObjectProperty, BacnetPropertyValue> valueMap = ack.flatMap();
+        MultiValueMap<BacnetObjectProperty, BacnetPropertyValue> valueMap = ack.flatMap();
 
         List<DevicePointDto> devicePoints = deviceDto.getDevicePoints();
         Map<String, Object> deviceStatus = CollectionUtils.newHashMap(devicePoints.size());
@@ -40,8 +42,11 @@ public class BacnetMapper {
             }
             BacnetObjectProperty bop = ((BacnetDevicePointExtra) devicePoint.getPointExtra()).getBacnetObjectProperty();
             Object pointValue = Optional.ofNullable(valueMap.get(bop))
-                    .map(BacnetPropertyValue::toObject)
-                    .orElse(null);
+                    .map(in -> in.stream()
+                            .map(BacnetPropertyValue::getValue)
+                            .collect(Collectors.toList()))
+                    .map(CollectionUtils::oneOrMore)// on or more
+                    .orElse(null);// null represent the error
             deviceStatus.put(devicePoint.getPointCode(), pointValue);
         }
         return new DeviceStatus(deviceDto.getDeviceCode(), deviceStatus, System.currentTimeMillis());

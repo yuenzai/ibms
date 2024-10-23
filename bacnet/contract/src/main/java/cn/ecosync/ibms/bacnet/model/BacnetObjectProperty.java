@@ -20,6 +20,10 @@ public class BacnetObjectProperty {
     protected BacnetObjectProperty() {
     }
 
+    public BacnetObjectProperty(BacnetObjectType objectType, Integer objectInstance, BacnetProperty property) {
+        this(objectType, objectInstance, property.getPropertyIdentifier(), property.getPropertyArrayIndex().orElse(null));
+    }
+
     public BacnetObjectProperty(BacnetObjectType objectType, Integer objectInstance, BacnetPropertyId propertyIdentifier, Integer propertyArrayIndex) {
         this.objectType = objectType;
         this.objectInstance = objectInstance;

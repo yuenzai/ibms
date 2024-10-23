@@ -157,12 +157,12 @@ curl -X POST -H 'Content-Type: application/json' http://localhost/bacnet/service
 > > > 数组索引
 > >
 > > > propertyValues<br><br>
-> > > `array`<br><br>
-> > > 属性值
+> > > `array` `nullable`<br><br>
+> > > 属性值，不会和`error`属性同时存在
 > >
 > > > error<br><br>
 > > > `object` `nullable`<br><br>
-> > > 错误
+> > > 错误，不会和`propertyValues`属性同时存在
 
 ### Example
 
@@ -225,12 +225,17 @@ None
 > 优先级
 
 > valueType<br><br>
-> `integer` `required`<br><br>
+> `integer` `enum` `required`<br><br>
 > 要写入的值类型
+> - **1** - BOOLEAN
+> - **2** - UNSIGNED_INT
+> - **3** - SIGNED_INT
+> - **4** - REAL
+> - **5** - DOUBLE
 
 > value<br><br>
 > `any` `required`<br><br>
-> 要写入的值
+> 要写入的值，格式取决于`valueType`
 
 #### Response body parameters
 

@@ -559,9 +559,9 @@ public enum BacnetPropertyId {
     ;
 
     @JsonValue
-    private final int code;
+    private final Integer code;
 
-    BacnetPropertyId(int code) {
+    BacnetPropertyId(Integer code) {
         this.code = code;
     }
 }

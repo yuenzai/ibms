@@ -74,10 +74,10 @@ public enum BacnetObjectType {
     OBJECT_COLOR_TEMPERATURE(64, "COLOR_TEMPERATURE"), /* Addendum 135-2020ca */;
 
     @JsonValue
-    private final int code;
+    private final Integer code;
     private final String name;
 
-    BacnetObjectType(int code, String name) {
+    BacnetObjectType(Integer code, String name) {
         this.code = code;
         this.name = name;
     }

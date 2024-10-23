@@ -3,10 +3,7 @@ package cn.ecosync.ibms.util;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CollectionUtils extends org.springframework.util.CollectionUtils {
     public static <T> Collection<T> nullSafeOf(Collection<T> collection) {
@@ -15,6 +12,10 @@ public class CollectionUtils extends org.springframework.util.CollectionUtils {
 
     public static <T> List<T> nullSafeOf(List<T> list) {
         return isEmpty(list) ? Collections.emptyList() : list;
+    }
+
+    public static <T> Set<T> nullSafeOf(Set<T> set) {
+        return isEmpty(set) ? Collections.emptySet() : set;
     }
 
     public static <K, V> Map<K, V> nullSafeOf(@Nullable Map<K, V> map) {
@@ -27,6 +28,13 @@ public class CollectionUtils extends org.springframework.util.CollectionUtils {
 
     public static boolean notEmpty(@Nullable Map<?, ?> map) {
         return !isEmpty(map);
+    }
+
+    public static Object oneOrMore(List<?> list) {
+        if (isEmpty(list)) {
+            return null;
+        }
+        return list.size() > 1 ? list : firstElement(list);
     }
 
     public static Pageable of(Integer page, Integer pageSize) {

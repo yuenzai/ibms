@@ -49,8 +49,8 @@ public class BacnetRestController {
     public List<BacnetObject> getDeviceObjectIds(@PathVariable Integer deviceInstance) {
         BacnetObject deviceObject = new BacnetObject(BacnetObjectType.OBJECT_DEVICE, deviceInstance);
         BacnetProperty objectIdsProperty = new BacnetProperty(BacnetPropertyId.PROP_OBJECT_LIST, null);
-        BacnetObjectProperties objectProperties = new BacnetObjectProperties(deviceObject, Collections.singletonList(objectIdsProperty));
-        BacnetReadPropertyMultiple service = new BacnetReadPropertyMultiple(deviceInstance, Collections.singletonList(objectProperties));
+        BacnetObjectProperties objectProperties = new BacnetObjectProperties(deviceObject, Collections.singleton(objectIdsProperty));
+        BacnetReadPropertyMultiple service = new BacnetReadPropertyMultiple(deviceInstance, Collections.singleton(objectProperties));
         try {
             ReadPropertyMultipleAck.Property objectIdsPropertyValue = bacnetApplicationService.execute(service)
                     .map(in -> CollectionUtils.firstElement(in.getValues()))
