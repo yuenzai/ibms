@@ -1,6 +1,6 @@
-## 设备变更操作
+## 新增设备
 
-`POST` `/device`
+`POST` `/device/add`
 
 ### Parameters
 
@@ -18,20 +18,298 @@
 
 #### Request body parameters
 
-> commandType<br><br>
-> `string` `enum` `required`<br><br>
-> Enum options:<br>
-> * **ADD_DEVICE** - [新增设备](#新增设备命令)<br>
-> * **UPDATE_DEVICE** - [修改设备（暂时和新增设备命令结构一致）](#新增设备命令)<br>
-> * **REMOVE_DEVICE** - [删除设备](#删除设备命令)<br>
-> * **PUT_DEVICE_POINT** - [保存设备点位](#保存设备点位命令)<br>
-> * **REMOVE_DEVICE_POINT** - [删除设备点位](#删除设备点位命令)<br>
+> deviceCode<br><br>
+> `string` `required`<br><br>
+> 设备编码，全局唯一
+
+> deviceName<br><br>
+> `string`<br><br>
+> 设备名称
+
+> path<br><br>
+> `string`<br><br>
+> 目录路径
+
+> description<br><br>
+> `string`<br><br>
+> 描述
+
+> deviceExtra<br><br>
+> `object` `required`<br><br>
+> 设备的其他属性<br>
+> - [BACnet设备属性](#BACnet设备属性)
 
 #### Response body parameters
 
 > None
 
-#### [Request example](device-command.http)
+### Example
+
+#### Request example
+
+```shell
+curl -X POST -H 'Content-Type: application/json' \
+-d '
+{
+  "deviceCode": "B831",
+  "deviceName": "B831",
+  "deviceExtra": {
+    "type": "BACNET",
+    "deviceInstance": 7601
+  }
+}
+' \
+http://localhost/device/add
+```
+
+#### Response example
+
+    None
+
+## 修改设备
+
+`POST` `/device/update`
+
+### Parameters
+
+#### Headers
+
+> `Content-Type`: `application/json`
+
+#### Path parameters
+
+> None
+
+#### Query parameters
+
+> None
+
+#### Request body parameters
+
+> deviceCode<br><br>
+> `string` `required`<br><br>
+> 设备编码，全局唯一
+
+> deviceName<br><br>
+> `string`<br><br>
+> 设备名称
+
+> path<br><br>
+> `string`<br><br>
+> 目录路径
+
+> description<br><br>
+> `string`<br><br>
+> 描述
+
+> deviceExtra<br><br>
+> `object` `required`<br><br>
+> 设备的其他属性<br>
+> - [BACnet设备属性](#BACnet设备属性)
+
+#### Response body parameters
+
+> None
+
+### Example
+
+#### Request example
+
+```shell
+curl -X POST -H 'Content-Type: application/json' \
+-d '
+{
+  "deviceCode": "B831",
+  "deviceName": "B831",
+  "path": "/foo/bar",
+  "description": "测试设备1",
+  "deviceExtra": {
+    "type": "BACNET",
+    "deviceInstance": 7609
+  }
+}
+' \
+http://localhost/device/update
+```
+
+#### Response example
+
+    None
+
+## 删除设备
+
+`POST` `/device/remove`
+
+### Parameters
+
+#### Headers
+
+> `Content-Type`: `application/json`
+
+#### Path parameters
+
+> None
+
+#### Query parameters
+
+> None
+
+#### Request body parameters
+
+> deviceCode<br><br>
+> `string` `required`<br><br>
+> 设备编码，全局唯一
+
+#### Response body parameters
+
+> None
+
+### Example
+
+#### Request example
+
+```shell
+curl -X POST -H 'Content-Type: application/json' \
+-d '
+{
+  "deviceCode": "B831"
+}
+' \
+http://localhost/device/remove
+```
+
+#### Response example
+
+    None
+
+## 保存设备点位
+
+`POST` `/device/point/put`
+
+### Parameters
+
+#### Headers
+
+> `Content-Type`: `application/json`
+
+#### Path parameters
+
+> None
+
+#### Query parameters
+
+> None
+
+#### Request body parameters
+
+> deviceCode<br><br>
+> `string` `required`<br><br>
+> 设备编码，全局唯一
+
+> devicePoints<br><br>
+> `array` `required`<br><br>
+> 设备点位
+>
+> > devicePoints.pointCode<br><br>
+> > `string` `required`<br><br>
+> > 点位编码
+>
+> > devicePoints.pointName<br><br>
+> > `string`<br><br>
+> > 点位名称
+>
+> > devicePoints.pointExtra<br><br>
+> > `object` `required`<br><br>
+> > 点位的其他属性
+> > - [BACnet点位属性](#BACnet点位属性)
+
+#### Response body parameters
+
+> None
+
+### Example
+
+#### Request example
+
+```shell
+curl -X POST -H 'Content-Type: application/json' \
+-d '
+{
+  "deviceCode": "B831",
+  "devicePoints": [
+    {
+      "pointCode": "2",
+      "pointName": "2",
+      "pointExtra": {
+        "type": "BACNET",
+        "objectType": 2,
+        "objectInstance": 2,
+        "propertyIdentifier": 85
+      }
+    }
+  ]
+}
+' \
+http://localhost/device/point/put
+```
+
+#### Response example
+
+    None
+
+## 删除设备点位
+
+`POST` `/device/point/remove`
+
+### Parameters
+
+#### Headers
+
+> `Content-Type`: `application/json`
+
+#### Path parameters
+
+> None
+
+#### Query parameters
+
+> None
+
+#### Request body parameters
+
+> deviceCode<br><br>
+> `string` `required`<br><br>
+> 设备编码，全局唯一
+
+> pointCodes<br><br>
+> `array`<br><br>
+> 点位编码
+
+#### Response body parameters
+
+> None
+
+### Example
+
+#### Request example
+
+```shell
+curl -X POST -H 'Content-Type: application/json' \
+-d '
+{
+  "deviceCode": "B831",
+  "pointCodes": [
+    "1",
+    "2"
+  ]
+}
+' \
+http://localhost/device/point/remove
+```
+
+#### Response example
+
+    None
 
 ## 根据设备编码查询设备
 
@@ -186,68 +464,6 @@ curl http://localhost/device?readonly=true
 ```
 
 ## 数据结构
-
-### 新增设备命令
-
-> deviceCode<br><br>
-> `string` `required`<br><br>
-> 设备编码，全局唯一
-
-> deviceName<br><br>
-> `string`<br><br>
-> 设备名称
-
-> path<br><br>
-> `string`<br><br>
-> 目录路径
-
-> description<br><br>
-> `string`<br><br>
-> 描述
-
-> deviceExtra<br><br>
-> `object` `required`<br><br>
-> 设备的其他属性<br>
-> - [BACnet设备属性](#BACnet设备属性)
-
-### 删除设备命令
-
-> deviceCode<br><br>
-> `string` `required`<br><br>
-> 设备编码，全局唯一
-
-### 保存设备点位命令
-
-> deviceCode<br><br>
-> `string` `required`<br><br>
-> 设备编码，全局唯一
-
-> devicePoints<br><br>
-> `array` `required`<br><br>
-> 设备点位
->
-> > devicePoints.pointCode<br><br>
-> > `string` `required`<br><br>
-> > 点位编码
->
-> > devicePoints.pointName<br><br>
-> > `string`<br><br>
-> > 点位名称
->
-> > devicePoints.pointExtra<br><br>
-> > `object` `required`<br><br>
-> > 点位的其他属性
-> > - [BACnet点位属性](#BACnet点位属性)
-
-### 删除设备点位命令
-
-> deviceCode<br><br>
-> `string` `required`<br><br>
-> 设备编码，全局唯一
-
-> pointCodes<br><br>
-> `array` `string`<br><br>
-> 点位编码
 
 ### BACnet设备属性
 

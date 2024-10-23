@@ -1,8 +1,8 @@
 package cn.ecosync.ibms.scheduling.controller;
 
-import cn.ecosync.ibms.command.Command;
 import cn.ecosync.ibms.command.CommandBus;
 import cn.ecosync.ibms.query.QueryBus;
+import cn.ecosync.ibms.scheduling.command.*;
 import cn.ecosync.ibms.scheduling.dto.SchedulingDto;
 import cn.ecosync.ibms.scheduling.query.GetSchedulingTasksQuery;
 import cn.ecosync.ibms.scheduling.query.SearchSchedulingQuery;
@@ -19,8 +19,28 @@ public class SchedulingRestController {
     private final CommandBus commandBus;
     private final QueryBus queryBus;
 
-    @PostMapping
-    public void execute(@RequestBody @Validated Command command) {
+    @PostMapping("/add")
+    public void execute(@RequestBody @Validated AddSchedulingCommand command) {
+        commandBus.execute(command);
+    }
+
+    @PostMapping("/update")
+    public void execute(@RequestBody @Validated UpdateSchedulingCommand command) {
+        commandBus.execute(command);
+    }
+
+    @PostMapping("/remove")
+    public void execute(@RequestBody @Validated RemoveSchedulingCommand command) {
+        commandBus.execute(command);
+    }
+
+    @PostMapping("/switch")
+    public void execute(@RequestBody @Validated SwitchSchedulingCommand command) {
+        commandBus.execute(command);
+    }
+
+    @PostMapping("/reset")
+    public void execute(@RequestBody @Validated ResetSchedulingCommand command) {
         commandBus.execute(command);
     }
 

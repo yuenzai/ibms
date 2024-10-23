@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.device.controller;
 
-import cn.ecosync.ibms.command.Command;
 import cn.ecosync.ibms.command.CommandBus;
+import cn.ecosync.ibms.device.command.*;
 import cn.ecosync.ibms.device.model.DeviceDto;
 import cn.ecosync.ibms.device.query.GetDeviceQuery;
 import cn.ecosync.ibms.device.query.SearchDeviceListQuery;
@@ -20,8 +20,28 @@ public class DeviceRestController {
     private final CommandBus commandBus;
     private final QueryBus queryBus;
 
-    @PostMapping
-    public void execute(@RequestBody @Validated Command command) {
+    @PostMapping("/add")
+    public void execute(@RequestBody @Validated AddDeviceCommand command) {
+        commandBus.execute(command);
+    }
+
+    @PostMapping("/update")
+    public void execute(@RequestBody @Validated UpdateDeviceCommand command) {
+        commandBus.execute(command);
+    }
+
+    @PostMapping("/remove")
+    public void execute(@RequestBody @Validated RemoveDeviceCommand command) {
+        commandBus.execute(command);
+    }
+
+    @PostMapping("/point/put")
+    public void execute(@RequestBody @Validated PutDevicePointCommand command) {
+        commandBus.execute(command);
+    }
+
+    @PostMapping("/point/remove")
+    public void execute(@RequestBody @Validated RemoveDevicePointCommand command) {
         commandBus.execute(command);
     }
 

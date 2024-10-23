@@ -1,6 +1,8 @@
-## 定时任务变更
+## 新增定时任务
 
-`POST` `/scheduling`
+`POST` `/scheduling/add`
+
+新创建的定时任务默认不会开始执行，需要调用启停定时任务命令来控制
 
 ### Parameters
 
@@ -18,20 +20,288 @@
 
 #### Request body parameters
 
-> commandType<br><br>
-> `string` `enum` `required`<br><br>
-> Enum options:<br>
-> * **ADD_SCHEDULING** - [新增定时任务](#新增定时任务命令)，新创建的定时任务默认不会开始执行，需要调用启停定时任务命令来控制
-> * **UPDATE_SCHEDULING** - [更新定时任务](#更新定时任务命令)
-> * **REMOVE_SCHEDULING** - [删除定时任务](#删除定时任务命令)
-> * **SWITCH_SCHEDULING** - [启停定时任务](#启停定时任务命令)
-> * **RESET_SCHEDULING** - [重置定时任务状态](#重置定时任务状态命令)，用于将定时任务从错误状态中恢复
+> schedulingName<br><br>
+> `string` `required`<br><br>
+> 定时任务名称，全局唯一，不能修改
+
+> schedulingTrigger<br><br>
+> `object` `required`<br><br>
+> 定时任务触发器<br>
+> - [cron触发器](#cron触发器)
+
+> schedulingTaskParams<br><br>
+> `object` `required`<br><br>
+> 定时任务参数
+>
+> - 读取设备状态任务参数
+> > type<br><br>
+> > `string` `literal` `required`<br><br>
+> > ReadDeviceStatus
+>
+> > deviceCode<br><br>
+> > `string` `required`<br><br>
+> > 设备编码
+>
+> - 读取所有设备状态任务参数
+> > type<br><br>
+> > `string` `literal` `required`<br><br>
+> > ReadDeviceStatusBatch
+
+> description<br><br>
+> `string`<br><br>
+> 描述
 
 #### Response body parameters
 
 > None
 
-#### [Request example](scheduling-command.http)
+### Example
+
+#### Request example
+
+```shell
+curl -X POST -H 'Content-Type: application/json' \
+-d '
+{
+  "schedulingName": "example_batch",
+  "schedulingTrigger": {
+    "type": "CRON",
+    "expression": "0 0/1 * * * ?"
+  },
+  "schedulingTaskParams": {
+    "type": "ReadDeviceStatusBatch"
+  },
+  "description": "读取所有设备状态"
+}
+' \
+http://localhost/scheduling/add
+```
+
+#### Response example
+
+    None
+
+## 更新定时任务
+
+`POST` `/scheduling/update`
+
+### Parameters
+
+#### Headers
+
+> `Content-Type`: `application/json`
+
+#### Path parameters
+
+> None
+
+#### Query parameters
+
+> None
+
+#### Request body parameters
+
+> schedulingName<br><br>
+> `string` `required`<br><br>
+> 定时任务名称，全局唯一，不能修改
+
+> schedulingTrigger<br><br>
+> `object`<br><br>
+> 定时任务触发器<br>
+> - [cron触发器](#cron触发器)
+
+> schedulingTaskParams<br><br>
+> `object`<br><br>
+> 定时任务参数
+>
+> - 读取设备状态任务参数
+> > type<br><br>
+> > `string` `literal` `required`<br><br>
+> > ReadDeviceStatus
+>
+> > deviceCode<br><br>
+> > `string` `required`<br><br>
+> > 设备编码
+>
+> - 读取所有设备状态任务参数
+> > type<br><br>
+> > `string` `literal` `required`<br><br>
+> > ReadDeviceStatusBatch
+
+> description<br><br>
+> `string`<br><br>
+> 描述
+
+#### Response body parameters
+
+> None
+
+### Example
+
+#### Request example
+
+```shell
+curl -X POST -H 'Content-Type: application/json' \
+-d '
+{
+  "schedulingName": "example_batch",
+  "schedulingTrigger": {
+    "type": "CRON",
+    "expression": "0/15 * * * * ?"
+  }
+}
+' \
+http://localhost/scheduling/update
+```
+
+#### Response example
+
+    None
+
+## 删除定时任务
+
+`POST` `/scheduling/remove`
+
+### Parameters
+
+#### Headers
+
+> `Content-Type`: `application/json`
+
+#### Path parameters
+
+> None
+
+#### Query parameters
+
+> None
+
+#### Request body parameters
+
+> schedulingName<br><br>
+> `string` `required`<br><br>
+> 定时任务名称，全局唯一，不能修改
+
+#### Response body parameters
+
+> None
+
+### Example
+
+#### Request example
+
+```shell
+curl -X POST -H 'Content-Type: application/json' \
+-d '
+{
+  "schedulingName": "example_batch"
+}
+' \
+http://localhost/scheduling/remove
+```
+
+#### Response example
+
+    None
+
+## 启停定时任务
+
+`POST` `/scheduling/switch`
+
+### Parameters
+
+#### Headers
+
+> `Content-Type`: `application/json`
+
+#### Path parameters
+
+> None
+
+#### Query parameters
+
+> None
+
+#### Request body parameters
+
+> schedulingName<br><br>
+> `string` `required`<br><br>
+> 定时任务名称，全局唯一，不能修改
+
+> enabled<br><br>
+> `boolean` `required`<br><br>
+> 启动或停止定时任务
+
+#### Response body parameters
+
+> None
+
+### Example
+
+#### Request example
+
+```shell
+curl -X POST -H 'Content-Type: application/json' \
+-d '
+{
+  "schedulingName": "example_batch",
+  "enabled": true
+}
+' \
+http://localhost/scheduling/switch
+```
+
+#### Response example
+
+    None
+
+## 重置定时任务
+
+`POST` `/scheduling/reset`
+
+用于将定时任务从错误状态中恢复
+
+### Parameters
+
+#### Headers
+
+> `Content-Type`: `application/json`
+
+#### Path parameters
+
+> None
+
+#### Query parameters
+
+> None
+
+#### Request body parameters
+
+> schedulingName<br><br>
+> `string` `required`<br><br>
+> 定时任务名称，全局唯一，不能修改
+
+#### Response body parameters
+
+> None
+
+### Example
+
+#### Request example
+
+```shell
+curl -X POST -H 'Content-Type: application/json' \
+-d '
+{
+  "schedulingName": "example_batch"
+}
+' \
+http://localhost/scheduling/reset
+```
+
+#### Response example
+
+    None
 
 ## 查询定时任务类型
 
@@ -123,94 +393,6 @@ curl http://localhost/scheduling?page=1&pagesize=10&max-count=5
 > None
 
 ## 数据结构
-
-### 新增定时任务命令
-
-> schedulingName<br><br>
-> `string` `required`<br><br>
-> 定时任务名称，全局唯一，不能修改
-
-> schedulingTrigger<br><br>
-> `object` `required`<br><br>
-> 定时任务触发器<br>
-> - [cron触发器](#cron触发器)
-
-> schedulingTaskParams<br><br>
-> `object` `required`<br><br>
-> 定时任务参数
->
-> - 读取设备状态任务参数
-> > type<br><br>
-> > `string` `literal` `required`<br><br>
-> > ReadDeviceStatus
->
-> > deviceCode<br><br>
-> > `string` `required`<br><br>
-> > 设备编码
->
-> - 读取所有设备状态任务参数
-> > type<br><br>
-> > `string` `literal` `required`<br><br>
-> > ReadDeviceStatusBatch
-
-> description<br><br>
-> `string`<br><br>
-> 描述
-
-### 更新定时任务命令
-
-> schedulingName<br><br>
-> `string` `required`<br><br>
-> 定时任务名称，全局唯一，不能修改
-
-> schedulingTrigger<br><br>
-> `object`<br><br>
-> 定时任务触发器<br>
-> - [cron触发器](#cron触发器)
-
-> schedulingTaskParams<br><br>
-> `object`<br><br>
-> 定时任务参数
->
-> - 读取设备状态任务参数
-> > type<br><br>
-> > `string` `literal` `required`<br><br>
-> > ReadDeviceStatus
->
-> > deviceCode<br><br>
-> > `string` `required`<br><br>
-> > 设备编码
->
-> - 读取所有设备状态任务参数
-> > type<br><br>
-> > `string` `literal` `required`<br><br>
-> > ReadDeviceStatusBatch
-
-> description<br><br>
-> `string`<br><br>
-> 描述
-
-### 删除定时任务命令
-
-> schedulingName<br><br>
-> `string` `required`<br><br>
-> 定时任务名称，全局唯一，不能修改
-
-### 启停定时任务命令
-
-> schedulingName<br><br>
-> `string` `required`<br><br>
-> 定时任务名称，全局唯一，不能修改
-
-> enabled<br><br>
-> `boolean` `required`<br><br>
-> 启动或停止定时任务
-
-### 重置定时任务状态命令
-
-> schedulingName<br><br>
-> `string` `required`<br><br>
-> 定时任务名称，全局唯一，不能修改
 
 ### cron触发器
 
