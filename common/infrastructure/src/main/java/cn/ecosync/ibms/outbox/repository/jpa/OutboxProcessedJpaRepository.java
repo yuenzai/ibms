@@ -1,4 +1,4 @@
-package cn.ecosync.ibms.repository.jpa;
+package cn.ecosync.ibms.outbox.repository.jpa;
 
 import cn.ecosync.ibms.event.EventAcknowledgment;
 import cn.ecosync.ibms.outbox.model.OutboxProcessed;

@@ -71,3 +71,8 @@ spring:
 #  level:
 #    org.springframework.jdbc.core.JdbcTemplate: debug
 #    org.flywaydb: debug
+
+# outbox
+#---
+#outbox:
+#  enabled: true
