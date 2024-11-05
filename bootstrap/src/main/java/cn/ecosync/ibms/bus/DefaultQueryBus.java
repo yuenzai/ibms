@@ -1,5 +1,8 @@
-package cn.ecosync.ibms.query;
+package cn.ecosync.ibms.bus;
 
+import cn.ecosync.ibms.query.Query;
+import cn.ecosync.ibms.query.QueryBus;
+import cn.ecosync.ibms.query.QueryHandler;
 import cn.ecosync.ibms.util.CollectionUtils;
 import cn.ecosync.ibms.util.HttpRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +13,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.client.RestTemplate;
@@ -30,13 +32,12 @@ import java.util.stream.Collectors;
  * @since 2024
  */
 @Slf4j
-@Component
-public class QueryBusDefaultAdapter implements QueryBus {
+public class DefaultQueryBus implements QueryBus {
     private final Map<Class<?>, QueryHandler<?, ?>> queryHandlers;
     private final RestTemplate restTemplate;
     private final Environment environment;
 
-    public QueryBusDefaultAdapter(List<QueryHandler<?, ?>> queryHandlers, RestTemplateBuilder builder, Environment environment) {
+    public DefaultQueryBus(List<QueryHandler<?, ?>> queryHandlers, RestTemplateBuilder builder, Environment environment) {
         this.queryHandlers = queryHandlers.stream()
                 .map(in -> new AbstractMap.SimpleImmutableEntry<>(getQueryType(in), in))
                 .filter(in -> in.getKey() != null)

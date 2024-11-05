@@ -1,5 +1,7 @@
-package cn.ecosync.ibms.event;
+package cn.ecosync.ibms.bus;
 
+import cn.ecosync.ibms.event.AbstractEventBus;
+import cn.ecosync.ibms.event.Event;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -7,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2024
  */
 @Slf4j
-public class TransactionalEventBus extends AbstractEventBus {
+public class DefaultEventBus extends AbstractEventBus {
     @Override
     public void publish(Event event) {
         handle(event);

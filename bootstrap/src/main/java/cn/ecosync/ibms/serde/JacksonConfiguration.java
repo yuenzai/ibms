@@ -1,4 +1,4 @@
-package cn.ecosync.ibms.config;
+package cn.ecosync.ibms.serde;
 
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,10 +1,10 @@
 package cn.ecosync.ibms.device.event.handler;
 
-import cn.ecosync.ibms.JdbcService;
 import cn.ecosync.ibms.device.event.DeviceStatusUpdatedEvent;
 import cn.ecosync.ibms.device.model.DeviceDto;
 import cn.ecosync.ibms.event.AggregateRemovedEvent;
 import cn.ecosync.ibms.event.AggregateSavedEvent;
+import cn.ecosync.ibms.jpa.JpaService;
 import cn.ecosync.ibms.serde.JsonSerde;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ public class DeviceModelSynchronizer {
                     "device_points = new.device_points";
 
     private final JdbcTemplate jdbcTemplate;
-    private final JdbcService jdbcService;
+    private final JpaService jpaService;
     private final JsonSerde jsonSerde;
 
     @Transactional
@@ -44,7 +44,7 @@ public class DeviceModelSynchronizer {
         Assert.isInstanceOf(DeviceDto.class, event.aggregateRoot(), "");
         DeviceDto deviceDto = (DeviceDto) event.aggregateRoot();
         DataSource dataSource = jdbcTemplate.getDataSource();
-        String vendor = jdbcService.getDatabaseName(dataSource).orElse(null);
+        String vendor = jpaService.getDatabaseName(dataSource).orElse(null);
         if ("MySQL".equals(vendor)) {
             jdbcTemplate.update(STATEMENT_MYSQL, args(deviceDto));
         }

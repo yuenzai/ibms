@@ -86,10 +86,6 @@
             <id>dev</id>
             <dependencies>
                 <dependency>
-                    <groupId>cn.ecosync.ibms.common</groupId>
-                    <artifactId>ibms-common-infrastructure</artifactId>
-                </dependency>
-                <dependency>
                     <groupId>cn.ecosync.ibms.device</groupId>
                     <artifactId>ibms-device-infrastructure</artifactId>
                 </dependency>

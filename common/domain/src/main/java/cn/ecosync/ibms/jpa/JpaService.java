@@ -1,9 +1,9 @@
-package cn.ecosync.ibms;
+package cn.ecosync.ibms.jpa;
 
 import javax.sql.DataSource;
 import java.util.Optional;
 
-public interface JdbcService {
+public interface JpaService {
     /**
      * 返回 JDBC 供应商的名称：<br>
      * Microsoft SQL Server<br>

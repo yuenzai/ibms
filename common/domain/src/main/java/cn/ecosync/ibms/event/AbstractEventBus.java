@@ -3,6 +3,7 @@ package cn.ecosync.ibms.event;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.util.Assert;
 
 @Slf4j
 public abstract class AbstractEventBus implements EventBus, ApplicationEventPublisherAware {
@@ -10,10 +11,8 @@ public abstract class AbstractEventBus implements EventBus, ApplicationEventPubl
 
     @Override
     public void handle(Event event) {
-        if (applicationEventPublisher == null || event == null) {
-            log.error("No SpringEventPublisher or Event");
-            return;
-        }
+        Assert.notNull(applicationEventPublisher, "applicationEventPublisher is null");
+        Assert.notNull(event, "event must not be null");
         applicationEventPublisher.publishEvent(event);
     }
 

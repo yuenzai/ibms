@@ -1,9 +1,11 @@
-package cn.ecosync.ibms.command;
+package cn.ecosync.ibms.bus;
 
+import cn.ecosync.ibms.command.Command;
+import cn.ecosync.ibms.command.CommandBus;
+import cn.ecosync.ibms.command.CommandHandler;
 import cn.ecosync.ibms.util.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ResolvableType;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
@@ -18,11 +20,10 @@ import java.util.stream.Collectors;
  * @since 2024
  */
 @Slf4j
-@Component
-public class CommandBusDefaultAdapter implements CommandBus {
+public class DefaultCommandBus implements CommandBus {
     private final Map<Class<?>, CommandHandler<?>> commandHandlers;
 
-    public CommandBusDefaultAdapter(List<CommandHandler<?>> commandHandlers) {
+    public DefaultCommandBus(List<CommandHandler<?>> commandHandlers) {
         this.commandHandlers = commandHandlers.stream()
                 .map(in -> new AbstractMap.SimpleImmutableEntry<>(getCommandType(in), in))
                 .filter(in -> in.getKey() != null)
