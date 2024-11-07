@@ -13,8 +13,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>cn.ecosync.ibms.common</groupId>
-            <artifactId>ibms-common-domain</artifactId>
+            <groupId>cn.ecosync.ibms</groupId>
+            <artifactId>ibms-common</artifactId>
         </dependency>
     </dependencies>
 

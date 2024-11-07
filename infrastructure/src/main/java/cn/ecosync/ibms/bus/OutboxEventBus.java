@@ -1,4 +1,4 @@
-package cn.ecosync.ibms.outbox;
+package cn.ecosync.ibms.bus;
 
 import cn.ecosync.ibms.event.AbstractEventBus;
 import cn.ecosync.ibms.event.Event;

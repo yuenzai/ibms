@@ -21,6 +21,8 @@
         <module>common</module>
         <module>device</module>
         <module>scheduling</module>
+        <module>autoconfigure</module>
+        <module>infrastructure</module>
     </modules>
 
     <properties>
@@ -42,15 +44,19 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- common -->
             <dependency>
-                <groupId>cn.ecosync.ibms.common</groupId>
-                <artifactId>ibms-common-domain</artifactId>
+                <groupId>cn.ecosync.ibms</groupId>
+                <artifactId>ibms-infrastructure</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>cn.ecosync.ibms.common</groupId>
-                <artifactId>ibms-common-infrastructure</artifactId>
+                <groupId>cn.ecosync.ibms</groupId>
+                <artifactId>ibms-autoconfigure</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms</groupId>
+                <artifactId>ibms-common</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <!-- bacnet -->

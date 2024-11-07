@@ -16,7 +16,6 @@ spring:
     jdbc:
       initialize-schema: never
 
-# kafka
 #---
 #spring:
 #  kafka:
@@ -45,7 +44,6 @@ spring:
 #        default.dsl.store: rocksDB
 #      auto-startup: false
 
-# flyway
 ---
 spring:
   flyway:
@@ -72,7 +70,6 @@ spring:
 #    org.springframework.jdbc.core.JdbcTemplate: debug
 #    org.flywaydb: debug
 
-# outbox
-#---
-#outbox:
-#  enabled: true
+#ibms:
+#  outbox:
+#    enabled: true
