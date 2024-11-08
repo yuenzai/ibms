@@ -1,7 +1,5 @@
 FROM eclipse-temurin:8-jre-jammy
 
-RUN mkdir -p /opt/app/modules
+RUN mkdir -p /opt/app
 
 WORKDIR /opt/app
-
-ENV LOADER_PATH=modules

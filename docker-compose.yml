@@ -16,7 +16,6 @@ services:
     environment:
       - BACNET_SERVICE_HOST=host.docker.internal:47808
     volumes:
-      - ./target:/opt/app/modules
       - ./bootstrap/target/ibms-bootstrap-0.0.1-SNAPSHOT.jar:/opt/app/ibms-bootstrap-0.0.1-SNAPSHOT.jar
       - ./bootstrap/src/main/resources/application.yml:/opt/app/application.yml
     command: ["java", "-jar", "ibms-bootstrap-0.0.1-SNAPSHOT.jar"]
