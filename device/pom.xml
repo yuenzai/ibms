@@ -19,5 +19,6 @@
         <module>application</module>
         <module>infrastructure</module>
         <module>presentation</module>
+        <module>starter</module>
     </modules>
 </project>

@@ -96,6 +96,11 @@
                 <artifactId>ibms-device-presentation</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms.device</groupId>
+                <artifactId>ibms-device-spring-boot-starter</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
             <!-- scheduling -->
             <dependency>
                 <groupId>cn.ecosync.ibms.scheduling</groupId>
@@ -115,6 +120,11 @@
             <dependency>
                 <groupId>cn.ecosync.ibms.scheduling</groupId>
                 <artifactId>ibms-scheduling-presentation</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms.scheduling</groupId>
+                <artifactId>ibms-scheduling-spring-boot-starter</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
         </dependencies>

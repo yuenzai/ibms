@@ -9,27 +9,16 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ibms-device-domain</artifactId>
+    <artifactId>ibms-device-spring-boot-starter</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>cn.ecosync.ibms</groupId>
-            <artifactId>ibms-common</artifactId>
+            <groupId>cn.ecosync.ibms.device</groupId>
+            <artifactId>ibms-device-infrastructure</artifactId>
         </dependency>
-        <!-- for compile source file -->
         <dependency>
-            <groupId>com.querydsl</groupId>
-            <artifactId>querydsl-jpa</artifactId>
-            <scope>provided</scope>
+            <groupId>cn.ecosync.ibms.device</groupId>
+            <artifactId>ibms-device-presentation</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>com.mysema.maven</groupId>
-                <artifactId>apt-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 </project>

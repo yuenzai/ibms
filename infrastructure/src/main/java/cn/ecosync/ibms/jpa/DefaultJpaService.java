@@ -2,14 +2,12 @@ package cn.ecosync.ibms.jpa;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.support.JdbcUtils;
-import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.sql.DatabaseMetaData;
 import java.util.Optional;
 
 @Slf4j
-@Service
 public class DefaultJpaService implements JpaService {
     @Override
     public Optional<String> getDatabaseName(DataSource dataSource) {

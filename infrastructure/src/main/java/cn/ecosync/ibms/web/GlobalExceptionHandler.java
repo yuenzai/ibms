@@ -1,4 +1,4 @@
-package cn.ecosync.ibms;
+package cn.ecosync.ibms.web;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
