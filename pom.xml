@@ -23,6 +23,7 @@
         <module>scheduling</module>
         <module>autoconfigure</module>
         <module>infrastructure</module>
+        <module>starter</module>
     </modules>
 
     <properties>
@@ -57,6 +58,11 @@
             <dependency>
                 <groupId>cn.ecosync.ibms</groupId>
                 <artifactId>ibms-common</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms</groupId>
+                <artifactId>ibms-infrastructure-spring-boot-starter</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <!-- bacnet -->
