@@ -13,10 +13,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>cn.ecosync.ibms.bacnet</groupId>
-            <artifactId>ibms-bacnet-contract</artifactId>
-        </dependency>
-        <dependency>
             <groupId>cn.ecosync.ibms.scheduling</groupId>
             <artifactId>ibms-scheduling-application</artifactId>
         </dependency>

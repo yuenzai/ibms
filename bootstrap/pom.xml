@@ -14,10 +14,6 @@
     <dependencies>
         <dependency>
             <groupId>cn.ecosync.ibms</groupId>
-            <artifactId>ibms-autoconfigure</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.ecosync.ibms</groupId>
             <artifactId>ibms-infrastructure-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
@@ -27,6 +23,15 @@
         <dependency>
             <groupId>cn.ecosync.ibms.scheduling</groupId>
             <artifactId>ibms-scheduling-spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.ecosync.ibms</groupId>
+            <artifactId>ibms-orchestration</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.ecosync.ibms</groupId>
+            <artifactId>ibms-autoconfigure</artifactId>
         </dependency>
 
         <dependency>

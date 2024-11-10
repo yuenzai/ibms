@@ -1,2 +1,5 @@
 cn.ecosync.ibms.autoconfigure.IntelligentBuildingManagementSystemAutoConfiguration
 cn.ecosync.ibms.autoconfigure.KafkaStreamsAutoConfiguration
+cn.ecosync.ibms.autoconfigure.serde.JacksonAutoConfiguration
+cn.ecosync.ibms.autoconfigure.scheduling.ReadDeviceStatusAutoConfiguration
+cn.ecosync.ibms.autoconfigure.scheduling.ReadDeviceStatusBatchAutoConfiguration

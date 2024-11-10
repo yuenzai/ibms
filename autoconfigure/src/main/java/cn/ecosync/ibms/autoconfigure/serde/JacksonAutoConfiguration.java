@@ -1,27 +1,25 @@
-package cn.ecosync.ibms.device;
+package cn.ecosync.ibms.autoconfigure.serde;
 
 import cn.ecosync.ibms.bacnet.model.BacnetDeviceExtra;
 import cn.ecosync.ibms.bacnet.model.BacnetDevicePointExtra;
+import cn.ecosync.ibms.orchestration.ReadDeviceStatus;
+import cn.ecosync.ibms.orchestration.ReadDeviceStatusBatch;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
+@AutoConfiguration(before = org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class)
 @ConditionalOnClass(ObjectMapper.class)
-public class DeviceConfig {
+public class JacksonAutoConfiguration {
     @Bean
-    public Module deviceTypeModule() {
+    public Module jsonTypeModule() {
         SimpleModule simpleModule = new SimpleModule();
-//        simpleModule.registerSubtypes(new NamedType(AddDeviceCommand.class, "ADD_DEVICE"));
-//        simpleModule.registerSubtypes(new NamedType(UpdateDeviceCommand.class, "UPDATE_DEVICE"));
-//        simpleModule.registerSubtypes(new NamedType(RemoveDeviceCommand.class, "REMOVE_DEVICE"));
-//        simpleModule.registerSubtypes(new NamedType(PutDevicePointCommand.class, "PUT_DEVICE_POINT"));
-//        simpleModule.registerSubtypes(new NamedType(RemoveDevicePointCommand.class, "REMOVE_DEVICE_POINT"));
-
+        simpleModule.registerSubtypes(new NamedType(ReadDeviceStatusBatch.TaskParams.class, ReadDeviceStatusBatch.JOB_ID));
+        simpleModule.registerSubtypes(new NamedType(ReadDeviceStatus.TaskParams.class, ReadDeviceStatus.JOB_ID));
         simpleModule.registerSubtypes(new NamedType(BacnetDeviceExtra.class, "BACNET"));
         simpleModule.registerSubtypes(new NamedType(BacnetDevicePointExtra.class, "BACNET"));
         return simpleModule;

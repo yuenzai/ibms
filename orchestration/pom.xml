@@ -9,16 +9,17 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>cn.ecosync.ibms.scheduling</groupId>
-    <artifactId>ibms-scheduling-parent</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>ibms-orchestration</artifactId>
 
-    <modules>
-        <module>contract</module>
-        <module>domain</module>
-        <module>application</module>
-        <module>infrastructure</module>
-        <module>presentation</module>
-        <module>starter</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>cn.ecosync.ibms.bacnet</groupId>
+            <artifactId>ibms-bacnet-contract</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.ecosync.ibms.scheduling</groupId>
+            <artifactId>ibms-scheduling-contract</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>
