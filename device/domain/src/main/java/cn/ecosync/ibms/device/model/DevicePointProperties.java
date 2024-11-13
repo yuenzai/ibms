@@ -1,12 +1,10 @@
 package cn.ecosync.ibms.device.model;
 
-import cn.ecosync.ibms.device.jpa.DevicePointPropertiesJpaConverter;
 import cn.ecosync.ibms.util.StringUtils;
 import lombok.Getter;
 import org.springframework.util.Assert;
 
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Embeddable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -19,7 +17,6 @@ public class DevicePointProperties {
 
     @Valid
     @NotNull
-    @Convert(converter = DevicePointPropertiesJpaConverter.class)
     @Column(name = "point_extra", nullable = false)
     private DevicePointExtra pointExtra;
 

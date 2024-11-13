@@ -6,7 +6,7 @@ import cn.ecosync.ibms.serde.JsonSerde;
 
 import javax.persistence.Converter;
 
-@Converter
+@Converter(autoApply = true)
 public class DevicePointPropertiesJpaConverter extends PropertiesJpaConverter<DevicePointExtra> {
     public DevicePointPropertiesJpaConverter() {
     }
