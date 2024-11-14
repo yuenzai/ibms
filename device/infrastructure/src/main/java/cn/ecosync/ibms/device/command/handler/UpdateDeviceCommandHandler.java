@@ -4,8 +4,9 @@ import cn.ecosync.ibms.command.CommandHandler;
 import cn.ecosync.ibms.device.DeviceMapper;
 import cn.ecosync.ibms.device.command.UpdateDeviceCommand;
 import cn.ecosync.ibms.device.model.Device;
-import cn.ecosync.ibms.device.model.DeviceId;
 import cn.ecosync.ibms.device.model.DeviceDto;
+import cn.ecosync.ibms.device.model.DeviceId;
+import cn.ecosync.ibms.device.model.DeviceProperties;
 import cn.ecosync.ibms.device.repository.DeviceRepository;
 import cn.ecosync.ibms.event.AggregateSavedEvent;
 import cn.ecosync.ibms.event.EventBus;
@@ -23,11 +24,16 @@ public class UpdateDeviceCommandHandler implements CommandHandler<UpdateDeviceCo
     @Override
     @Transactional
     public void handle(UpdateDeviceCommand command) {
-        DeviceId deviceId = command.getDeviceId();
+        DeviceId deviceId = new DeviceId(command.getDeviceCode());
 
         Device device = deviceRepository.get(deviceId).orElse(null);
         Assert.notNull(device, "device does not exist: " + deviceId.getDeviceCode());
-        device.update(command.getDeviceProperties());
+
+        DeviceProperties deviceProperties = new DeviceProperties(
+                command.getDeviceName(), command.getPath(), command.getDescription(), command.getDeviceExtra()
+        );
+
+        device.update(deviceProperties);
 
         DeviceDto dto = DeviceMapper.map(device);
         AggregateSavedEvent event = new AggregateSavedEvent(dto);

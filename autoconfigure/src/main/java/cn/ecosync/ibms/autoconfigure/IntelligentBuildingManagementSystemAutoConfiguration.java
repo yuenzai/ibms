@@ -52,7 +52,7 @@ import static cn.ecosync.ibms.Constants.*;
 
 @AutoConfiguration
 @EnableJpaAuditing
-@EnableJpaRepositories("cn.ecosync.**.repository.jpa")
+@EnableJpaRepositories("cn.ecosync.**.repository")
 @EnableConfigurationProperties(IntelligentBuildingManagementSystemProperties.class)
 public class IntelligentBuildingManagementSystemAutoConfiguration {
     @Bean
@@ -92,25 +92,25 @@ public class IntelligentBuildingManagementSystemAutoConfiguration {
         return new JacksonSerde(objectMapper);
     }
 
-    @Bean
-    @ConditionalOnBean(JsonSerde.class)
-    public Module javaTimeModule() {
-        JavaTimeModule javaTimeModule = new JavaTimeModule();
-
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATETIME_FORMAT);
-        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(dateTimeFormatter));
-        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(dateTimeFormatter));
-
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
-        javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(dateFormatter));
-        javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(dateFormatter));
-
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
-        javaTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(timeFormatter));
-        javaTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormatter));
-
-        return javaTimeModule;
-    }
+//    @Bean
+//    @ConditionalOnBean(JsonSerde.class)
+//    public Module javaTimeModule() {
+//        JavaTimeModule javaTimeModule = new JavaTimeModule();
+//
+//        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DATETIME_FORMAT);
+//        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(dateTimeFormatter));
+//        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(dateTimeFormatter));
+//
+//        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+//        javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(dateFormatter));
+//        javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(dateFormatter));
+//
+//        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
+//        javaTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(timeFormatter));
+//        javaTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(timeFormatter));
+//
+//        return javaTimeModule;
+//    }
 
     @Bean
     public JpaService jpaService() {

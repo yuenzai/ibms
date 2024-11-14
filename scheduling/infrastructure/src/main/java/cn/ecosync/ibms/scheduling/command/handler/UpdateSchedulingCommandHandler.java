@@ -3,7 +3,7 @@ package cn.ecosync.ibms.scheduling.command.handler;
 import cn.ecosync.ibms.command.CommandHandler;
 import cn.ecosync.ibms.event.Event;
 import cn.ecosync.ibms.event.EventBus;
-import cn.ecosync.ibms.scheduling.SchedulingApplicationService;
+import cn.ecosync.ibms.scheduling.application.SchedulingApplicationService;
 import cn.ecosync.ibms.scheduling.command.UpdateSchedulingCommand;
 import cn.ecosync.ibms.scheduling.model.Scheduling;
 import cn.ecosync.ibms.scheduling.model.SchedulingId;
@@ -29,7 +29,7 @@ public class UpdateSchedulingCommandHandler implements CommandHandler<UpdateSche
             schedulingApplicationService.checkExists(command.getSchedulingTaskParams());
         }
 
-        SchedulingId schedulingId = command.toSchedulingId();
+        SchedulingId schedulingId = new SchedulingId(command.getSchedulingName());
         Scheduling scheduling = schedulingRepository.get(schedulingId).orElse(null);
         Assert.notNull(scheduling, "scheduling doesn't exist");
 

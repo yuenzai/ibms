@@ -3,8 +3,8 @@ package cn.ecosync.ibms.device.query.handler;
 import cn.ecosync.ibms.device.DeviceMapper;
 import cn.ecosync.ibms.device.model.DeviceDto;
 import cn.ecosync.ibms.device.query.SearchDeviceListQuery;
-import cn.ecosync.ibms.device.repository.jpa.DeviceJpaRepository;
-import cn.ecosync.ibms.device.repository.jpa.DeviceReadonlyRepository;
+import cn.ecosync.ibms.device.repository.DeviceReadonlyRepository;
+import cn.ecosync.ibms.device.repository.DeviceRepository;
 import cn.ecosync.ibms.query.QueryHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class SearchDeviceListQueryHandler implements QueryHandler<SearchDeviceListQuery, List<DeviceDto>> {
-    private final DeviceJpaRepository deviceRepository;
+    private final DeviceRepository deviceRepository;
     private final DeviceReadonlyRepository deviceReadonlyRepository;
 
     @Override

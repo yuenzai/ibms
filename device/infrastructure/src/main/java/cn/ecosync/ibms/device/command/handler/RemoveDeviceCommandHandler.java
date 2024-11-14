@@ -26,7 +26,7 @@ public class RemoveDeviceCommandHandler implements CommandHandler<RemoveDeviceCo
     @Override
     @Transactional
     public void handle(RemoveDeviceCommand command) {
-        DeviceId deviceId = command.getDeviceId();
+        DeviceId deviceId = new DeviceId(command.getDeviceCode());
 
         Device device = deviceRepository.get(deviceId).orElse(null);
         if (device != null) {

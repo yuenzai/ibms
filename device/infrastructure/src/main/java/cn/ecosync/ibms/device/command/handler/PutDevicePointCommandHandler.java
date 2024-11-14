@@ -23,7 +23,7 @@ public class PutDevicePointCommandHandler implements CommandHandler<PutDevicePoi
     @Override
     @Transactional
     public void handle(PutDevicePointCommand command) {
-        DeviceId deviceId = command.getDeviceId();
+        DeviceId deviceId = new DeviceId(command.getDeviceCode());
         Device device = deviceRepository.get(deviceId).orElse(null);
         Assert.notNull(device, "device not exist: " + deviceId.getDeviceCode());
 

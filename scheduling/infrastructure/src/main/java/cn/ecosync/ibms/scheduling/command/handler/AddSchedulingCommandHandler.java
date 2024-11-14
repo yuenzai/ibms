@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.scheduling.command.handler;
 
 import cn.ecosync.ibms.command.CommandHandler;
-import cn.ecosync.ibms.scheduling.SchedulingApplicationService;
+import cn.ecosync.ibms.scheduling.application.SchedulingApplicationService;
 import cn.ecosync.ibms.scheduling.command.AddSchedulingCommand;
 import cn.ecosync.ibms.scheduling.model.Scheduling;
 import cn.ecosync.ibms.scheduling.model.SchedulingId;
@@ -22,7 +22,7 @@ public class AddSchedulingCommandHandler implements CommandHandler<AddScheduling
     public void handle(AddSchedulingCommand command) {
         schedulingApplicationService.checkExists(command.getSchedulingTaskParams());
 
-        SchedulingId schedulingId = command.toSchedulingId();
+        SchedulingId schedulingId = new SchedulingId(command.getSchedulingName());
         Scheduling scheduling = schedulingRepository.get(schedulingId).orElse(null);
         Assert.isNull(scheduling, "schedulingName already exists");
 

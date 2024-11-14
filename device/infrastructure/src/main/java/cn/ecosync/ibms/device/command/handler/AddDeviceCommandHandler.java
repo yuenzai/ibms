@@ -4,9 +4,9 @@ import cn.ecosync.ibms.command.CommandHandler;
 import cn.ecosync.ibms.device.DeviceMapper;
 import cn.ecosync.ibms.device.command.AddDeviceCommand;
 import cn.ecosync.ibms.device.model.Device;
+import cn.ecosync.ibms.device.model.DeviceDto;
 import cn.ecosync.ibms.device.model.DeviceId;
 import cn.ecosync.ibms.device.model.DeviceProperties;
-import cn.ecosync.ibms.device.model.DeviceDto;
 import cn.ecosync.ibms.device.repository.DeviceRepository;
 import cn.ecosync.ibms.event.AggregateSavedEvent;
 import cn.ecosync.ibms.event.EventBus;
@@ -24,8 +24,10 @@ public class AddDeviceCommandHandler implements CommandHandler<AddDeviceCommand>
     @Override
     @Transactional
     public void handle(AddDeviceCommand command) {
-        DeviceId deviceId = command.getDeviceId();
-        DeviceProperties deviceProperties = command.getDeviceProperties();
+        DeviceId deviceId = new DeviceId(command.getDeviceCode());
+        DeviceProperties deviceProperties = new DeviceProperties(
+                command.getDeviceName(), command.getPath(), command.getDescription(), command.getDeviceExtra()
+        );
 
         Device device = deviceRepository.get(deviceId).orElse(null);
         Assert.isNull(device, "Device already exists: " + deviceId.getDeviceCode());

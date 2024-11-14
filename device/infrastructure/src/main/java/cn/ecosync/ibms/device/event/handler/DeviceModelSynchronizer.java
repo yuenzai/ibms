@@ -8,7 +8,6 @@ import cn.ecosync.ibms.jpa.JpaService;
 import cn.ecosync.ibms.serde.JsonSerde;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.event.EventListener;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -20,7 +19,6 @@ import javax.sql.DataSource;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@ConditionalOnClass(JdbcTemplate.class)
 public class DeviceModelSynchronizer {
     private static final String STATEMENT_MYSQL =
             "INSERT INTO device_readonly (device_code, device_name, path, description, enabled, device_extra, device_points) " +

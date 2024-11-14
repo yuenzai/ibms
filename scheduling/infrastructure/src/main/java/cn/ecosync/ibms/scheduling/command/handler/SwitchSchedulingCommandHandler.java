@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.scheduling.command.handler;
 
 import cn.ecosync.ibms.command.CommandHandler;
-import cn.ecosync.ibms.scheduling.SchedulingApplicationService;
+import cn.ecosync.ibms.scheduling.application.SchedulingApplicationService;
 import cn.ecosync.ibms.scheduling.command.SwitchSchedulingCommand;
 import cn.ecosync.ibms.scheduling.model.Scheduling;
 import cn.ecosync.ibms.scheduling.model.SchedulingId;
@@ -20,7 +20,7 @@ public class SwitchSchedulingCommandHandler implements CommandHandler<SwitchSche
     @Override
     @Transactional
     public void handle(SwitchSchedulingCommand command) {
-        SchedulingId schedulingId = command.toSchedulingId();
+        SchedulingId schedulingId = new SchedulingId(command.getSchedulingName());
         Scheduling scheduling = schedulingRepository.get(schedulingId).orElse(null);
         Assert.notNull(scheduling, "scheduling cannot be null");
         if (command.getEnabled()) {

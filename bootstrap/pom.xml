@@ -27,6 +27,14 @@
 
         <dependency>
             <groupId>cn.ecosync.ibms</groupId>
+            <artifactId>ibms-contract</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.ecosync.ibms</groupId>
+            <artifactId>ibms-presentation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.ecosync.ibms</groupId>
             <artifactId>ibms-orchestration</artifactId>
         </dependency>
         <dependency>

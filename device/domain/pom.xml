@@ -13,8 +13,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>cn.ecosync.ibms.device</groupId>
-            <artifactId>ibms-device-contract</artifactId>
+            <groupId>cn.ecosync.ibms</groupId>
+            <artifactId>ibms-contract</artifactId>
         </dependency>
         <!-- for compile source file -->
         <dependency>

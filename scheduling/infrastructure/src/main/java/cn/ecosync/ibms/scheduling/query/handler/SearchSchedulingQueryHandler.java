@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.scheduling.query.handler;
 
 import cn.ecosync.ibms.query.QueryHandler;
-import cn.ecosync.ibms.scheduling.SchedulingApplicationService;
+import cn.ecosync.ibms.scheduling.application.SchedulingApplicationService;
 import cn.ecosync.ibms.scheduling.dto.SchedulingDto;
 import cn.ecosync.ibms.scheduling.model.QScheduling;
 import cn.ecosync.ibms.scheduling.model.SchedulingId;
@@ -13,7 +13,6 @@ import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -26,7 +25,6 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-@ConditionalOnClass(JPAQueryFactory.class)
 public class SearchSchedulingQueryHandler implements QueryHandler<SearchSchedulingQuery, Iterable<SchedulingDto>> {
     private final JPAQueryFactory jpaQueryFactory;
     private final SchedulingApplicationService schedulingApplicationService;

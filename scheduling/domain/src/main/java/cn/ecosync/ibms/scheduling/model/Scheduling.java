@@ -3,13 +3,14 @@ package cn.ecosync.ibms.scheduling.model;
 import cn.ecosync.ibms.event.Event;
 import cn.ecosync.ibms.model.ConcurrencySafeEntity;
 import cn.ecosync.ibms.scheduling.event.SchedulingRescheduledEvent;
-import cn.ecosync.ibms.scheduling.jpa.SchedulingTaskParamsAttributeConverter;
-import cn.ecosync.ibms.scheduling.jpa.SchedulingTriggerAttributeConverter;
 import cn.ecosync.ibms.util.StringUtils;
 import lombok.Getter;
 import org.springframework.util.Assert;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -26,11 +27,9 @@ public class Scheduling extends ConcurrencySafeEntity {
     @Embedded
     private SchedulingId schedulingId;
 
-    @Convert(converter = SchedulingTriggerAttributeConverter.class)
     @Column(name = "scheduling_trigger", nullable = false)
     private SchedulingTrigger schedulingTrigger;
 
-    @Convert(converter = SchedulingTaskParamsAttributeConverter.class)
     @Column(name = "scheduling_task_params", nullable = false)
     private SchedulingTaskParams schedulingTaskParams;
 
@@ -63,6 +62,6 @@ public class Scheduling extends ConcurrencySafeEntity {
         if (schedulingTaskParams != null) {
             this.schedulingTaskParams = schedulingTaskParams;
         }
-        return Collections.singletonList(new SchedulingRescheduledEvent(this.schedulingId, this.schedulingTrigger, this.schedulingTaskParams));
+        return Collections.singletonList(new SchedulingRescheduledEvent(this.schedulingId.getSchedulingName(), this.schedulingTrigger, this.schedulingTaskParams));
     }
 }

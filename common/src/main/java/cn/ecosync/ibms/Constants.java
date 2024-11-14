@@ -8,10 +8,8 @@ public class Constants {
     public static final String TIME_FORMAT = "HH:mm:ss";
 
     public interface Create extends Default {
-
     }
 
     public interface Update extends Default {
-
     }
 }

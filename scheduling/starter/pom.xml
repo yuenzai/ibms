@@ -17,10 +17,6 @@
             <artifactId>ibms-scheduling-infrastructure</artifactId>
         </dependency>
         <dependency>
-            <groupId>cn.ecosync.ibms.scheduling</groupId>
-            <artifactId>ibms-scheduling-presentation</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-quartz</artifactId>
         </dependency>

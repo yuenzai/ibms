@@ -27,6 +27,8 @@
         <module>infrastructure</module>
 
         <module>starter</module>
+        <module>ibms-contract</module>
+        <module>ibms-presentation</module>
     </modules>
 
     <properties>
@@ -48,6 +50,16 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>cn.ecosync.ibms</groupId>
+                <artifactId>ibms-contract</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms</groupId>
+                <artifactId>ibms-presentation</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
             <dependency>
                 <groupId>cn.ecosync.ibms</groupId>
                 <artifactId>ibms-infrastructure</artifactId>
