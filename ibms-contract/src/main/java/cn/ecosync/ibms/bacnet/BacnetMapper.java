@@ -1,7 +1,6 @@
 package cn.ecosync.ibms.bacnet;
 
 import cn.ecosync.ibms.bacnet.model.*;
-import cn.ecosync.ibms.bacnet.service.BacnetReadPropertyMultiple;
 import cn.ecosync.ibms.device.model.DeviceDto;
 import cn.ecosync.ibms.device.model.DevicePointDto;
 import cn.ecosync.ibms.device.model.DeviceStatus;
@@ -16,7 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class BacnetMapper {
-    public static BacnetReadPropertyMultiple toReadPropertyMultipleService(DeviceDto device) {
+    public static BacnetReadPropertyMultipleService toReadPropertyMultipleService(DeviceDto device) {
         Assert.notNull(device, "deviceDto must not be null");
         // 设备配置属性
         BacnetDeviceExtra deviceProperties = (BacnetDeviceExtra) device.getDeviceExtra();
@@ -28,7 +27,7 @@ public class BacnetMapper {
         Assert.notEmpty(devicePoints, "devicePoints must not be empty");
         Map<BacnetObject, Set<BacnetProperty>> objectProperties = devicePoints.stream()
                 .collect(Collectors.groupingBy(BacnetDevicePointExtra::toBacnetObject, Collectors.mapping(BacnetDevicePointExtra::toBacnetProperty, Collectors.toSet())));
-        return new BacnetReadPropertyMultiple(deviceProperties.getDeviceInstance(), objectProperties);
+        return new BacnetReadPropertyMultipleService(deviceProperties.getDeviceInstance(), objectProperties);
     }
 
     public static DeviceStatus toDeviceStatus(DeviceDto deviceDto, ReadPropertyMultipleAck ack) {

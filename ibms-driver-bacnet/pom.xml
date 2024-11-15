@@ -9,18 +9,13 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ibms-contract</artifactId>
+    <groupId>cn.ecosync.ibms.driver</groupId>
+    <artifactId>ibms-driver-bacnet</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>cn.ecosync.ibms</groupId>
-            <artifactId>ibms-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>${swagger-api.version}</version>
-            <optional>true</optional>
+            <artifactId>ibms-contract</artifactId>
         </dependency>
     </dependencies>
 

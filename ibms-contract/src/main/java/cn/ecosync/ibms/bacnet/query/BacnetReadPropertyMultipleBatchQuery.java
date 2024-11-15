@@ -1,21 +1,30 @@
 package cn.ecosync.ibms.bacnet.query;
 
 import cn.ecosync.ibms.bacnet.BacnetConstants;
+import cn.ecosync.ibms.bacnet.model.BacnetReadPropertyMultipleService;
 import cn.ecosync.ibms.bacnet.model.ReadPropertyMultipleAck;
-import cn.ecosync.ibms.bacnet.service.BacnetReadPropertyMultiple;
 import cn.ecosync.ibms.query.Query;
 import cn.ecosync.ibms.util.HttpRequest;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Getter;
 import lombok.ToString;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Getter
 @ToString
 public class BacnetReadPropertyMultipleBatchQuery implements Query<List<ReadPropertyMultipleAck>> {
-    private final List<BacnetReadPropertyMultiple> services;
+    @Valid
+    @NotEmpty
+    @JsonUnwrapped
+    private List<BacnetReadPropertyMultipleService> services;
 
-    public BacnetReadPropertyMultipleBatchQuery(List<BacnetReadPropertyMultiple> services) {
+    protected BacnetReadPropertyMultipleBatchQuery() {
+    }
+
+    public BacnetReadPropertyMultipleBatchQuery(List<BacnetReadPropertyMultipleService> services) {
         this.services = services;
     }
 

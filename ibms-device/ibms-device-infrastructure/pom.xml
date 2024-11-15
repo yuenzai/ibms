@@ -4,23 +4,22 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>cn.ecosync.ibms</groupId>
-        <artifactId>ibms-parent</artifactId>
+        <groupId>cn.ecosync.ibms.device</groupId>
+        <artifactId>ibms-device-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ibms-contract</artifactId>
+    <artifactId>ibms-device-infrastructure</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>cn.ecosync.ibms</groupId>
-            <artifactId>ibms-common</artifactId>
+            <groupId>cn.ecosync.ibms.device</groupId>
+            <artifactId>ibms-device-domain</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>${swagger-api.version}</version>
-            <optional>true</optional>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

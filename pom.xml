@@ -16,19 +16,21 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>bacnet</module>
-        <module>bootstrap</module>
-        <module>common</module>
-        <module>device</module>
-        <module>scheduling</module>
+        <module>ibms-device</module>
+        <module>ibms-scheduling</module>
 
-        <module>autoconfigure</module>
-        <module>orchestration</module>
-        <module>infrastructure</module>
-
-        <module>starter</module>
+        <module>ibms-common</module>
         <module>ibms-contract</module>
-        <module>ibms-presentation</module>
+        <module>ibms-infrastructure</module>
+        <module>ibms-autoconfigure</module>
+        <module>ibms-orchestration</module>
+        <module>ibms-bootstrap</module>
+
+        <module>ibms-presentation-http</module>
+
+        <module>ibms-driver-bacnet</module>
+
+        <module>ibms-starters</module>
     </modules>
 
     <properties>
@@ -37,6 +39,8 @@
         <!-- 升级 Kafka Streams 版本，因为 RocksDB 不支持 Apple Silicon 芯片 -->
         <kafka.version>3.2.3</kafka.version>
         <spring-kafka.version>2.9.13</spring-kafka.version>
+        <springdoc.version>1.8.0</springdoc.version>
+        <swagger-api.version>2.2.20</swagger-api.version>
     </properties>
 
     <dependencies>
@@ -57,11 +61,6 @@
             </dependency>
             <dependency>
                 <groupId>cn.ecosync.ibms</groupId>
-                <artifactId>ibms-presentation</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms</groupId>
                 <artifactId>ibms-infrastructure</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
@@ -77,31 +76,22 @@
             </dependency>
             <dependency>
                 <groupId>cn.ecosync.ibms</groupId>
-                <artifactId>ibms-infrastructure-spring-boot-starter</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms</groupId>
                 <artifactId>ibms-orchestration</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
-            <!-- bacnet -->
+            <!-- presentation -->
             <dependency>
-                <groupId>cn.ecosync.ibms.bacnet</groupId>
-                <artifactId>ibms-bacnet-contract</artifactId>
+                <groupId>cn.ecosync.ibms.presentation</groupId>
+                <artifactId>ibms-presentation-http</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
+            <!-- driver -->
             <dependency>
-                <groupId>cn.ecosync.ibms.bacnet</groupId>
-                <artifactId>ibms-bacnet-application</artifactId>
+                <groupId>cn.ecosync.ibms.driver</groupId>
+                <artifactId>ibms-driver-bacnet</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <!-- device -->
-            <dependency>
-                <groupId>cn.ecosync.ibms.device</groupId>
-                <artifactId>ibms-device-contract</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
             <dependency>
                 <groupId>cn.ecosync.ibms.device</groupId>
                 <artifactId>ibms-device-domain</artifactId>
@@ -109,30 +99,10 @@
             </dependency>
             <dependency>
                 <groupId>cn.ecosync.ibms.device</groupId>
-                <artifactId>ibms-device-application</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms.device</groupId>
                 <artifactId>ibms-device-infrastructure</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms.device</groupId>
-                <artifactId>ibms-device-presentation</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms.device</groupId>
-                <artifactId>ibms-device-spring-boot-starter</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
             <!-- scheduling -->
-            <dependency>
-                <groupId>cn.ecosync.ibms.scheduling</groupId>
-                <artifactId>ibms-scheduling-contract</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
             <dependency>
                 <groupId>cn.ecosync.ibms.scheduling</groupId>
                 <artifactId>ibms-scheduling-domain</artifactId>
@@ -140,23 +110,35 @@
             </dependency>
             <dependency>
                 <groupId>cn.ecosync.ibms.scheduling</groupId>
-                <artifactId>ibms-scheduling-application</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms.scheduling</groupId>
                 <artifactId>ibms-scheduling-infrastructure</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
+            <!-- starters -->
             <dependency>
-                <groupId>cn.ecosync.ibms.scheduling</groupId>
-                <artifactId>ibms-scheduling-presentation</artifactId>
+                <groupId>cn.ecosync.ibms.starter</groupId>
+                <artifactId>ibms-bacnet-spring-boot-starter</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>cn.ecosync.ibms.scheduling</groupId>
+                <groupId>cn.ecosync.ibms.starter</groupId>
+                <artifactId>ibms-infrastructure-spring-boot-starter</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms.starter</groupId>
+                <artifactId>ibms-device-spring-boot-starter</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms.starter</groupId>
                 <artifactId>ibms-scheduling-spring-boot-starter</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-ui</artifactId>
+                <version>${springdoc.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

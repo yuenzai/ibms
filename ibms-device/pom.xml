@@ -9,19 +9,13 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ibms-contract</artifactId>
+    <groupId>cn.ecosync.ibms.device</groupId>
+    <artifactId>ibms-device-parent</artifactId>
+    <packaging>pom</packaging>
 
-    <dependencies>
-        <dependency>
-            <groupId>cn.ecosync.ibms</groupId>
-            <artifactId>ibms-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>${swagger-api.version}</version>
-            <optional>true</optional>
-        </dependency>
-    </dependencies>
+    <modules>
+        <module>ibms-device-domain</module>
+        <module>ibms-device-infrastructure</module>
+    </modules>
 
 </project>

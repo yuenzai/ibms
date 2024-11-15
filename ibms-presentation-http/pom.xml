@@ -9,18 +9,21 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ibms-contract</artifactId>
+    <groupId>cn.ecosync.ibms.presentation</groupId>
+    <artifactId>ibms-presentation-http</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>cn.ecosync.ibms</groupId>
-            <artifactId>ibms-common</artifactId>
+            <artifactId>ibms-contract</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>${swagger-api.version}</version>
-            <optional>true</optional>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
         </dependency>
     </dependencies>
 
