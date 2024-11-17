@@ -1,11 +1,11 @@
 FROM eclipse-temurin:8-jre-jammy
 
-COPY application/target/ibms-bacnet-application-0.0.1-SNAPSHOT.jar .
+COPY application/target/ibms-driver-bacnet-0.0.1-SNAPSHOT.jar .
 
 RUN mkdir -p /opt/app /opt/lib && \
     apt-get update && \
     apt-get install -y cmake git && \
-    mv ibms-bacnet-application-0.0.1-SNAPSHOT.jar /opt/app/
+    mv ibms-driver-bacnet-0.0.1-SNAPSHOT.jar /opt/app/
 
 WORKDIR /opt/lib
 
@@ -25,4 +25,4 @@ RUN git clone --branch 1.3.8 --single-branch https://github.com/yuenzai/bacnet-s
 
 WORKDIR /opt/app
 
-CMD ["java", "-jar", "ibms-bacnet-application-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "ibms-driver-bacnet-0.0.1-SNAPSHOT.jar"]

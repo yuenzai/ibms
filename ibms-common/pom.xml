@@ -36,13 +36,13 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
-            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
-        <!-- for compile source file -->
+        <!-- for compile generated source file -->
         <dependency>
             <groupId>com.querydsl</groupId>
-            <artifactId>querydsl-jpa</artifactId>
-            <scope>provided</scope>
+            <artifactId>querydsl-core</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
@@ -54,4 +54,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

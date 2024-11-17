@@ -16,20 +16,6 @@
             <groupId>cn.ecosync.ibms</groupId>
             <artifactId>ibms-contract</artifactId>
         </dependency>
-        <!-- for compile source file -->
-        <dependency>
-            <groupId>com.querydsl</groupId>
-            <artifactId>querydsl-jpa</artifactId>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>com.mysema.maven</groupId>
-                <artifactId>apt-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 </project>
