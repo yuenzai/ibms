@@ -15,18 +15,9 @@ import cn.ecosync.ibms.query.QueryHandler;
 import cn.ecosync.ibms.serde.JacksonSerde;
 import cn.ecosync.ibms.serde.JsonSerde;
 import cn.ecosync.ibms.web.LoggingRequestInterceptor;
-import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -42,13 +33,7 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
 import javax.persistence.EntityManager;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-
-import static cn.ecosync.ibms.Constants.*;
 
 @AutoConfiguration
 @EnableJpaAuditing
@@ -58,8 +43,8 @@ public class IntelligentBuildingManagementSystemAutoConfiguration {
     @Bean
     @ConditionalOnClass(OutboxJpaRepository.class)
     @ConditionalOnProperty(prefix = "ibms.outbox", name = "enabled")
-    public EventBus outboxEventBus(OutboxJpaRepository outboxJpaRepository) {
-        return new OutboxEventBus(outboxJpaRepository);
+    public EventBus outboxEventBus(OutboxJpaRepository outboxJpaRepository, JsonSerde jsonSerde) {
+        return new OutboxEventBus(outboxJpaRepository, jsonSerde);
     }
 
     @Bean
