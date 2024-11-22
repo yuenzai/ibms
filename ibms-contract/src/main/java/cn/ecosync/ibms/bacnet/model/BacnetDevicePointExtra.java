@@ -1,6 +1,6 @@
 package cn.ecosync.ibms.bacnet.model;
 
-import cn.ecosync.ibms.device.model.DevicePointExtra;
+import cn.ecosync.ibms.device.dto.DevicePointExtra;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Getter;
 import lombok.ToString;

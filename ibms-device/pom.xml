@@ -7,15 +7,20 @@
         <groupId>cn.ecosync.ibms</groupId>
         <artifactId>ibms-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../ibms-parent</relativePath>
     </parent>
 
-    <groupId>cn.ecosync.ibms.device</groupId>
-    <artifactId>ibms-device-parent</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>ibms-device</artifactId>
 
-    <modules>
-        <module>ibms-device-domain</module>
-        <module>ibms-device-infrastructure</module>
-    </modules>
-
+    <dependencies>
+        <dependency>
+            <groupId>cn.ecosync.ibms</groupId>
+            <artifactId>ibms-domain</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
 </project>

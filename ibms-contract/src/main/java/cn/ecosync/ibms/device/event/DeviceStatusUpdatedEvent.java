@@ -1,8 +1,8 @@
 package cn.ecosync.ibms.device.event;
 
 import cn.ecosync.ibms.device.DeviceConstant;
-import cn.ecosync.ibms.device.model.DeviceStatus;
-import cn.ecosync.ibms.event.AbstractEvent;
+import cn.ecosync.ibms.device.dto.DeviceStatus;
+import cn.ecosync.iframework.event.AbstractEvent;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Getter;
 import lombok.ToString;

@@ -1,13 +1,13 @@
 package cn.ecosync.ibms.device.controller;
 
-import cn.ecosync.ibms.command.CommandBus;
 import cn.ecosync.ibms.device.command.*;
-import cn.ecosync.ibms.device.model.DeviceDto;
+import cn.ecosync.ibms.device.dto.DeviceDto;
 import cn.ecosync.ibms.device.query.GetDeviceQuery;
 import cn.ecosync.ibms.device.query.SearchDeviceListQuery;
 import cn.ecosync.ibms.device.query.SearchDevicePageQuery;
-import cn.ecosync.ibms.query.QueryBus;
-import cn.ecosync.ibms.util.CollectionUtils;
+import cn.ecosync.iframework.command.CommandBus;
+import cn.ecosync.iframework.query.QueryBus;
+import cn.ecosync.iframework.util.CollectionUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;

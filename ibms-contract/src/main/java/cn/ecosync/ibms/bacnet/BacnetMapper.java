@@ -1,10 +1,10 @@
 package cn.ecosync.ibms.bacnet;
 
 import cn.ecosync.ibms.bacnet.model.*;
-import cn.ecosync.ibms.device.model.DeviceDto;
-import cn.ecosync.ibms.device.model.DevicePointDto;
-import cn.ecosync.ibms.device.model.DeviceStatus;
-import cn.ecosync.ibms.util.CollectionUtils;
+import cn.ecosync.ibms.device.dto.DeviceDto;
+import cn.ecosync.ibms.device.dto.DevicePointDto;
+import cn.ecosync.ibms.device.dto.DeviceStatus;
+import cn.ecosync.iframework.util.CollectionUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.MultiValueMap;
 

@@ -3,10 +3,10 @@ package cn.ecosync.ibms.bacnet.query.handler;
 import cn.ecosync.ibms.bacnet.model.BacnetReadPropertyMultipleService;
 import cn.ecosync.ibms.bacnet.model.ReadPropertyMultipleAck;
 import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleQuery;
-import cn.ecosync.ibms.query.QueryHandler;
-import cn.ecosync.ibms.serde.JsonSerde;
-import cn.ecosync.ibms.serde.TypeReference;
-import cn.ecosync.ibms.util.StringUtils;
+import cn.ecosync.iframework.query.QueryHandler;
+import cn.ecosync.iframework.serde.JsonSerde;
+import cn.ecosync.iframework.serde.TypeReference;
+import cn.ecosync.iframework.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -43,7 +43,7 @@ public class BacnetReadPropertyMultipleQueryHandler implements QueryHandler<Bacn
         if (StringUtils.hasText(stderr)) {
             throw new RuntimeException("ReadPropertyMultiple occurred error: " + stderr);
         }
-        return jsonSerde.readValue(stdout, new TypeReference<ReadPropertyMultipleAck>() {
-        }).orElse(null);
+        return jsonSerde.deserialize(stdout, new TypeReference<ReadPropertyMultipleAck>() {
+        });
     }
 }

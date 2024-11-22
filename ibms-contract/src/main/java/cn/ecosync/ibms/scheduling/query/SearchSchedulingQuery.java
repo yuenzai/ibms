@@ -1,8 +1,8 @@
 package cn.ecosync.ibms.scheduling.query;
 
-import cn.ecosync.ibms.query.Query;
 import cn.ecosync.ibms.scheduling.dto.SchedulingDto;
-import cn.ecosync.ibms.util.CollectionUtils;
+import cn.ecosync.iframework.query.Query;
+import cn.ecosync.iframework.util.CollectionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;

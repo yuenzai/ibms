@@ -1,9 +1,9 @@
 package cn.ecosync.ibms.scheduling.event;
 
-import cn.ecosync.ibms.event.AbstractEvent;
 import cn.ecosync.ibms.scheduling.SchedulingConstant;
-import cn.ecosync.ibms.scheduling.model.SchedulingTaskParams;
-import cn.ecosync.ibms.scheduling.model.SchedulingTrigger;
+import cn.ecosync.ibms.scheduling.dto.SchedulingTaskParams;
+import cn.ecosync.ibms.scheduling.dto.SchedulingTrigger;
+import cn.ecosync.iframework.event.AbstractEvent;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;

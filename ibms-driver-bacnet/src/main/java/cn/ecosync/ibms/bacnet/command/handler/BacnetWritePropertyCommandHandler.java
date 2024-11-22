@@ -2,8 +2,8 @@ package cn.ecosync.ibms.bacnet.command.handler;
 
 import cn.ecosync.ibms.bacnet.command.BacnetWritePropertyCommand;
 import cn.ecosync.ibms.bacnet.model.BacnetWritePropertyService;
-import cn.ecosync.ibms.command.CommandHandler;
-import cn.ecosync.ibms.util.StringUtils;
+import cn.ecosync.iframework.command.CommandHandler;
+import cn.ecosync.iframework.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;

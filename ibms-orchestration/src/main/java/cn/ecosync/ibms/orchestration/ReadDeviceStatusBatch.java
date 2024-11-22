@@ -6,17 +6,13 @@ import cn.ecosync.ibms.bacnet.model.BacnetReadPropertyMultipleService;
 import cn.ecosync.ibms.bacnet.model.ReadPropertyMultipleAck;
 import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleBatchQuery;
 import cn.ecosync.ibms.device.event.DeviceStatusUpdatedEvent;
-import cn.ecosync.ibms.device.model.DeviceDto;
-import cn.ecosync.ibms.device.model.DeviceStatus;
+import cn.ecosync.ibms.device.dto.DeviceDto;
+import cn.ecosync.ibms.device.dto.DeviceStatus;
 import cn.ecosync.ibms.device.query.SearchDeviceListQuery;
-import cn.ecosync.ibms.event.EventBus;
-import cn.ecosync.ibms.query.QueryBus;
-import cn.ecosync.ibms.scheduling.model.SchedulingTaskParams;
-import cn.ecosync.ibms.util.CollectionUtils;
-import lombok.Getter;
-import lombok.ToString;
+import cn.ecosync.iframework.event.EventBus;
+import cn.ecosync.iframework.query.QueryBus;
+import cn.ecosync.iframework.util.CollectionUtils;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -57,20 +53,6 @@ public class ReadDeviceStatusBatch {
             }
             DeviceStatus deviceStatus = BacnetMapper.toDeviceStatus(deviceDto, ack);
             eventBus.publish(new DeviceStatusUpdatedEvent(deviceStatus));
-        }
-    }
-
-    @Getter
-    @ToString
-    public static class TaskParams implements SchedulingTaskParams {
-        @Override
-        public String type() {
-            return JOB_ID;
-        }
-
-        @Override
-        public Map<String, Object> toParams() {
-            return Collections.emptyMap();
         }
     }
 }

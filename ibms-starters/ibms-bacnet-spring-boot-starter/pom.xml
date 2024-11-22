@@ -17,5 +17,4 @@
             <artifactId>ibms-driver-bacnet</artifactId>
         </dependency>
     </dependencies>
-
 </project>

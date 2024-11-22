@@ -1,6 +1,6 @@
 package cn.ecosync.ibms.bacnet.model;
 
-import cn.ecosync.ibms.device.model.DeviceExtra;
+import cn.ecosync.ibms.device.dto.DeviceExtra;
 import lombok.Getter;
 import lombok.ToString;
 

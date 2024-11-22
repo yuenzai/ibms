@@ -3,202 +3,29 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.18</version>
-        <relativePath/>
-    </parent>
 
     <groupId>cn.ecosync.ibms</groupId>
-    <artifactId>ibms-parent</artifactId>
+    <artifactId>ibms-build</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
+        <!-- common -->
+        <module>ibms-dependencies</module>
+        <module>ibms-parent</module>
+        <module>ibms-contract</module>
+        <module>ibms-domain</module>
+        <!-- infrastructure -->
+        <module>ibms-persistence-jpa</module>
+        <module>ibms-presentation-http</module>
+        <!-- functional -->
         <module>ibms-device</module>
         <module>ibms-scheduling</module>
-
-        <module>ibms-common</module>
-        <module>ibms-contract</module>
-        <module>ibms-infrastructure</module>
-        <module>ibms-autoconfigure</module>
-        <module>ibms-orchestration</module>
-        <module>ibms-bootstrap</module>
-
-        <module>ibms-presentation-http</module>
-
         <module>ibms-driver-bacnet</module>
-
+        <!-- other -->
+        <module>ibms-orchestration</module>
+        <module>ibms-autoconfigure</module>
+        <module>ibms-bootstrap</module>
         <module>ibms-starters</module>
     </modules>
-
-    <properties>
-        <basedir.ref>${project.basedir}</basedir.ref>
-        <java.version>8</java.version>
-        <!-- 升级 Kafka Streams 版本，因为 RocksDB 不支持 Apple Silicon 芯片 -->
-        <kafka.version>3.2.3</kafka.version>
-        <spring-kafka.version>2.9.13</spring-kafka.version>
-        <springdoc.version>1.8.0</springdoc.version>
-        <swagger-api.version>2.2.20</swagger-api.version>
-    </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-    </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>cn.ecosync.ibms</groupId>
-                <artifactId>ibms-contract</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms</groupId>
-                <artifactId>ibms-infrastructure</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms</groupId>
-                <artifactId>ibms-autoconfigure</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms</groupId>
-                <artifactId>ibms-common</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms</groupId>
-                <artifactId>ibms-orchestration</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <!-- presentation -->
-            <dependency>
-                <groupId>cn.ecosync.ibms.presentation</groupId>
-                <artifactId>ibms-presentation-http</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <!-- driver -->
-            <dependency>
-                <groupId>cn.ecosync.ibms.driver</groupId>
-                <artifactId>ibms-driver-bacnet</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <!-- device -->
-            <dependency>
-                <groupId>cn.ecosync.ibms.device</groupId>
-                <artifactId>ibms-device-domain</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms.device</groupId>
-                <artifactId>ibms-device-infrastructure</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <!-- scheduling -->
-            <dependency>
-                <groupId>cn.ecosync.ibms.scheduling</groupId>
-                <artifactId>ibms-scheduling-domain</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms.scheduling</groupId>
-                <artifactId>ibms-scheduling-infrastructure</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <!-- starters -->
-            <dependency>
-                <groupId>cn.ecosync.ibms.starter</groupId>
-                <artifactId>ibms-bacnet-spring-boot-starter</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms.starter</groupId>
-                <artifactId>ibms-infrastructure-spring-boot-starter</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms.starter</groupId>
-                <artifactId>ibms-device-spring-boot-starter</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms.starter</groupId>
-                <artifactId>ibms-scheduling-spring-boot-starter</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-ui</artifactId>
-                <version>${springdoc.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-annotations</artifactId>
-                <version>${swagger-api.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>copy</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>copy</goal>
-                            </goals>
-                            <configuration>
-                                <artifactItems>
-                                    <artifactItem>
-                                        <groupId>${project.groupId}</groupId>
-                                        <artifactId>${project.artifactId}</artifactId>
-                                        <version>${project.version}</version>
-                                        <type>jar</type>
-                                    </artifactItem>
-                                </artifactItems>
-                                <outputDirectory>${session.executionRootDirectory}/target</outputDirectory>
-                                <overWriteSnapshots>true</overWriteSnapshots>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>com.mysema.maven</groupId>
-                    <artifactId>apt-maven-plugin</artifactId>
-                    <version>1.1.3</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>process</goal>
-                            </goals>
-                            <configuration>
-                                <outputDirectory>target/generated-sources/java</outputDirectory>
-                                <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
-                            </configuration>
-                        </execution>
-                    </executions>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.querydsl</groupId>
-                            <artifactId>querydsl-apt</artifactId>
-                            <version>${querydsl.version}</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
 </project>

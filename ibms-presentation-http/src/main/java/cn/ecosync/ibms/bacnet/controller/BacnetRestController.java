@@ -8,9 +8,9 @@ import cn.ecosync.ibms.bacnet.model.BacnetReadPropertyMultipleService.BacnetObje
 import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleBatchQuery;
 import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleQuery;
 import cn.ecosync.ibms.bacnet.query.BacnetWhoIsQuery;
-import cn.ecosync.ibms.command.CommandBus;
-import cn.ecosync.ibms.query.QueryBus;
-import cn.ecosync.ibms.util.CollectionUtils;
+import cn.ecosync.iframework.command.CommandBus;
+import cn.ecosync.iframework.query.QueryBus;
+import cn.ecosync.iframework.util.CollectionUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

@@ -2,7 +2,7 @@ package cn.ecosync.ibms.bacnet.query;
 
 import cn.ecosync.ibms.bacnet.model.BacnetDeviceAddress;
 import cn.ecosync.ibms.bacnet.model.BacnetWhoIsService;
-import cn.ecosync.ibms.query.Query;
+import cn.ecosync.iframework.query.Query;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Getter;
 import lombok.ToString;

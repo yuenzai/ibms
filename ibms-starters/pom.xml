@@ -7,6 +7,7 @@
         <groupId>cn.ecosync.ibms</groupId>
         <artifactId>ibms-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../ibms-parent</relativePath>
     </parent>
 
     <groupId>cn.ecosync.ibms.starter</groupId>
@@ -14,10 +15,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>ibms-infrastructure-spring-boot-starter</module>
         <module>ibms-scheduling-spring-boot-starter</module>
         <module>ibms-device-spring-boot-starter</module>
         <module>ibms-bacnet-spring-boot-starter</module>
+        <module>ibms-persistence-jpa-spring-boot-starter</module>
+        <module>ibms-presentation-spring-boot-starter</module>
     </modules>
-
 </project>

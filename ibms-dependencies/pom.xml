@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>cn.ecosync.iframework</groupId>
+        <artifactId>iframework-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>cn.ecosync.ibms</groupId>
+    <artifactId>ibms-dependencies</artifactId>
+    <packaging>pom</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>cn.ecosync.ibms</groupId>
+                <artifactId>ibms-parent</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms</groupId>
+                <artifactId>ibms-contract</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms</groupId>
+                <artifactId>ibms-domain</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms</groupId>
+                <artifactId>ibms-autoconfigure</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms</groupId>
+                <artifactId>ibms-orchestration</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <!-- persistence -->
+            <dependency>
+                <groupId>cn.ecosync.ibms.persistence</groupId>
+                <artifactId>ibms-persistence-jpa</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <!-- presentation -->
+            <dependency>
+                <groupId>cn.ecosync.ibms.presentation</groupId>
+                <artifactId>ibms-presentation-http</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <!-- driver -->
+            <dependency>
+                <groupId>cn.ecosync.ibms.driver</groupId>
+                <artifactId>ibms-driver-bacnet</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms</groupId>
+                <artifactId>ibms-device</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms</groupId>
+                <artifactId>ibms-scheduling</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <!-- starters -->
+            <dependency>
+                <groupId>cn.ecosync.ibms.starter</groupId>
+                <artifactId>ibms-presentation-spring-boot-starter</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms.starter</groupId>
+                <artifactId>ibms-persistence-jpa-spring-boot-starter</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms.starter</groupId>
+                <artifactId>ibms-bacnet-spring-boot-starter</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms.starter</groupId>
+                <artifactId>ibms-device-spring-boot-starter</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.ecosync.ibms.starter</groupId>
+                <artifactId>ibms-scheduling-spring-boot-starter</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>

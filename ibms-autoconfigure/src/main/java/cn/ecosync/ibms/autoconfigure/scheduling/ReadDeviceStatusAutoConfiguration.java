@@ -1,8 +1,8 @@
 package cn.ecosync.ibms.autoconfigure.scheduling;
 
-import cn.ecosync.ibms.event.EventBus;
 import cn.ecosync.ibms.orchestration.ReadDeviceStatus;
-import cn.ecosync.ibms.query.QueryBus;
+import cn.ecosync.iframework.event.EventBus;
+import cn.ecosync.iframework.query.QueryBus;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.quartz.*;

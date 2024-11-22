@@ -8,6 +8,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     show-sql: true
+    open-in-view: false
   quartz:
     job-store-type: jdbc
     auto-startup: true
@@ -69,7 +70,3 @@ spring:
 #  level:
 #    org.springframework.jdbc.core.JdbcTemplate: debug
 #    org.flywaydb: debug
-
-#ibms:
-#  outbox:
-#    enabled: true

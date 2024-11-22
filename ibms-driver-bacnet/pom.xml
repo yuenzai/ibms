@@ -7,6 +7,7 @@
         <groupId>cn.ecosync.ibms</groupId>
         <artifactId>ibms-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../ibms-parent</relativePath>
     </parent>
 
     <groupId>cn.ecosync.ibms.driver</groupId>
@@ -18,5 +19,4 @@
             <artifactId>ibms-contract</artifactId>
         </dependency>
     </dependencies>
-
 </project>

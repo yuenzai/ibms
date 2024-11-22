@@ -1,8 +1,8 @@
 package cn.ecosync.ibms.scheduling.command;
 
-import cn.ecosync.ibms.command.Command;
-import cn.ecosync.ibms.scheduling.model.SchedulingTaskParams;
-import cn.ecosync.ibms.scheduling.model.SchedulingTrigger;
+import cn.ecosync.ibms.scheduling.dto.SchedulingTaskParams;
+import cn.ecosync.ibms.scheduling.dto.SchedulingTrigger;
+import cn.ecosync.iframework.command.Command;
 import lombok.Getter;
 import lombok.ToString;
 

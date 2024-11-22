@@ -1,6 +1,6 @@
 package cn.ecosync.ibms.bacnet.model;
 
-import cn.ecosync.ibms.util.CollectionUtils;
+import cn.ecosync.iframework.util.CollectionUtils;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.util.StringUtils;

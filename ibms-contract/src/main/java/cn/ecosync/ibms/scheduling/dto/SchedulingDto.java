@@ -1,9 +1,6 @@
 package cn.ecosync.ibms.scheduling.dto;
 
-import cn.ecosync.ibms.scheduling.model.SchedulingState;
-import cn.ecosync.ibms.scheduling.model.SchedulingTaskParams;
-import cn.ecosync.ibms.scheduling.model.SchedulingTrigger;
-import cn.ecosync.ibms.util.CollectionUtils;
+import cn.ecosync.iframework.util.CollectionUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -24,6 +21,18 @@ public class SchedulingDto {
     private SchedulingState schedulingState;
     private List<Long> nextFireTimes;
     private Long previousFireTime;
+
+    protected SchedulingDto() {
+    }
+
+    public SchedulingDto(String schedulingName, SchedulingTrigger schedulingTrigger, SchedulingTaskParams schedulingTaskParams, String description, Long createdDate, Long lastModifiedDate) {
+        this.schedulingName = schedulingName;
+        this.schedulingTrigger = schedulingTrigger;
+        this.schedulingTaskParams = schedulingTaskParams;
+        this.description = description;
+        this.createdDate = createdDate;
+        this.lastModifiedDate = lastModifiedDate;
+    }
 
     public SchedulingState getSchedulingState() {
         return schedulingState != null ? schedulingState : SchedulingState.NONE;

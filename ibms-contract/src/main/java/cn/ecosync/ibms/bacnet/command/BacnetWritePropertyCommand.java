@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.bacnet.command;
 
 import cn.ecosync.ibms.bacnet.model.BacnetWritePropertyService;
-import cn.ecosync.ibms.command.Command;
+import cn.ecosync.iframework.command.Command;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Getter;
 import lombok.ToString;

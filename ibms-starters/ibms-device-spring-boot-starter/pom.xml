@@ -13,9 +13,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>cn.ecosync.ibms.device</groupId>
-            <artifactId>ibms-device-infrastructure</artifactId>
+            <groupId>cn.ecosync.ibms</groupId>
+            <artifactId>ibms-device</artifactId>
         </dependency>
     </dependencies>
-
 </project>

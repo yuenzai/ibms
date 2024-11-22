@@ -1,6 +1,6 @@
 package cn.ecosync.ibms.scheduling.command;
 
-import cn.ecosync.ibms.command.Command;
+import cn.ecosync.iframework.command.Command;
 import lombok.Getter;
 import lombok.ToString;
 

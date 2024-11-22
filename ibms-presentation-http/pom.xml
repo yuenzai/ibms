@@ -7,6 +7,7 @@
         <groupId>cn.ecosync.ibms</groupId>
         <artifactId>ibms-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../ibms-parent</relativePath>
     </parent>
 
     <groupId>cn.ecosync.ibms.presentation</groupId>
@@ -27,5 +28,4 @@
             <optional>true</optional>
         </dependency>
     </dependencies>
-
 </project>
