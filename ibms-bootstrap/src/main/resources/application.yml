@@ -17,10 +17,15 @@ spring:
     jdbc:
       initialize-schema: never
 
-#---
-#spring:
-#  kafka:
-#    bootstrap-servers: kafka:9092
+---
+spring:
+  kafka:
+    bootstrap-servers: kafka:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      properties:
+        enable.idempotence: true
 #    consumer:
 #      group-id: ${spring.application.name}
 #      enable-auto-commit: false

@@ -24,7 +24,7 @@ import static org.apache.kafka.common.serialization.Serdes.String;
 @AutoConfiguration
 @EnableKafkaStreams
 @ConditionalOnClass(KafkaStreams.class)
-@ConditionalOnProperty(prefix = "spring.kafka", name = "bootstrap-servers")
+@ConditionalOnProperty(prefix = "spring.kafka.streams", name = "bootstrap-servers")
 public class KafkaStreamsAutoConfiguration {
     /**
      * 消费某个主题，构建 GlobalStateStore
