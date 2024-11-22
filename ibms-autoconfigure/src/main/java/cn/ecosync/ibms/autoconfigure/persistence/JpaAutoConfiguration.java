@@ -21,7 +21,7 @@ import javax.persistence.EntityManager;
 @EntityScan("cn.ecosync.ibms.domain")
 public class JpaAutoConfiguration {
     @Configuration(proxyBeanMethods = false)
-    @ConditionalOnClass(JPAQueryFactory.class)
+    @ConditionalOnClass({JpaRepository.class, JPAQueryFactory.class})
     public static class QueryDslJpaConfiguration {
         @Bean
         public JPAQueryFactory jpaQueryFactory(EntityManager entityManager) {

@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 @ConditionalOnClass(Device.class)
 public class DeviceAutoConfiguration {
     @Configuration(proxyBeanMethods = false)
-    @ConditionalOnClass(JdbcTemplate.class)
+    @ConditionalOnClass({Device.class, JdbcTemplate.class})
     public static class DeviceJdbcConfiguration {
         @Bean
         @ConditionalOnMissingBean

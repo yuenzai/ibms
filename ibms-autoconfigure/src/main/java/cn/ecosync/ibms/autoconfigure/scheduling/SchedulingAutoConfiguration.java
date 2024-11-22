@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 @ConditionalOnClass(Scheduling.class)
 public class SchedulingAutoConfiguration {
     @Configuration(proxyBeanMethods = false)
-    @ConditionalOnClass(JdbcTemplate.class)
+    @ConditionalOnClass({Scheduling.class, JdbcTemplate.class})
     public static class SchedulingJdbcConfiguration {
         @Bean
         @ConditionalOnMissingBean
