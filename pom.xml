@@ -14,10 +14,6 @@
         <module>ibms-dependencies</module>
         <module>ibms-parent</module>
         <module>ibms-contract</module>
-        <module>ibms-domain</module>
-        <!-- infrastructure -->
-        <module>ibms-persistence-jpa</module>
-        <module>ibms-presentation-http</module>
         <!-- functional -->
         <module>ibms-device</module>
         <module>ibms-scheduling</module>
@@ -26,6 +22,5 @@
         <module>ibms-orchestration</module>
         <module>ibms-autoconfigure</module>
         <module>ibms-bootstrap</module>
-        <module>ibms-starters</module>
     </modules>
 </project>

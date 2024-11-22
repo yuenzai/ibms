@@ -15,7 +15,19 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-quartz</artifactId>
         </dependency>
 
         <dependency>
@@ -23,24 +35,16 @@
             <artifactId>iframework-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
-            <groupId>cn.ecosync.ibms.starter</groupId>
-            <artifactId>ibms-presentation-spring-boot-starter</artifactId>
+            <groupId>cn.ecosync.ibms</groupId>
+            <artifactId>ibms-device</artifactId>
         </dependency>
         <dependency>
-            <groupId>cn.ecosync.ibms.starter</groupId>
-            <artifactId>ibms-persistence-jpa-spring-boot-starter</artifactId>
+            <groupId>cn.ecosync.ibms</groupId>
+            <artifactId>ibms-scheduling</artifactId>
         </dependency>
         <dependency>
-            <groupId>cn.ecosync.ibms.starter</groupId>
-            <artifactId>ibms-device-spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.ecosync.ibms.starter</groupId>
-            <artifactId>ibms-scheduling-spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.ecosync.ibms.starter</groupId>
-            <artifactId>ibms-bacnet-spring-boot-starter</artifactId>
+            <groupId>cn.ecosync.ibms.driver</groupId>
+            <artifactId>ibms-driver-bacnet</artifactId>
         </dependency>
 
         <dependency>

@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.autoconfigure.scheduling;
 
-import cn.ecosync.ibms.jdbc.SchedulingReadonlyJdbcRepository;
-import cn.ecosync.ibms.scheduling.application.SchedulingApplicationQuartzService;
+import cn.ecosync.ibms.domain.Scheduling;
+import cn.ecosync.ibms.repository.jdbc.SchedulingReadonlyJdbcRepository;
 import cn.ecosync.iframework.serde.JsonSerde;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -12,7 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 @AutoConfiguration
-@ConditionalOnClass(SchedulingApplicationQuartzService.class)
+@ConditionalOnClass(Scheduling.class)
 public class SchedulingAutoConfiguration {
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(JdbcTemplate.class)

@@ -36,35 +36,12 @@
             </dependency>
             <dependency>
                 <groupId>cn.ecosync.ibms</groupId>
-                <artifactId>ibms-domain</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms</groupId>
                 <artifactId>ibms-autoconfigure</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>cn.ecosync.ibms</groupId>
                 <artifactId>ibms-orchestration</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <!-- persistence -->
-            <dependency>
-                <groupId>cn.ecosync.ibms.persistence</groupId>
-                <artifactId>ibms-persistence-jpa</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <!-- presentation -->
-            <dependency>
-                <groupId>cn.ecosync.ibms.presentation</groupId>
-                <artifactId>ibms-presentation-http</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <!-- driver -->
-            <dependency>
-                <groupId>cn.ecosync.ibms.driver</groupId>
-                <artifactId>ibms-driver-bacnet</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
@@ -77,30 +54,9 @@
                 <artifactId>ibms-scheduling</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
-            <!-- starters -->
             <dependency>
-                <groupId>cn.ecosync.ibms.starter</groupId>
-                <artifactId>ibms-presentation-spring-boot-starter</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms.starter</groupId>
-                <artifactId>ibms-persistence-jpa-spring-boot-starter</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms.starter</groupId>
-                <artifactId>ibms-bacnet-spring-boot-starter</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms.starter</groupId>
-                <artifactId>ibms-device-spring-boot-starter</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms.starter</groupId>
-                <artifactId>ibms-scheduling-spring-boot-starter</artifactId>
+                <groupId>cn.ecosync.ibms.driver</groupId>
+                <artifactId>ibms-driver-bacnet</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
         </dependencies>
