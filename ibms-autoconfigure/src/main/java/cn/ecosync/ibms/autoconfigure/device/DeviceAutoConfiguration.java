@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.autoconfigure.device;
 
-import cn.ecosync.ibms.domain.Device;
-import cn.ecosync.ibms.repository.jdbc.DeviceReadonlyJdbcRepository;
+import cn.ecosync.ibms.device.domain.Device;
+import cn.ecosync.ibms.device.repository.DeviceReadonlyJdbcRepository;
 import cn.ecosync.iframework.serde.JsonSerde;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

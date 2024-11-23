@@ -17,8 +17,8 @@ import javax.persistence.EntityManager;
 @ConditionalOnClass(JpaRepository.class)
 @ConditionalOnProperty(prefix = "spring.data.jpa.repositories", name = "enabled", havingValue = "true", matchIfMissing = true)
 @EnableJpaAuditing
-@EnableJpaRepositories("cn.ecosync.ibms.repository.jpa")
-@EntityScan("cn.ecosync.ibms.domain")
+@EnableJpaRepositories("cn.ecosync.ibms.*.repository")
+@EntityScan("cn.ecosync.ibms.*.domain")
 public class JpaAutoConfiguration {
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass({JpaRepository.class, JPAQueryFactory.class})
