@@ -1,8 +1,8 @@
 package cn.ecosync.ibms.query.handler;
 
-import cn.ecosync.ibms.model.BacnetDeviceAddress;
-import cn.ecosync.ibms.model.BacnetWhoIsService;
-import cn.ecosync.ibms.query.BacnetWhoIsQuery;
+import cn.ecosync.ibms.bacnet.dto.BacnetDeviceAddress;
+import cn.ecosync.ibms.bacnet.dto.BacnetWhoIsService;
+import cn.ecosync.ibms.bacnet.query.BacnetWhoIsQuery;
 import cn.ecosync.iframework.query.QueryHandler;
 import cn.ecosync.iframework.util.StringUtils;
 import lombok.RequiredArgsConstructor;

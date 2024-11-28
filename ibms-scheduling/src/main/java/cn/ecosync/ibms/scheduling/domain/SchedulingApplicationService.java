@@ -1,8 +1,8 @@
 package cn.ecosync.ibms.scheduling.domain;
 
-import cn.ecosync.ibms.dto.SchedulingState;
-import cn.ecosync.ibms.dto.SchedulingTaskParams;
-import cn.ecosync.ibms.dto.SchedulingTrigger;
+import cn.ecosync.ibms.scheduling.dto.SchedulingState;
+import cn.ecosync.ibms.scheduling.dto.SchedulingTaskParams;
+import cn.ecosync.ibms.scheduling.dto.SchedulingTrigger;
 
 import java.util.Date;
 import java.util.List;

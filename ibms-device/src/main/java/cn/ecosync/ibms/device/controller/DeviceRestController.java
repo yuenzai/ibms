@@ -1,10 +1,10 @@
 package cn.ecosync.ibms.device.controller;
 
-import cn.ecosync.ibms.command.*;
-import cn.ecosync.ibms.dto.DeviceDto;
-import cn.ecosync.ibms.query.GetDeviceQuery;
-import cn.ecosync.ibms.query.SearchDeviceListQuery;
-import cn.ecosync.ibms.query.SearchDevicePageQuery;
+import cn.ecosync.ibms.device.command.*;
+import cn.ecosync.ibms.device.dto.DeviceDto;
+import cn.ecosync.ibms.device.query.GetDeviceQuery;
+import cn.ecosync.ibms.device.query.SearchDeviceListQuery;
+import cn.ecosync.ibms.device.query.SearchDevicePageQuery;
 import cn.ecosync.iframework.command.CommandBus;
 import cn.ecosync.iframework.query.QueryBus;
 import cn.ecosync.iframework.util.CollectionUtils;

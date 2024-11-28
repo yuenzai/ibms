@@ -1,6 +1,6 @@
 package cn.ecosync.ibms.device.domain;
 
-import cn.ecosync.ibms.dto.DeviceExtra;
+import cn.ecosync.ibms.device.dto.DeviceExtra;
 import cn.ecosync.iframework.util.StringUtils;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

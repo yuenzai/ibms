@@ -1,8 +1,8 @@
 package cn.ecosync.ibms.device;
 
 import cn.ecosync.ibms.device.domain.Device;
-import cn.ecosync.ibms.dto.DeviceDto;
-import cn.ecosync.ibms.dto.DevicePointDto;
+import cn.ecosync.ibms.device.dto.DeviceDto;
+import cn.ecosync.ibms.device.dto.DevicePointDto;
 
 import java.util.Collections;
 import java.util.List;

@@ -7,6 +7,9 @@ public class Constants {
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String TIME_FORMAT = "HH:mm:ss";
 
+    public static final String AGGREGATE_TYPE_DEVICE = "device";
+    public static final String AGGREGATE_TYPE_SCHEDULING = "scheduling";
+
     public interface Create extends Default {
     }
 

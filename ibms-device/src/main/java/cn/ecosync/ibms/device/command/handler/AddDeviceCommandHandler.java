@@ -1,12 +1,12 @@
 package cn.ecosync.ibms.device.command.handler;
 
-import cn.ecosync.ibms.command.AddDeviceCommand;
 import cn.ecosync.ibms.device.DeviceMapper;
+import cn.ecosync.ibms.device.command.AddDeviceCommand;
 import cn.ecosync.ibms.device.domain.Device;
 import cn.ecosync.ibms.device.domain.DeviceId;
 import cn.ecosync.ibms.device.domain.DeviceProperties;
 import cn.ecosync.ibms.device.domain.DeviceRepository;
-import cn.ecosync.ibms.dto.DeviceDto;
+import cn.ecosync.ibms.device.dto.DeviceDto;
 import cn.ecosync.iframework.command.CommandHandler;
 import cn.ecosync.iframework.event.AggregateSavedEvent;
 import cn.ecosync.iframework.event.EventBus;

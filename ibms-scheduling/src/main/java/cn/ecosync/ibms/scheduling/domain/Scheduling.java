@@ -1,8 +1,8 @@
 package cn.ecosync.ibms.scheduling.domain;
 
-import cn.ecosync.ibms.dto.SchedulingTaskParams;
-import cn.ecosync.ibms.dto.SchedulingTrigger;
-import cn.ecosync.ibms.event.SchedulingRescheduledEvent;
+import cn.ecosync.ibms.scheduling.dto.SchedulingTaskParams;
+import cn.ecosync.ibms.scheduling.dto.SchedulingTrigger;
+import cn.ecosync.ibms.scheduling.event.SchedulingRescheduledEvent;
 import cn.ecosync.iframework.domain.ConcurrencySafeEntity;
 import cn.ecosync.iframework.event.Event;
 import cn.ecosync.iframework.util.StringUtils;

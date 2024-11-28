@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.device.command.handler;
 
-import cn.ecosync.ibms.DeviceConstant;
-import cn.ecosync.ibms.command.RemoveDeviceCommand;
+import cn.ecosync.ibms.Constants;
+import cn.ecosync.ibms.device.command.RemoveDeviceCommand;
 import cn.ecosync.ibms.device.domain.*;
 import cn.ecosync.iframework.command.CommandHandler;
 import cn.ecosync.iframework.event.AggregateRemovedEvent;
@@ -34,7 +34,7 @@ public class RemoveDeviceCommandHandler implements CommandHandler<RemoveDeviceCo
             devicePoints.clear();
             deviceRepository.remove(device);
 
-            eventBus.publish(new AggregateRemovedEvent(DeviceConstant.AGGREGATE_TYPE, deviceId.getDeviceCode()));
+            eventBus.publish(new AggregateRemovedEvent(Constants.AGGREGATE_TYPE_DEVICE, deviceId.getDeviceCode()));
         }
     }
 }

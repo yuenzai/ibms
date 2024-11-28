@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.scheduling.query.handler;
 
-import cn.ecosync.ibms.query.GetSchedulingTasksQuery;
 import cn.ecosync.ibms.scheduling.domain.SchedulingApplicationService;
+import cn.ecosync.ibms.scheduling.query.GetSchedulingTasksQuery;
 import cn.ecosync.iframework.query.QueryHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

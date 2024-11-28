@@ -1,8 +1,8 @@
 package cn.ecosync.ibms.query.handler;
 
-import cn.ecosync.ibms.model.BacnetReadPropertyMultipleService;
-import cn.ecosync.ibms.model.ReadPropertyMultipleAck;
-import cn.ecosync.ibms.query.BacnetReadPropertyMultipleBatchQuery;
+import cn.ecosync.ibms.bacnet.dto.BacnetReadPropertyMultipleService;
+import cn.ecosync.ibms.bacnet.dto.ReadPropertyMultipleAck;
+import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleBatchQuery;
 import cn.ecosync.iframework.query.QueryHandler;
 import cn.ecosync.iframework.serde.JsonSerde;
 import cn.ecosync.iframework.serde.TypeReference;

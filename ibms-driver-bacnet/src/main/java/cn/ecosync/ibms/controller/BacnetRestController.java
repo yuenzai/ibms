@@ -1,13 +1,11 @@
 package cn.ecosync.ibms.controller;
 
-import cn.ecosync.ibms.BacnetConstants;
-import cn.ecosync.ibms.command.BacnetWritePropertyCommand;
-import cn.ecosync.ibms.exception.BacnetErrorException;
-import cn.ecosync.ibms.model.*;
-import cn.ecosync.ibms.model.BacnetReadPropertyMultipleService.BacnetObjectProperties;
-import cn.ecosync.ibms.query.BacnetReadPropertyMultipleBatchQuery;
-import cn.ecosync.ibms.query.BacnetReadPropertyMultipleQuery;
-import cn.ecosync.ibms.query.BacnetWhoIsQuery;
+import cn.ecosync.ibms.bacnet.command.BacnetWritePropertyCommand;
+import cn.ecosync.ibms.bacnet.dto.*;
+import cn.ecosync.ibms.bacnet.dto.BacnetReadPropertyMultipleService.BacnetObjectProperties;
+import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleBatchQuery;
+import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleQuery;
+import cn.ecosync.ibms.bacnet.query.BacnetWhoIsQuery;
 import cn.ecosync.iframework.command.CommandBus;
 import cn.ecosync.iframework.query.QueryBus;
 import cn.ecosync.iframework.util.CollectionUtils;
@@ -26,7 +24,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/" + BacnetConstants.BACNET)
+@RequestMapping("/bacnet")
 @Tag(name = "bacnet", description = "BACnet API")
 public class BacnetRestController {
     private final CommandBus commandBus;
@@ -70,7 +68,7 @@ public class BacnetRestController {
             }
             BacnetError bacnetError = objectIdsPropertyValue.getError().orElse(null);
             if (bacnetError != null) {
-                throw new BacnetErrorException(bacnetError);
+                throw new RuntimeException(bacnetError.toString());
             }
             return objectIdsPropertyValue.getPropertyValues().stream()
                     .filter(in -> in instanceof BacnetPropertyValue.OBJECT_ID)

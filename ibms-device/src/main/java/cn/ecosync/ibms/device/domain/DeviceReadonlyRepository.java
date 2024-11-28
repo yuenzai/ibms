@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.device.domain;
 
-import cn.ecosync.ibms.dto.DeviceDto;
-import cn.ecosync.ibms.dto.DeviceStatus;
+import cn.ecosync.ibms.device.dto.DeviceDto;
+import cn.ecosync.ibms.device.dto.DeviceStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;

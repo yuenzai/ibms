@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.command.handler;
 
-import cn.ecosync.ibms.command.BacnetWritePropertyCommand;
-import cn.ecosync.ibms.model.BacnetWritePropertyService;
+import cn.ecosync.ibms.bacnet.command.BacnetWritePropertyCommand;
+import cn.ecosync.ibms.bacnet.dto.BacnetWritePropertyService;
 import cn.ecosync.iframework.command.CommandHandler;
 import cn.ecosync.iframework.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;

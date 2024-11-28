@@ -1,8 +1,8 @@
 package cn.ecosync.ibms.device.event.handler;
 
 import cn.ecosync.ibms.device.domain.DeviceReadonlyRepository;
-import cn.ecosync.ibms.dto.DeviceDto;
-import cn.ecosync.ibms.event.DeviceStatusUpdatedEvent;
+import cn.ecosync.ibms.device.dto.DeviceDto;
+import cn.ecosync.ibms.device.event.DeviceStatusUpdatedEvent;
 import cn.ecosync.iframework.event.AggregateRemovedEvent;
 import cn.ecosync.iframework.event.AggregateSavedEvent;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package cn.ecosync.ibms.scheduling.command.handler;
 
-import cn.ecosync.ibms.command.ResetSchedulingCommand;
+import cn.ecosync.ibms.scheduling.command.ResetSchedulingCommand;
 import cn.ecosync.ibms.scheduling.domain.SchedulingApplicationService;
 import cn.ecosync.ibms.scheduling.domain.SchedulingId;
 import cn.ecosync.iframework.command.CommandHandler;

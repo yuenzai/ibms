@@ -1,10 +1,10 @@
 package cn.ecosync.ibms.device.repository;
 
 import cn.ecosync.ibms.device.domain.DeviceReadonlyRepository;
-import cn.ecosync.ibms.dto.DeviceDto;
-import cn.ecosync.ibms.dto.DeviceExtra;
-import cn.ecosync.ibms.dto.DevicePointDto;
-import cn.ecosync.ibms.dto.DeviceStatus;
+import cn.ecosync.ibms.device.dto.DeviceDto;
+import cn.ecosync.ibms.device.dto.DeviceExtra;
+import cn.ecosync.ibms.device.dto.DevicePointDto;
+import cn.ecosync.ibms.device.dto.DeviceStatus;
 import cn.ecosync.iframework.serde.JsonSerde;
 import cn.ecosync.iframework.serde.TypeReference;
 import cn.ecosync.iframework.util.CollectionUtils;

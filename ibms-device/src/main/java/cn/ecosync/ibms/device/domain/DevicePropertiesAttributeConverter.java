@@ -1,6 +1,6 @@
 package cn.ecosync.ibms.device.domain;
 
-import cn.ecosync.ibms.dto.DeviceExtra;
+import cn.ecosync.ibms.device.dto.DeviceExtra;
 import cn.ecosync.iframework.serde.JsonSerde;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;

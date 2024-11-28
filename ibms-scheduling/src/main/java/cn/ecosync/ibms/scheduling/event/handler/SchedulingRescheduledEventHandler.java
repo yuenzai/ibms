@@ -1,8 +1,8 @@
 package cn.ecosync.ibms.scheduling.event.handler;
 
-import cn.ecosync.ibms.event.SchedulingRescheduledEvent;
 import cn.ecosync.ibms.scheduling.domain.SchedulingApplicationService;
 import cn.ecosync.ibms.scheduling.domain.SchedulingId;
+import cn.ecosync.ibms.scheduling.event.SchedulingRescheduledEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

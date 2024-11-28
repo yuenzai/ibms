@@ -1,6 +1,6 @@
 package cn.ecosync.ibms.scheduling.domain;
 
-import cn.ecosync.ibms.dto.SchedulingTaskParams;
+import cn.ecosync.ibms.scheduling.dto.SchedulingTaskParams;
 import cn.ecosync.iframework.serde.JsonSerde;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;

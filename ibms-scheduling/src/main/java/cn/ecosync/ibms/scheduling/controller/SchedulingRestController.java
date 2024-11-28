@@ -1,9 +1,9 @@
 package cn.ecosync.ibms.scheduling.controller;
 
-import cn.ecosync.ibms.command.*;
-import cn.ecosync.ibms.dto.SchedulingDto;
-import cn.ecosync.ibms.query.GetSchedulingTasksQuery;
-import cn.ecosync.ibms.query.SearchSchedulingQuery;
+import cn.ecosync.ibms.scheduling.command.*;
+import cn.ecosync.ibms.scheduling.dto.SchedulingDto;
+import cn.ecosync.ibms.scheduling.query.GetSchedulingTasksQuery;
+import cn.ecosync.ibms.scheduling.query.SearchSchedulingQuery;
 import cn.ecosync.iframework.command.CommandBus;
 import cn.ecosync.iframework.query.QueryBus;
 import lombok.RequiredArgsConstructor;

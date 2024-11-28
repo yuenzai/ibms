@@ -1,6 +1,6 @@
 package cn.ecosync.ibms.scheduling.command.handler;
 
-import cn.ecosync.ibms.command.AddSchedulingCommand;
+import cn.ecosync.ibms.scheduling.command.AddSchedulingCommand;
 import cn.ecosync.ibms.scheduling.domain.Scheduling;
 import cn.ecosync.ibms.scheduling.domain.SchedulingApplicationService;
 import cn.ecosync.ibms.scheduling.domain.SchedulingId;

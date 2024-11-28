@@ -1,10 +1,10 @@
 package cn.ecosync.ibms.device.command.handler;
 
-import cn.ecosync.ibms.command.PutDevicePointCommand;
 import cn.ecosync.ibms.device.DeviceMapper;
+import cn.ecosync.ibms.device.command.PutDevicePointCommand;
 import cn.ecosync.ibms.device.domain.*;
-import cn.ecosync.ibms.dto.DeviceDto;
-import cn.ecosync.ibms.dto.DevicePointDto;
+import cn.ecosync.ibms.device.dto.DeviceDto;
+import cn.ecosync.ibms.device.dto.DevicePointDto;
 import cn.ecosync.iframework.command.CommandHandler;
 import cn.ecosync.iframework.event.AggregateSavedEvent;
 import cn.ecosync.iframework.event.EventBus;
