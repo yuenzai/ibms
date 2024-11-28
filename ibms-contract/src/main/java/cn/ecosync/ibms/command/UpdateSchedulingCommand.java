@@ -3,11 +3,10 @@ package cn.ecosync.ibms.command;
 import cn.ecosync.ibms.dto.SchedulingTaskParams;
 import cn.ecosync.ibms.dto.SchedulingTrigger;
 import cn.ecosync.iframework.command.Command;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.ToString;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 
 @Getter
 @ToString

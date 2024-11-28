@@ -4,11 +4,10 @@ import cn.ecosync.ibms.model.BacnetReadPropertyMultipleService;
 import cn.ecosync.ibms.model.ReadPropertyMultipleAck;
 import cn.ecosync.iframework.query.Query;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.util.Assert;
-
-import javax.validation.Valid;
 
 @Getter
 @ToString

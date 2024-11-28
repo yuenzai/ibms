@@ -4,11 +4,11 @@ import cn.ecosync.ibms.model.BacnetReadPropertyMultipleService;
 import cn.ecosync.ibms.model.ReadPropertyMultipleAck;
 import cn.ecosync.iframework.query.Query;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.ToString;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Getter

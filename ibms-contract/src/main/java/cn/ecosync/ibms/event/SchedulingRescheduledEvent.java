@@ -4,11 +4,10 @@ import cn.ecosync.ibms.SchedulingConstant;
 import cn.ecosync.ibms.dto.SchedulingTaskParams;
 import cn.ecosync.ibms.dto.SchedulingTrigger;
 import cn.ecosync.iframework.event.AbstractEvent;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-
-import javax.validation.constraints.NotBlank;
 
 @Getter
 @ToString

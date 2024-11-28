@@ -3,12 +3,12 @@ package cn.ecosync.ibms.command;
 import cn.ecosync.ibms.dto.DevicePointDto;
 import cn.ecosync.iframework.command.Command;
 import cn.ecosync.iframework.util.CollectionUtils;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.ToString;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @Getter

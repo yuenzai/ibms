@@ -1,10 +1,9 @@
 package cn.ecosync.ibms.command;
 
 import cn.ecosync.iframework.command.Command;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.ToString;
-
-import javax.validation.constraints.NotBlank;
 
 @Getter
 @ToString

@@ -4,10 +4,10 @@ import cn.ecosync.ibms.model.BacnetDeviceAddress;
 import cn.ecosync.ibms.model.BacnetWhoIsService;
 import cn.ecosync.iframework.query.Query;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.ToString;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Getter

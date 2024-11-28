@@ -1,17 +1,12 @@
 package cn.ecosync.ibms.autoconfigure.persistence;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-
-import javax.persistence.EntityManager;
 
 @AutoConfiguration
 @ConditionalOnClass(JpaRepository.class)
@@ -20,12 +15,4 @@ import javax.persistence.EntityManager;
 @EnableJpaRepositories("cn.ecosync.ibms.*.repository")
 @EntityScan("cn.ecosync.ibms.*.domain")
 public class JpaAutoConfiguration {
-    @Configuration(proxyBeanMethods = false)
-    @ConditionalOnClass({JpaRepository.class, JPAQueryFactory.class})
-    public static class QueryDslJpaConfiguration {
-        @Bean
-        public JPAQueryFactory jpaQueryFactory(EntityManager entityManager) {
-            return new JPAQueryFactory(entityManager);
-        }
-    }
 }

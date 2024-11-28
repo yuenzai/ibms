@@ -1,6 +1,6 @@
 package cn.ecosync.ibms;
 
-import javax.validation.groups.Default;
+import jakarta.validation.groups.Default;
 
 public class Constants {
     public static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";

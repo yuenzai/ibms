@@ -6,13 +6,13 @@ import cn.ecosync.ibms.event.SchedulingRescheduledEvent;
 import cn.ecosync.iframework.domain.ConcurrencySafeEntity;
 import cn.ecosync.iframework.event.Event;
 import cn.ecosync.iframework.util.StringUtils;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import org.springframework.util.Assert;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.Collection;
 import java.util.Collections;
 

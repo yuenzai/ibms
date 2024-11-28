@@ -1,9 +1,9 @@
 package cn.ecosync.ibms.device.domain;
 
 import cn.ecosync.iframework.domain.IdentifiedValueObject;
+import jakarta.persistence.*;
 import org.springframework.util.Assert;
 
-import javax.persistence.*;
 import java.util.Objects;
 
 @Entity

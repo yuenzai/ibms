@@ -1,9 +1,9 @@
 package cn.ecosync.ibms.model;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.ToString;
 
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Getter

@@ -4,6 +4,7 @@ services:
     container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: CJVixCszaS+7raa/5326YJDq3xrSBXHg
+#      MYSQL_RANDOM_ROOT_PASSWORD: yes
     volumes:
       - ./my.cnf:/etc/mysql/conf.d/my.cnf
       - ./initdb.d:/docker-entrypoint-initdb.d

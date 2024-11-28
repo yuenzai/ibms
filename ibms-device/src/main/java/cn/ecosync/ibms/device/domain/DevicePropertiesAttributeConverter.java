@@ -2,17 +2,12 @@ package cn.ecosync.ibms.device.domain;
 
 import cn.ecosync.ibms.dto.DeviceExtra;
 import cn.ecosync.iframework.serde.JsonSerde;
-
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
 public class DevicePropertiesAttributeConverter implements AttributeConverter<DeviceExtra, String> {
     private final JsonSerde jsonSerde;
-
-    public DevicePropertiesAttributeConverter() {
-        this(null);
-    }
 
     public DevicePropertiesAttributeConverter(JsonSerde jsonSerde) {
         this.jsonSerde = jsonSerde;

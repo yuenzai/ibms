@@ -2,17 +2,12 @@ package cn.ecosync.ibms.scheduling.domain;
 
 import cn.ecosync.ibms.dto.SchedulingTrigger;
 import cn.ecosync.iframework.serde.JsonSerde;
-
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
 public class SchedulingTriggerAttributeConverter implements AttributeConverter<SchedulingTrigger, String> {
     private final JsonSerde jsonSerde;
-
-    public SchedulingTriggerAttributeConverter() {
-        this(null);
-    }
 
     public SchedulingTriggerAttributeConverter(JsonSerde jsonSerde) {
         this.jsonSerde = jsonSerde;
