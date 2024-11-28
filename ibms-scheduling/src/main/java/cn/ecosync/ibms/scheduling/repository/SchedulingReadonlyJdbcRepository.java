@@ -40,12 +40,12 @@ public class SchedulingReadonlyJdbcRepository implements SchedulingReadonlyRepos
     }
 
     @Override
-    public List<SchedulingDto> listing() {
+    public List<SchedulingDto> listSearch() {
         return jdbcTemplate.query(SQL_SELECT, rowMapper);
     }
 
     @Override
-    public Page<SchedulingDto> paging(Pageable pageable) {
+    public Page<SchedulingDto> pageSearch(Pageable pageable) {
         Assert.notNull(pageable, "pageable must not be null");
         Long total = jdbcTemplate.queryForObject("SELECT count(*) FROM scheduling", new EmptySqlParameterSource(), Long.class);
 

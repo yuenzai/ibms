@@ -9,11 +9,7 @@ import java.util.List;
 
 @NoRepositoryBean
 public interface SchedulingReadonlyRepository {
-    List<SchedulingDto> listing();
+    List<SchedulingDto> listSearch();
 
-    Page<SchedulingDto> paging(Pageable pageable);
-
-    default Iterable<SchedulingDto> search(Pageable pageable) {
-        return pageable.isPaged() ? paging(pageable) : listing();
-    }
+    Page<SchedulingDto> pageSearch(Pageable pageable);
 }

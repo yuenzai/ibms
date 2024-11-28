@@ -2,22 +2,20 @@ package cn.ecosync.ibms.device.query;
 
 import cn.ecosync.ibms.device.dto.DeviceDto;
 import cn.ecosync.iframework.query.Query;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Getter
 @ToString
-public class GetDeviceQuery implements Query<DeviceDto> {
-    @NotEmpty
-    private String deviceCode;
+public class ListSearchDeviceQuery implements Query<List<DeviceDto>> {
     private Boolean readonly;
 
-    protected GetDeviceQuery() {
+    protected ListSearchDeviceQuery() {
     }
 
-    public GetDeviceQuery(String deviceCode, Boolean readonly) {
-        this.deviceCode = deviceCode;
+    public ListSearchDeviceQuery(Boolean readonly) {
         this.readonly = readonly;
     }
 

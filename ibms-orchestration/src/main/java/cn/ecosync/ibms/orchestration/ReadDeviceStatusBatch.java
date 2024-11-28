@@ -7,7 +7,7 @@ import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleBatchQuery;
 import cn.ecosync.ibms.device.dto.DeviceDto;
 import cn.ecosync.ibms.device.dto.DeviceStatus;
 import cn.ecosync.ibms.device.event.DeviceStatusUpdatedEvent;
-import cn.ecosync.ibms.device.query.SearchDeviceListQuery;
+import cn.ecosync.ibms.device.query.ListSearchDeviceQuery;
 import cn.ecosync.iframework.event.EventBus;
 import cn.ecosync.iframework.query.QueryBus;
 import cn.ecosync.iframework.util.CollectionUtils;
@@ -20,7 +20,7 @@ public class ReadDeviceStatusBatch {
     public static final String JOB_ID = "ReadDeviceStatusBatch";
 
     public static void run(QueryBus queryBus, EventBus eventBus) {
-        List<DeviceDto> deviceDtoList = queryBus.execute(new SearchDeviceListQuery(true)).stream()
+        List<DeviceDto> deviceDtoList = queryBus.execute(new ListSearchDeviceQuery(true)).stream()
                 .filter(in -> in.getDeviceExtra() instanceof BacnetDeviceExtra && CollectionUtils.notEmpty(in.getDevicePoints()))
                 .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(deviceDtoList)) {

@@ -6,6 +6,7 @@ import cn.ecosync.ibms.bacnet.dto.BacnetReadPropertyMultipleService.BacnetObject
 import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleBatchQuery;
 import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleQuery;
 import cn.ecosync.ibms.bacnet.query.BacnetWhoIsQuery;
+import cn.ecosync.ibms.bacnet.query.ListSearchBacnetDeviceObjectIdsQuery;
 import cn.ecosync.iframework.command.CommandBus;
 import cn.ecosync.iframework.query.QueryBus;
 import cn.ecosync.iframework.util.CollectionUtils;
@@ -14,7 +15,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
 import java.util.List;
@@ -51,15 +55,16 @@ public class BacnetRestController {
         commandBus.execute(command);
     }
 
-    @GetMapping("/device/{deviceInstance}/object-ids")
-    public List<BacnetObject> getDeviceObjectIds(@PathVariable Integer deviceInstance) {
+    @PostMapping("/device-object-ids/list-search")
+    public List<BacnetObject> getDeviceObjectIds(@RequestBody @Validated ListSearchBacnetDeviceObjectIdsQuery query) {
+        Integer deviceInstance = query.getDeviceInstance();
         BacnetObject deviceObject = new BacnetObject(BacnetObjectType.OBJECT_DEVICE, deviceInstance);
         BacnetProperty objectIdsProperty = new BacnetProperty(BacnetPropertyId.PROP_OBJECT_LIST, null);
         BacnetObjectProperties objectProperties = new BacnetObjectProperties(deviceObject, Collections.singleton(objectIdsProperty));
         BacnetReadPropertyMultipleService service = new BacnetReadPropertyMultipleService(deviceInstance, Collections.singleton(objectProperties));
-        BacnetReadPropertyMultipleQuery query = new BacnetReadPropertyMultipleQuery(service);
+        BacnetReadPropertyMultipleQuery readpropmQuery = new BacnetReadPropertyMultipleQuery(service);
         try {
-            ReadPropertyMultipleAck.Property objectIdsPropertyValue = Optional.ofNullable(queryBus.execute(query))
+            ReadPropertyMultipleAck.Property objectIdsPropertyValue = Optional.ofNullable(queryBus.execute(readpropmQuery))
                     .map(in -> CollectionUtils.firstElement(in.getValues()))
                     .map(in -> CollectionUtils.firstElement(in.getProperties()))
                     .orElse(null);

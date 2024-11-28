@@ -3,15 +3,19 @@ package cn.ecosync.ibms.device.controller;
 import cn.ecosync.ibms.device.command.*;
 import cn.ecosync.ibms.device.dto.DeviceDto;
 import cn.ecosync.ibms.device.query.GetDeviceQuery;
-import cn.ecosync.ibms.device.query.SearchDeviceListQuery;
-import cn.ecosync.ibms.device.query.SearchDevicePageQuery;
+import cn.ecosync.ibms.device.query.ListSearchDeviceQuery;
+import cn.ecosync.ibms.device.query.PageSearchDeviceQuery;
 import cn.ecosync.iframework.command.CommandBus;
 import cn.ecosync.iframework.query.QueryBus;
-import cn.ecosync.iframework.util.CollectionUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,22 +49,18 @@ public class DeviceRestController {
         commandBus.execute(command);
     }
 
-    @GetMapping("/{deviceCode}")
-    public DeviceDto get(@PathVariable String deviceCode, @RequestParam(value = "readonly", defaultValue = "false") Boolean readonly) {
-        return queryBus.execute(new GetDeviceQuery(deviceCode, readonly));
+    @PostMapping("/get")
+    public DeviceDto get(@RequestBody @Validated GetDeviceQuery query) {
+        return queryBus.execute(query);
     }
 
-    @GetMapping
-    public Iterable<DeviceDto> search(
-            @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "pagesize", required = false) Integer pageSize,
-            @RequestParam(value = "readonly", defaultValue = "false") Boolean readonly
-    ) {
-        Pageable pageable = CollectionUtils.of(page, pageSize);
-        if (pageable.isPaged()) {
-            return queryBus.execute(new SearchDevicePageQuery(page, pageSize, readonly));
-        } else {
-            return queryBus.execute(new SearchDeviceListQuery(readonly));
-        }
+    @PostMapping("/list-search")
+    public List<DeviceDto> search(@RequestBody @Validated ListSearchDeviceQuery query) {
+        return queryBus.execute(query);
+    }
+
+    @PostMapping("/page-search")
+    public Page<DeviceDto> search(@RequestBody @Validated PageSearchDeviceQuery query) {
+        return queryBus.execute(query);
     }
 }

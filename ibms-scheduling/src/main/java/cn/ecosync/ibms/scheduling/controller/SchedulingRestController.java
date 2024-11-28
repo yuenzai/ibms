@@ -2,13 +2,18 @@ package cn.ecosync.ibms.scheduling.controller;
 
 import cn.ecosync.ibms.scheduling.command.*;
 import cn.ecosync.ibms.scheduling.dto.SchedulingDto;
-import cn.ecosync.ibms.scheduling.query.GetSchedulingTasksQuery;
-import cn.ecosync.ibms.scheduling.query.SearchSchedulingQuery;
+import cn.ecosync.ibms.scheduling.query.ListSearchSchedulingQuery;
+import cn.ecosync.ibms.scheduling.query.ListSearchSchedulingTasksQuery;
+import cn.ecosync.ibms.scheduling.query.PageSearchSchedulingQuery;
 import cn.ecosync.iframework.command.CommandBus;
 import cn.ecosync.iframework.query.QueryBus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -44,18 +49,18 @@ public class SchedulingRestController {
         commandBus.execute(command);
     }
 
-    @GetMapping("/tasks")
-    public List<String> tasks() {
-        return queryBus.execute(new GetSchedulingTasksQuery());
+    @PostMapping("/task/list-search")
+    public List<String> tasks(@RequestBody @Validated ListSearchSchedulingTasksQuery query) {
+        return queryBus.execute(query);
     }
 
-    @GetMapping
-    public Iterable<SchedulingDto> search(
-            @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "pagesize", required = false) Integer pageSize,
-            @RequestParam(value = "max-count", defaultValue = "5") Integer maxCount
-    ) {
-        SearchSchedulingQuery query = new SearchSchedulingQuery(page, pageSize, maxCount);
+    @PostMapping("/list-search")
+    public List<SchedulingDto> search(@RequestBody @Validated ListSearchSchedulingQuery query) {
+        return queryBus.execute(query);
+    }
+
+    @PostMapping("/page-search")
+    public Page<SchedulingDto> search(@RequestBody @Validated PageSearchSchedulingQuery query) {
         return queryBus.execute(query);
     }
 }

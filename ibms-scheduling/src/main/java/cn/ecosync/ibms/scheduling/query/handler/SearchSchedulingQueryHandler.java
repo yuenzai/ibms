@@ -2,36 +2,21 @@ package cn.ecosync.ibms.scheduling.query.handler;
 
 import cn.ecosync.ibms.scheduling.domain.SchedulingApplicationService;
 import cn.ecosync.ibms.scheduling.domain.SchedulingId;
-import cn.ecosync.ibms.scheduling.domain.SchedulingReadonlyRepository;
 import cn.ecosync.ibms.scheduling.dto.SchedulingDto;
 import cn.ecosync.ibms.scheduling.dto.SchedulingTrigger;
-import cn.ecosync.ibms.scheduling.query.SearchSchedulingQuery;
-import cn.ecosync.iframework.query.QueryHandler;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
-@RequiredArgsConstructor
-public class SearchSchedulingQueryHandler implements QueryHandler<SearchSchedulingQuery, Iterable<SchedulingDto>> {
-    private final SchedulingReadonlyRepository schedulingReadonlyRepository;
+class SearchSchedulingQueryHandler {
     private final SchedulingApplicationService schedulingApplicationService;
 
-    @Override
-    @Transactional(readOnly = true)
-    public Iterable<SchedulingDto> handle(SearchSchedulingQuery query) {
-        Pageable pageable = query.toPageable();
-        Iterable<SchedulingDto> schedules = schedulingReadonlyRepository.search(pageable);
-        putStateFor(schedules, query);
-        return schedules;
+    SearchSchedulingQueryHandler(SchedulingApplicationService schedulingApplicationService) {
+        this.schedulingApplicationService = schedulingApplicationService;
     }
 
-    private void putStateFor(Iterable<SchedulingDto> result, SearchSchedulingQuery query) {
+    protected void putStateFor(Iterable<SchedulingDto> result, Integer maxCount) {
         for (SchedulingDto schedulingStatusDto : result) {
             SchedulingId schedulingId = new SchedulingId(schedulingStatusDto.getSchedulingName());
             schedulingStatusDto.setSchedulingState(schedulingApplicationService.getSchedulingState(schedulingId));
@@ -39,7 +24,7 @@ public class SearchSchedulingQueryHandler implements QueryHandler<SearchScheduli
             SchedulingTrigger trigger = schedulingStatusDto.getSchedulingTrigger();
             if (trigger != null) {
                 // 计算之后几次的触发时间
-                List<Long> nextFireTimes = schedulingApplicationService.computeNextFireTimes(schedulingId, query.getMaxCount()).stream()
+                List<Long> nextFireTimes = schedulingApplicationService.computeNextFireTimes(schedulingId, maxCount).stream()
                         .map(Date::getTime)
                         .collect(Collectors.toList());
                 schedulingStatusDto.setNextFireTimes(nextFireTimes);
