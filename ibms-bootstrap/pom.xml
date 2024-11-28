@@ -99,6 +99,15 @@
             </dependencies>
         </profile>
         <profile>
+            <id>debezium</id>
+            <dependencies>
+                <dependency>
+                    <groupId>io.debezium</groupId>
+                    <artifactId>debezium-embedded</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>kafka</id>
             <dependencies>
                 <dependency>
@@ -126,6 +135,11 @@
                 <dependency>
                     <groupId>org.flywaydb</groupId>
                     <artifactId>flyway-mysql</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>io.debezium</groupId>
+                    <artifactId>debezium-connector-mysql</artifactId>
+                    <scope>runtime</scope>
                 </dependency>
             </dependencies>
         </profile>
