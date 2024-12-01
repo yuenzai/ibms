@@ -1,5 +1,7 @@
 package cn.ecosync.ibms.autoconfigure.stream;
 
+import cn.ecosync.ibms.device.event.handler.DeviceKafkaStreams;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -17,6 +19,8 @@ import org.apache.kafka.streams.state.Stores;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.annotation.EnableKafkaStreams;
 
 import static org.apache.kafka.common.serialization.Serdes.String;
@@ -25,7 +29,19 @@ import static org.apache.kafka.common.serialization.Serdes.String;
 @EnableKafkaStreams
 @ConditionalOnClass(KafkaStreams.class)
 @ConditionalOnProperty(prefix = "spring.kafka.streams", name = "bootstrap-servers")
+@EnableConfigurationProperties(StreamProperties.class)
 public class KafkaStreamsAutoConfiguration {
+    private final StreamProperties streamProperties;
+
+    public KafkaStreamsAutoConfiguration(StreamProperties streamProperties) {
+        this.streamProperties = streamProperties;
+    }
+
+    @Bean
+    public DeviceKafkaStreams deviceKafkaStreams(StreamsBuilder streamsBuilder, ObjectMapper objectMapper) {
+        return new DeviceKafkaStreams(streamsBuilder, objectMapper, streamProperties.getTopicPrefix());
+    }
+
     /**
      * 消费某个主题，构建 GlobalStateStore
      * tip: GlobalStateStore 是只读的
