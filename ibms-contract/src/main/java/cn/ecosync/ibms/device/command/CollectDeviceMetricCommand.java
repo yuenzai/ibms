@@ -6,13 +6,13 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class ReadDeviceMetricCommand {
+public class CollectDeviceMetricCommand {
     private DeviceId deviceId;
 
-    protected ReadDeviceMetricCommand() {
+    protected CollectDeviceMetricCommand() {
     }
 
-    public ReadDeviceMetricCommand(DeviceId deviceId) {
+    public CollectDeviceMetricCommand(DeviceId deviceId) {
         this.deviceId = deviceId;
     }
 }

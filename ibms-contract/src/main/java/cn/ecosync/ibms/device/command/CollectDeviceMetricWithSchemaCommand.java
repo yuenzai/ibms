@@ -8,17 +8,17 @@ import org.springframework.util.Assert;
 
 @Getter
 @ToString
-public class ReadDeviceMetricWithSchemaCommand {
-    private ReadDeviceMetricCommand readDeviceCommand;
+public class CollectDeviceMetricWithSchemaCommand {
+    private CollectDeviceMetricCommand readDeviceCommand;
     private DeviceWithSchemaDto deviceWithSchema;
 
-    protected ReadDeviceMetricWithSchemaCommand() {
+    protected CollectDeviceMetricWithSchemaCommand() {
     }
 
-    public ReadDeviceMetricWithSchemaCommand(ReadDeviceMetricCommand readDeviceCommand, DeviceWithSchemaDto deviceWithSchema) {
-        Assert.notNull(readDeviceCommand, "readDeviceCommand can not be null");
+    public CollectDeviceMetricWithSchemaCommand(CollectDeviceMetricCommand collectDeviceCommand, DeviceWithSchemaDto deviceWithSchema) {
+        Assert.notNull(collectDeviceCommand, "collectDeviceCommand can not be null");
         Assert.notNull(deviceWithSchema, "deviceWithSchema can not be null");
-        this.readDeviceCommand = readDeviceCommand;
+        this.readDeviceCommand = collectDeviceCommand;
         this.deviceWithSchema = deviceWithSchema;
     }
 

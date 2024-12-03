@@ -14,8 +14,8 @@ public class Constants {
     public static final String TOPIC_DEVICE_SCHEMA = "device-schema";
     public static final String TOPIC_DEVICE_METRIC = "device-metric";
 
-    public static final String TOPIC_READ_DEVICE_METRIC_COMMAND = "read-device-metric-command";
-    public static final String TOPIC_READ_DEVICE_METRIC_WITH_SCHEMA_COMMAND = "read-device-metric-with-schema-command";
+    public static final String TOPIC_COLLECT_DEVICE_METRIC_COMMAND = "collect-device-metric-command";
+    public static final String TOPIC_COLLECT_DEVICE_METRIC_WITH_SCHEMA_COMMAND = "collect-device-metric-with-schema-command";
 
     public interface Create extends Default {
     }

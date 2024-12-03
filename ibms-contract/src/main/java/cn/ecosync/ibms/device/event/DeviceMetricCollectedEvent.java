@@ -6,10 +6,10 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class DeviceStatusUploadedEvent {
+public class DeviceMetricCollectedEvent {
     private DeviceId deviceId;
     private Long timestamp;
 
-    protected DeviceStatusUploadedEvent() {
+    protected DeviceMetricCollectedEvent() {
     }
 }
