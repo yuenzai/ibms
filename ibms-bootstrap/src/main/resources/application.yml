@@ -2,7 +2,7 @@ spring:
   application:
     name: ibms
   datasource:
-    url: jdbc:mysql://mysql:3306/ibms?serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://mysql:3306/IBMS?serverTimezone=Asia/Shanghai
     username: root
     password: CJVixCszaS+7raa/5326YJDq3xrSBXHg
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -24,35 +24,35 @@ spring:
 ---
 spring:
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: kafka:19092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
       properties:
         enable.idempotence: true
-#    consumer:
-#      group-id: ${spring.application.name}
-#      enable-auto-commit: false
-#      auto-offset-reset: earliest
-#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#    listener:
-#      ack-mode: manual_immediate
-#      concurrency: 1
-#    streams:
-#      application-id: ${spring.application.name}
-#      bootstrap-servers: kafka:9092
+    consumer:
+      group-id: ${spring.application.name}
+      enable-auto-commit: false
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    listener:
+      ack-mode: manual_immediate
+      concurrency: 1
+    streams:
+      application-id: ${spring.application.name}
+      bootstrap-servers: ${spring.kafka.bootstrap-servers}
 #      cache-max-size-buffering: 10MB
-#      cleanup:
-#        on-startup: true
-#        on-shutdown: true
-#      state-dir: rocksdb
-#      properties:
-#        default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-#        default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-#        num.stream.threads: 1
-#        default.dsl.store: rocksDB
-#      auto-startup: false
+      cleanup:
+        on-startup: true
+        on-shutdown: true
+      state-dir: rocksdb
+      properties:
+        default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        num.stream.threads: 1
+        default.dsl.store: rocksDB
+      auto-startup: true
 
 ---
 spring:

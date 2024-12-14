@@ -1,9 +1,9 @@
 package cn.ecosync.ibms.device.model;
 
-public interface DeviceQueryModel {
+public interface DeviceModel {
     DeviceId getDeviceId();
 
-    DeviceSchemaId getDeviceSchemaId();
+    DeviceDataAcquisitionId getDaqId();
 
     String getDeviceName();
 

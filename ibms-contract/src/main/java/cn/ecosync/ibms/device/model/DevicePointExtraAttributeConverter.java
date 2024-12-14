@@ -5,7 +5,7 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
-public class DevicePointExtraAttributeConverter implements AttributeConverter<DevicePointExtra, String> {
+public class DevicePointExtraAttributeConverter implements AttributeConverter<DevicePointProperties, String> {
     private final JsonSerde jsonSerde;
 
     public DevicePointExtraAttributeConverter(JsonSerde jsonSerde) {
@@ -13,12 +13,12 @@ public class DevicePointExtraAttributeConverter implements AttributeConverter<De
     }
 
     @Override
-    public String convertToDatabaseColumn(DevicePointExtra attribute) {
+    public String convertToDatabaseColumn(DevicePointProperties attribute) {
         return jsonSerde.serialize(attribute);
     }
 
     @Override
-    public DevicePointExtra convertToEntityAttribute(String dbData) {
-        return jsonSerde.deserialize(dbData, DevicePointExtra.class);
+    public DevicePointProperties convertToEntityAttribute(String dbData) {
+        return jsonSerde.deserialize(dbData, DevicePointProperties.class);
     }
 }

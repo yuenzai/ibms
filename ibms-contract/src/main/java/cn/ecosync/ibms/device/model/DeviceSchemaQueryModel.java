@@ -1,17 +1,11 @@
-package cn.ecosync.ibms.device.model;
-
-import org.apache.avro.Schema;
-import org.apache.avro.SchemaFormatter;
-
-public interface DeviceSchemaQueryModel {
-    DeviceSchemaId getDeviceSchemaId();
-
-    DevicePoints getDevicePoints();
-
-    Schema toAvroSchema();
-
-    default String formatAvroSchema(Schema schema) {
-        return SchemaFormatter.getInstance("json")
-                .format(schema);
-    }
-}
+//package cn.ecosync.ibms.device.model;
+//
+//import java.util.Set;
+//
+//public interface DeviceSchemaQueryModel {
+//    DeviceSchemaId getSchemaId();
+//
+//    String getDescription();
+//
+//    Set<DeviceSchemaFieldModel> getFields();
+//}

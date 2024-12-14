@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.device.controller;
 
 import cn.ecosync.ibms.device.command.*;
-import cn.ecosync.ibms.device.dto.DeviceDto;
+import cn.ecosync.ibms.device.model.DeviceModel;
 import cn.ecosync.ibms.device.query.GetDeviceQuery;
 import cn.ecosync.ibms.device.query.ListSearchDeviceQuery;
 import cn.ecosync.ibms.device.query.PageSearchDeviceQuery;
@@ -50,17 +50,17 @@ public class DeviceRestController {
     }
 
     @PostMapping("/get")
-    public DeviceDto get(@RequestBody @Validated GetDeviceQuery query) {
+    public DeviceModel get(@RequestBody @Validated GetDeviceQuery query) {
         return queryBus.execute(query);
     }
 
     @PostMapping("/list-search")
-    public List<DeviceDto> search(@RequestBody @Validated ListSearchDeviceQuery query) {
+    public List<DeviceModel> search(@RequestBody @Validated ListSearchDeviceQuery query) {
         return queryBus.execute(query);
     }
 
     @PostMapping("/page-search")
-    public Page<DeviceDto> search(@RequestBody @Validated PageSearchDeviceQuery query) {
+    public Page<DeviceModel> search(@RequestBody @Validated PageSearchDeviceQuery query) {
         return queryBus.execute(query);
     }
 }

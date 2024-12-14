@@ -1,14 +1,12 @@
 package cn.ecosync.ibms.device.command.handler;
 
-import cn.ecosync.ibms.device.DeviceMapper;
 import cn.ecosync.ibms.device.command.AddDeviceCommand;
-import cn.ecosync.ibms.device.domain.Device;
-import cn.ecosync.ibms.device.domain.DeviceId;
-import cn.ecosync.ibms.device.domain.DeviceProperties;
-import cn.ecosync.ibms.device.domain.DeviceRepository;
-import cn.ecosync.ibms.device.dto.DeviceDto;
+import cn.ecosync.ibms.device.event.DeviceSavedEvent;
+import cn.ecosync.ibms.device.model.Device;
+import cn.ecosync.ibms.device.model.DeviceCommandModel;
+import cn.ecosync.ibms.device.model.DeviceRepository;
+import cn.ecosync.ibms.device.model.DeviceId;
 import cn.ecosync.iframework.command.CommandHandler;
-import cn.ecosync.iframework.event.AggregateSavedEvent;
 import cn.ecosync.iframework.event.EventBus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -24,18 +22,12 @@ public class AddDeviceCommandHandler implements CommandHandler<AddDeviceCommand>
     @Override
     @Transactional
     public void handle(AddDeviceCommand command) {
-        DeviceId deviceId = new DeviceId(command.getDeviceCode());
-        DeviceProperties deviceProperties = new DeviceProperties(
-                command.getDeviceName(), command.getPath(), command.getDescription(), command.getDeviceExtra()
-        );
-
-        Device device = deviceRepository.get(deviceId).orElse(null);
-        Assert.isNull(device, "Device already exists: " + deviceId.getDeviceCode());
-        device = new Device(deviceId, deviceProperties);
+        DeviceId deviceId = command.getDeviceId();
+        DeviceCommandModel device = deviceRepository.get(deviceId).orElse(null);
+        Assert.isNull(device, "device already exists: " + deviceId.getDeviceCode());
+        device = new Device(deviceId, command.getDaqId(), command.getDeviceName(), command.getPath(), command.getDescription(), command.getDeviceExtra());
         deviceRepository.add(device);
-
-        DeviceDto dto = DeviceMapper.map(device);
-        AggregateSavedEvent event = new AggregateSavedEvent(dto);
+        DeviceSavedEvent event = new DeviceSavedEvent(device);
         eventBus.publish(event);
     }
 }

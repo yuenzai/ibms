@@ -8,14 +8,15 @@ public class Constants {
     public static final String TIME_FORMAT = "HH:mm:ss";
 
     public static final String AGGREGATE_TYPE_DEVICE = "device";
+    public static final String AGGREGATE_TYPE_DEVICE_SCHEMA = "device-schema";
+    public static final String AGGREGATE_TYPE_DEVICE_DAQ = "device-daq";
     public static final String AGGREGATE_TYPE_SCHEDULING = "scheduling";
 
-    public static final String TOPIC_DEVICE = "device";
-    public static final String TOPIC_DEVICE_SCHEMA = "device-schema";
-    public static final String TOPIC_DEVICE_METRIC = "device-metric";
-
+    public static final String TOPIC_DEVICE = AGGREGATE_TYPE_DEVICE;
+    public static final String TOPIC_DEVICE_SCHEMA = AGGREGATE_TYPE_DEVICE_SCHEMA;
+    public static final String TOPIC_AGGREGATE_TYPE_DEVICE_DAQ = AGGREGATE_TYPE_DEVICE_DAQ;
     public static final String TOPIC_COLLECT_DEVICE_METRIC_COMMAND = "collect-device-metric-command";
-    public static final String TOPIC_COLLECT_DEVICE_METRIC_WITH_SCHEMA_COMMAND = "collect-device-metric-with-schema-command";
+    public static final String TOPIC_COLLECT_DEVICE_METRIC_COMMAND_JOINED = "collect-device-metric-command-joined";
 
     public interface Create extends Default {
     }

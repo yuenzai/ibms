@@ -39,7 +39,7 @@ public class KafkaStreamsAutoConfiguration {
 
     @Bean
     public DeviceKafkaStreams deviceKafkaStreams(StreamsBuilder streamsBuilder, ObjectMapper objectMapper) {
-        return new DeviceKafkaStreams(streamsBuilder, objectMapper, streamProperties.getTopicPrefix());
+        return DeviceKafkaStreams.newInstance(streamsBuilder, streamProperties.getTopicPrefix(), objectMapper);
     }
 
     /**

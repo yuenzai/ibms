@@ -1,7 +1,5 @@
 package cn.ecosync.ibms.device.dto;
 
-import cn.ecosync.ibms.Constants;
-import cn.ecosync.iframework.domain.AggregateRoot;
 import cn.ecosync.iframework.util.CollectionUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class DeviceDto implements AggregateRoot {
+public class DeviceDto {
     private String deviceCode;
     private String deviceName;
     private String path;
@@ -34,16 +32,6 @@ public class DeviceDto implements AggregateRoot {
         this.deviceExtra = deviceExtra;
         this.devicePoints = devicePoints;
         this.deviceStatus = deviceStatus;
-    }
-
-    @Override
-    public String aggregateType() {
-        return Constants.AGGREGATE_TYPE_DEVICE;
-    }
-
-    @Override
-    public String aggregateId() {
-        return deviceCode;
     }
 
     public List<DevicePointDto> getDevicePoints() {

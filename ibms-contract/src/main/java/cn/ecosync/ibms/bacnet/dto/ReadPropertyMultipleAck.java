@@ -24,7 +24,8 @@ public class ReadPropertyMultipleAck {
         MultiValueMap<BacnetObjectProperty, BacnetPropertyValue> multiValueMap = new LinkedMultiValueMap<>();
         for (BacnetObjectProperties value : getValues()) {
             for (Property property : value.getProperties()) {
-                BacnetObjectProperty key = new BacnetObjectProperty(value.getObjectType(), value.getObjectInstance(), property.getProperty());
+                BacnetObject bacnetObject = new BacnetObject(value.getObjectType(), value.getObjectInstance());
+                BacnetObjectProperty key = new BacnetObjectProperty(bacnetObject, property.getProperty());
                 multiValueMap.put(key, property.toValue());// toValue() return null when error exists
             }
         }

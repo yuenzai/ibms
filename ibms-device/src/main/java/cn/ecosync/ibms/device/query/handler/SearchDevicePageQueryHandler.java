@@ -1,9 +1,8 @@
 package cn.ecosync.ibms.device.query.handler;
 
-import cn.ecosync.ibms.device.DeviceMapper;
-import cn.ecosync.ibms.device.domain.DeviceReadonlyRepository;
-import cn.ecosync.ibms.device.domain.DeviceRepository;
-import cn.ecosync.ibms.device.dto.DeviceDto;
+import cn.ecosync.ibms.device.model.DeviceRepository;
+import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
+import cn.ecosync.ibms.device.model.DeviceModel;
 import cn.ecosync.ibms.device.query.PageSearchDeviceQuery;
 import cn.ecosync.iframework.query.QueryHandler;
 import lombok.RequiredArgsConstructor;
@@ -14,19 +13,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
-public class SearchDevicePageQueryHandler implements QueryHandler<PageSearchDeviceQuery, Page<DeviceDto>> {
+public class SearchDevicePageQueryHandler implements QueryHandler<PageSearchDeviceQuery, Page<DeviceModel>> {
     private final DeviceRepository deviceRepository;
-    private final DeviceReadonlyRepository deviceReadonlyRepository;
 
     @Override
     @Transactional(readOnly = true)
-    public Page<DeviceDto> handle(PageSearchDeviceQuery query) {
+    public Page<DeviceModel> handle(PageSearchDeviceQuery query) {
         Pageable pageable = query.toPageable();
-        if (query.getReadonly()) {
-            return deviceReadonlyRepository.findAll(pageable);
-        } else {
-            return deviceRepository.findAll(pageable)
-                    .map(DeviceMapper::map);
-        }
+        DeviceDataAcquisitionId daqId = query.toDeviceDataAcquisitionId();
+        DeviceModel probe = deviceRepository.newProbe(daqId, null, null);
+        return deviceRepository.search(probe, pageable);
     }
 }

@@ -1,6 +1,0 @@
-CREATE DATABASE ibms CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-CREATE USER 'debezium'@'%' IDENTIFIED WITH mysql_native_password BY 'debezium';
-GRANT SELECT, RELOAD, SHOW DATABASES, REPLICATION SLAVE, REPLICATION CLIENT ON ibms.* TO 'debezium'@'%';
-
-FLUSH PRIVILEGES;

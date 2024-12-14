@@ -1,10 +1,13 @@
 package cn.ecosync.ibms.device.event.handler;
 
 import cn.ecosync.ibms.device.command.CollectDeviceMetricCommand;
-import cn.ecosync.ibms.device.command.CollectDeviceMetricWithSchemaCommand;
-import cn.ecosync.ibms.device.dto.DeviceWithSchemaDto;
-import cn.ecosync.ibms.device.event.DeviceMetricCollectedEvent;
-import cn.ecosync.ibms.device.model.*;
+import cn.ecosync.ibms.device.event.AbstractDeviceEvent;
+import cn.ecosync.ibms.device.event.DeviceDataAcquisitionEvent;
+import cn.ecosync.ibms.device.event.DeviceEventAggregator;
+import cn.ecosync.ibms.device.model.DeviceDataAcquisitionDto;
+import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
+import cn.ecosync.ibms.device.model.DeviceDataAcquisitionModel;
+import cn.ecosync.ibms.device.model.DeviceId;
 import cn.ecosync.iframework.util.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -26,26 +29,43 @@ public class DeviceKafkaStreams implements InitializingBean {
     private final StreamsBuilder streamsBuilder;
     private final String topicPrefix;
 
-    private final Serde<DeviceId> deviceKeySerde;
-    private final Serde<DeviceQueryModel> deviceValueSerde;
-    private final Serde<DeviceSchemaId> deviceSchemaKeySerde;
-    private final Serde<DeviceSchemaQueryModel> deviceSchemaValueSerde;
-    private final Serde<CollectDeviceMetricCommand> collectDeviceMetricCommandSerde;
-    private final Serde<DeviceWithSchemaDto> deviceWithSchemaSerde;
-    private final Serde<CollectDeviceMetricWithSchemaCommand> collectDeviceMetricWithSchemaCommandSerde;
-    private final Serde<DeviceMetricCollectedEvent> deviceMetricCollectedEventSerde;
+    private final Serde<DeviceId> deviceIdSerde;
+    private final Serde<AbstractDeviceEvent> deviceSerde;
+    //    private final Serde<DeviceSchemaId> deviceSchemaIdSerde;
+//    private final Serde<DeviceSchemaEvent> deviceSchemaEventSerde;
+//    private final Serde<DeviceSchemaQueryModel> deviceSchemaSerde;
+    private final Serde<DeviceDataAcquisitionId> daqIdSerde;
+    private final Serde<DeviceDataAcquisitionEvent> daqEventSerde;
+    private final Serde<DeviceDataAcquisitionModel> daqSerde;
+    private final Serde<DeviceEventAggregator> deviceEventAggregatorSerde;
 
-    public DeviceKafkaStreams(StreamsBuilder streamsBuilder, ObjectMapper objectMapper, String topicPrefix) {
+    private final Serde<CollectDeviceMetricCommand> collectDeviceMetricCommandSerde;
+
+    private DeviceKafkaStreams(
+            StreamsBuilder streamsBuilder,
+            String topicPrefix,
+            Serde<DeviceId> deviceIdSerde,
+            Serde<AbstractDeviceEvent> deviceSerde,
+//            Serde<DeviceSchemaId> deviceSchemaIdSerde,
+//            Serde<DeviceSchemaEvent> deviceSchemaEventSerde,
+//            Serde<DeviceSchemaQueryModel> deviceSchemaSerde,
+            Serde<DeviceDataAcquisitionId> daqIdSerde,
+            Serde<DeviceDataAcquisitionEvent> daqEventSerde,
+            Serde<DeviceDataAcquisitionModel> daqSerde,
+            Serde<DeviceEventAggregator> deviceEventAggregatorSerde,
+            Serde<CollectDeviceMetricCommand> collectDeviceMetricCommandSerde) {
         this.streamsBuilder = streamsBuilder;
         this.topicPrefix = topicPrefix;
-        this.deviceKeySerde = new ToFromStringSerde<>(new ToStringSerializer<>(), new ParseStringDeserializer<>(DeviceId::new));
-        this.deviceValueSerde = new JsonSerde<>(objectMapper.getTypeFactory().constructType(Device.class));
-        this.deviceSchemaKeySerde = new ToFromStringSerde<>(new ToStringSerializer<>(), new ParseStringDeserializer<>(DeviceSchemaId::new));
-        this.deviceSchemaValueSerde = new JsonSerde<>(objectMapper.getTypeFactory().constructType(DeviceSchema.class));
-        this.collectDeviceMetricCommandSerde = new JsonSerde<>(CollectDeviceMetricCommand.class);
-        this.deviceWithSchemaSerde = new JsonSerde<>(DeviceWithSchemaDto.class);
-        this.collectDeviceMetricWithSchemaCommandSerde = new JsonSerde<>(CollectDeviceMetricWithSchemaCommand.class);
-        this.deviceMetricCollectedEventSerde = new JsonSerde<>(DeviceMetricCollectedEvent.class);
+        this.deviceIdSerde = deviceIdSerde;
+        this.deviceSerde = deviceSerde;
+//        this.deviceSchemaIdSerde = deviceSchemaIdSerde;
+//        this.deviceSchemaEventSerde = deviceSchemaEventSerde;
+//        this.deviceSchemaSerde = deviceSchemaSerde;
+        this.daqIdSerde = daqIdSerde;
+        this.daqEventSerde = daqEventSerde;
+        this.daqSerde = daqSerde;
+        this.deviceEventAggregatorSerde = deviceEventAggregatorSerde;
+        this.collectDeviceMetricCommandSerde = collectDeviceMetricCommandSerde;
     }
 
     @Override
@@ -58,21 +78,50 @@ public class DeviceKafkaStreams implements InitializingBean {
     }
 
     private void afterPropertiesSetImpl() {
-        KTable<DeviceId, DeviceQueryModel> deviceTable = streamsBuilder.table(toFullName(TOPIC_DEVICE),
-                Consumed.with(deviceKeySerde, deviceValueSerde).withOffsetResetPolicy(EARLIEST));
+        KTable<DeviceDataAcquisitionId, DeviceEventAggregator> devicesTable = devicesTable();
+//        KTable<DeviceSchemaId, DeviceSchemaQueryModel> deviceSchemaTable = deviceSchemaTable();
+        KTable<DeviceDataAcquisitionId, DeviceDataAcquisitionModel> daqTable = daqTable();
 
-        KTable<DeviceSchemaId, DeviceSchemaQueryModel> deviceSchemaTable = streamsBuilder.table(toFullName(TOPIC_DEVICE_SCHEMA),
-                Consumed.with(deviceSchemaKeySerde, deviceSchemaValueSerde).withOffsetResetPolicy(EARLIEST));
+        String collectDeviceMetricCommandTopic = toFullName(TOPIC_COLLECT_DEVICE_METRIC_COMMAND);
+        Consumed<DeviceDataAcquisitionId, CollectDeviceMetricCommand> collectDeviceMetricCommandConsumed = Consumed.with(daqIdSerde, collectDeviceMetricCommandSerde).withOffsetResetPolicy(LATEST);
+        KStream<DeviceDataAcquisitionId, CollectDeviceMetricCommand> collectDeviceMetricCommandStream = streamsBuilder.stream(collectDeviceMetricCommandTopic, collectDeviceMetricCommandConsumed);
 
-        KTable<DeviceId, DeviceWithSchemaDto> deviceWithSchemaTable = deviceTable.join(deviceSchemaTable,
-                DeviceQueryModel::getDeviceSchemaId, DeviceWithSchemaDto::new, Materialized.with(deviceKeySerde, deviceWithSchemaSerde));
-
-        streamsBuilder.stream(toFullName(TOPIC_COLLECT_DEVICE_METRIC_COMMAND), Consumed.with(deviceKeySerde, collectDeviceMetricCommandSerde).withOffsetResetPolicy(LATEST))
-                .join(deviceWithSchemaTable, CollectDeviceMetricWithSchemaCommand::new, Joined.with(deviceKeySerde, collectDeviceMetricCommandSerde, deviceWithSchemaSerde))
-                .to(toFullName(TOPIC_COLLECT_DEVICE_METRIC_WITH_SCHEMA_COMMAND), Produced.with(deviceKeySerde, collectDeviceMetricWithSchemaCommandSerde));
-
-        streamsBuilder.stream(toFullName(TOPIC_DEVICE_METRIC), Consumed.with(deviceKeySerde, deviceMetricCollectedEventSerde));
+        String collectDeviceMetricCommandJoinedTopic = toFullName(TOPIC_COLLECT_DEVICE_METRIC_COMMAND_JOINED);
+        collectDeviceMetricCommandStream
+                .join(daqTable, CollectDeviceMetricCommand::withDaq, Joined.with(daqIdSerde, collectDeviceMetricCommandSerde, daqSerde))
+                .join(devicesTable, CollectDeviceMetricCommand::withAggregator, Joined.with(daqIdSerde, collectDeviceMetricCommandSerde, deviceEventAggregatorSerde))
+                .to(collectDeviceMetricCommandJoinedTopic, Produced.with(daqIdSerde, collectDeviceMetricCommandSerde));
     }
+
+    private KTable<DeviceDataAcquisitionId, DeviceEventAggregator> devicesTable() {
+        String deviceTopic = toFullName(TOPIC_DEVICE);
+        Consumed<DeviceId, AbstractDeviceEvent> deviceConsumed = Consumed.with(deviceIdSerde, deviceSerde).withOffsetResetPolicy(EARLIEST);
+        KTable<DeviceId, AbstractDeviceEvent> deviceTable = streamsBuilder.table(deviceTopic, deviceConsumed);
+
+        return deviceTable.toStream()
+                .filter(DeviceEventAggregator::canApply)
+                .selectKey((k, v) -> v.device().get().getDaqId())
+                .groupByKey(Grouped.with(daqIdSerde, deviceSerde))
+                .aggregate(DeviceEventAggregator::newInstance, DeviceEventAggregator::aggregator, Materialized.with(daqIdSerde, deviceEventAggregatorSerde));
+    }
+
+    private KTable<DeviceDataAcquisitionId, DeviceDataAcquisitionModel> daqTable() {
+        String daqTopic = toFullName(TOPIC_AGGREGATE_TYPE_DEVICE_DAQ);
+        Consumed<DeviceDataAcquisitionId, DeviceDataAcquisitionEvent> daqConsumed = Consumed.with(daqIdSerde, daqEventSerde).withOffsetResetPolicy(EARLIEST);
+        return streamsBuilder.table(daqTopic, daqConsumed)
+//                .filter((k, v) -> v instanceof DeviceSchemaSavedEvent || v instanceof DeviceSchemaRemovedEvent)
+                .mapValues((k, v) -> v.daq().orElse(null))
+                .filter((k, v) -> v != null);
+    }
+
+//    private KTable<DeviceSchemaId, DeviceSchemaQueryModel> deviceSchemaTable() {
+//        String deviceSchemaTopic = toFullName(TOPIC_DEVICE_SCHEMA);
+//        Consumed<DeviceSchemaId, DeviceSchemaEvent> deviceSchemaConsumed = Consumed.with(deviceSchemaIdSerde, deviceSchemaEventSerde).withOffsetResetPolicy(EARLIEST);
+//        return streamsBuilder.table(deviceSchemaTopic, deviceSchemaConsumed)
+//                .filter((k, v) -> v instanceof DeviceSchemaSavedEvent || v instanceof DeviceSchemaRemovedEvent)
+//                .mapValues((k, v) -> v.deviceSchema().orElse(null))
+//                .filter((k, v) -> v != null);
+//    }
 
     private String toFullName(String key) {
         if (StringUtils.hasText(topicPrefix)) {
@@ -80,5 +129,22 @@ public class DeviceKafkaStreams implements InitializingBean {
         } else {
             return key;
         }
+    }
+
+    public static DeviceKafkaStreams newInstance(StreamsBuilder streamsBuilder, String topicPrefix, ObjectMapper objectMapper) {
+        return new DeviceKafkaStreams(
+                streamsBuilder,
+                topicPrefix,
+                new ToFromStringSerde<>(new ToStringSerializer<>(), new ParseStringDeserializer<>(DeviceId::new)),
+                new JsonSerde<>(AbstractDeviceEvent.class),
+//                new ToFromStringSerde<>(new ToStringSerializer<>(), new ParseStringDeserializer<>(DeviceSchemaId::new)),
+//                new JsonSerde<>(DeviceSchemaEvent.class),
+//                new JsonSerde<>(objectMapper.getTypeFactory().constructType(DeviceSchemaDto.class)),
+                new ToFromStringSerde<>(new ToStringSerializer<>(), new ParseStringDeserializer<>(DeviceDataAcquisitionId::new)),
+                new JsonSerde<>(DeviceDataAcquisitionEvent.class),
+                new JsonSerde<>(objectMapper.getTypeFactory().constructType(DeviceDataAcquisitionDto.class)),
+                new JsonSerde<>(DeviceEventAggregator.class),
+                new JsonSerde<>(CollectDeviceMetricCommand.class)
+        );
     }
 }

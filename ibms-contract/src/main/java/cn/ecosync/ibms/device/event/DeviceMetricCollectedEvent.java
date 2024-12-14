@@ -7,8 +7,9 @@ import lombok.ToString;
 @Getter
 @ToString
 public class DeviceMetricCollectedEvent {
-    private DeviceId deviceId;
+    private String tableName;
     private Long timestamp;
+    private DeviceId deviceId;
 
     protected DeviceMetricCollectedEvent() {
     }

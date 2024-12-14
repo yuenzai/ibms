@@ -1,54 +1,42 @@
 package cn.ecosync.ibms.bacnet.dto;
 
-import jakarta.validation.constraints.NotNull;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.ToString;
+import org.springframework.util.Assert;
 
 import java.util.Objects;
 
 @Getter
 @ToString
 public class BacnetObjectProperty {
-    @NotNull
-    private BacnetObjectType objectType;
-    @NotNull
-    private Integer objectInstance;
-    @NotNull
-    private BacnetPropertyId propertyIdentifier;
-    private Integer propertyArrayIndex;
+    @Valid
+    @JsonUnwrapped
+    private BacnetObject bacnetObject;
+    @Valid
+    @JsonUnwrapped
+    private BacnetProperty bacnetProperty;
 
     protected BacnetObjectProperty() {
     }
 
-    public BacnetObjectProperty(BacnetObjectType objectType, Integer objectInstance, BacnetProperty property) {
-        this(objectType, objectInstance, property.getPropertyIdentifier(), property.getPropertyArrayIndex().orElse(null));
-    }
-
-    public BacnetObjectProperty(BacnetObjectType objectType, Integer objectInstance, BacnetPropertyId propertyIdentifier, Integer propertyArrayIndex) {
-        this.objectType = objectType;
-        this.objectInstance = objectInstance;
-        this.propertyIdentifier = propertyIdentifier;
-        this.propertyArrayIndex = propertyArrayIndex;
+    public BacnetObjectProperty(BacnetObject bacnetObject, BacnetProperty bacnetProperty) {
+        Assert.notNull(bacnetObject, "bacnetObject must not be null");
+        Assert.notNull(bacnetProperty, "bacnetProperty must not be null");
+        this.bacnetObject = bacnetObject;
+        this.bacnetProperty = bacnetProperty;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (!(o instanceof BacnetObjectProperty)) return false;
         BacnetObjectProperty that = (BacnetObjectProperty) o;
-        return this.objectType == that.objectType && Objects.equals(this.objectInstance, that.objectInstance) && this.propertyIdentifier == that.propertyIdentifier && Objects.equals(this.propertyArrayIndex, that.propertyArrayIndex);
+        return Objects.equals(bacnetObject, that.bacnetObject) && Objects.equals(bacnetProperty, that.bacnetProperty);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.objectType, this.objectInstance, this.propertyIdentifier, this.propertyArrayIndex);
-    }
-
-    public BacnetObject toBacnetObject() {
-        return new BacnetObject(this.objectType, this.objectInstance);
-    }
-
-    public BacnetProperty toBacnetProperty() {
-        return new BacnetProperty(this.propertyIdentifier, this.propertyArrayIndex);
+        return Objects.hash(bacnetObject, bacnetProperty);
     }
 }

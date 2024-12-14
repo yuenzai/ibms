@@ -1,10 +1,7 @@
 package cn.ecosync.ibms.device.query.handler;
 
-import cn.ecosync.ibms.device.DeviceMapper;
-import cn.ecosync.ibms.device.domain.DeviceId;
-import cn.ecosync.ibms.device.domain.DeviceReadonlyRepository;
-import cn.ecosync.ibms.device.domain.DeviceRepository;
-import cn.ecosync.ibms.device.dto.DeviceDto;
+import cn.ecosync.ibms.device.model.DeviceRepository;
+import cn.ecosync.ibms.device.model.DeviceModel;
 import cn.ecosync.ibms.device.query.GetDeviceQuery;
 import cn.ecosync.iframework.query.QueryHandler;
 import lombok.RequiredArgsConstructor;
@@ -13,19 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
-public class GetDeviceQueryHandler implements QueryHandler<GetDeviceQuery, DeviceDto> {
+public class GetDeviceQueryHandler implements QueryHandler<GetDeviceQuery, DeviceModel> {
     private final DeviceRepository deviceRepository;
-    private final DeviceReadonlyRepository deviceReadonlyRepository;
 
     @Override
     @Transactional(readOnly = true)
-    public DeviceDto handle(GetDeviceQuery query) {
-        if (query.getReadonly()) {
-            return deviceReadonlyRepository.findByDeviceCode(query.getDeviceCode()).orElse(null);
-        } else {
-            return deviceRepository.get(new DeviceId(query.getDeviceCode()))
-                    .map(DeviceMapper::mapWithPoints)
-                    .orElse(null);
-        }
+    public DeviceModel handle(GetDeviceQuery query) {
+        return deviceRepository.get(query.getDeviceId()).orElse(null);
     }
 }
