@@ -1,5 +1,6 @@
 package cn.ecosync.ibms.device.model;
 
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -9,16 +10,16 @@ import java.util.List;
 import java.util.Optional;
 
 @NoRepositoryBean
-public interface DeviceRepository {
-    void add(DeviceCommandModel device);
+public interface DeviceRepository<T extends DeviceModel> {
+    void add(T device);
 
-    void remove(DeviceCommandModel device);
+    void remove(T device);
 
     Optional<DeviceCommandModel> get(DeviceId deviceId);
 
-    List<DeviceModel> search(DeviceModel probe, Sort sort);
+    List<T> search(Example<T> example, Sort sort);
 
-    Page<DeviceModel> search(DeviceModel probe, Pageable pageable);
+    Page<T> search(Example<T> example, Pageable pageable);
 
-    DeviceModel newProbe(DeviceDataAcquisitionId daqId, String deviceName, String path);
+    Example<T> newExample(DeviceId deviceIdProbe, DeviceProperties devicePropertiesProbe);
 }

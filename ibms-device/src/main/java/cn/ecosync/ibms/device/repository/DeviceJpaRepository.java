@@ -1,26 +1,21 @@
 package cn.ecosync.ibms.device.repository;
 
 import cn.ecosync.ibms.device.model.*;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-public interface DeviceJpaRepository extends JpaRepository<Device, Integer>, DeviceRepository {
+public interface DeviceJpaRepository extends JpaRepository<Device, Integer>, DeviceRepository<Device> {
     @Override
-    default void add(DeviceCommandModel device) {
-        save((Device) device);
+    default void add(Device device) {
+        save(device);
     }
 
     @Override
-    default void remove(DeviceCommandModel device) {
-        delete((Device) device);
+    default void remove(Device device) {
+        delete(device);
     }
 
     @Override
@@ -30,25 +25,24 @@ public interface DeviceJpaRepository extends JpaRepository<Device, Integer>, Dev
     }
 
     @Override
-    default List<DeviceModel> search(DeviceModel probe, Sort sort) {
-        Assert.isInstanceOf(Device.class, probe);
-        Example<Device> example = Example.of((Device) probe);
-        return findAll(example, sort).stream()
-                .map(DeviceModel.class::cast)
-                .collect(Collectors.toList());
+    default List<Device> search(Example<Device> example, Sort sort) {
+        return findAll(example, sort);
     }
 
     @Override
-    default Page<DeviceModel> search(DeviceModel probe, Pageable pageable) {
-        Assert.isInstanceOf(Device.class, probe);
-        Example<Device> example = Example.of((Device) probe);
-        return findAll(example, pageable)
-                .map(DeviceModel.class::cast);
+    default Page<Device> search(Example<Device> example, Pageable pageable) {
+        return findAll(example, pageable);
     }
 
     @Override
-    default DeviceModel newProbe(DeviceDataAcquisitionId daqId, String deviceName, String path) {
-        return Device.newProbe(daqId, deviceName, path);
+    default Example<Device> newExample(DeviceId deviceIdProbe, DeviceProperties devicePropertiesProbe) {
+        Device probe = Device.newProbe(deviceIdProbe, devicePropertiesProbe);
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withMatcher("deviceId.daqName", ExampleMatcher.GenericPropertyMatcher::exact)
+                .withMatcher("deviceId.deviceCode", ExampleMatcher.GenericPropertyMatcher::exact)
+                .withMatcher("deviceProperties.deviceName", ExampleMatcher.GenericPropertyMatcher::contains)
+                .withMatcher("deviceProperties.path", ExampleMatcher.GenericPropertyMatcher::startsWith);
+        return Example.of(probe, matcher);
     }
 
     Optional<Device> findByDeviceId(DeviceId deviceId);

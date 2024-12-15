@@ -3,8 +3,9 @@ package cn.ecosync.ibms.device.command.handler;
 import cn.ecosync.ibms.device.command.UpdateDeviceCommand;
 import cn.ecosync.ibms.device.event.DeviceSavedEvent;
 import cn.ecosync.ibms.device.model.DeviceCommandModel;
-import cn.ecosync.ibms.device.model.DeviceRepository;
 import cn.ecosync.ibms.device.model.DeviceId;
+import cn.ecosync.ibms.device.model.DeviceModel;
+import cn.ecosync.ibms.device.model.DeviceRepository;
 import cn.ecosync.iframework.command.CommandHandler;
 import cn.ecosync.iframework.event.EventBus;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ import org.springframework.util.Assert;
 @Component
 @RequiredArgsConstructor
 public class UpdateDeviceCommandHandler implements CommandHandler<UpdateDeviceCommand> {
-    private final DeviceRepository deviceRepository;
+    private final DeviceRepository<DeviceModel> deviceRepository;
     private final EventBus eventBus;
 
     @Override
@@ -24,7 +25,7 @@ public class UpdateDeviceCommandHandler implements CommandHandler<UpdateDeviceCo
         DeviceId deviceId = command.getDeviceId();
         DeviceCommandModel device = deviceRepository.get(deviceId).orElse(null);
         Assert.notNull(device, "device does not exist: " + deviceId.getDeviceCode());
-        device.update(command.getDeviceName(), command.getPath(), command.getDescription(), command.getDeviceExtra());
+        device.update(command.getDeviceProperties());
         DeviceSavedEvent event = new DeviceSavedEvent(device);
         eventBus.publish(event);
     }

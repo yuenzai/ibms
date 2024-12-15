@@ -5,12 +5,13 @@ import cn.ecosync.ibms.bacnet.dto.BacnetReadPropertyMultipleService;
 import cn.ecosync.ibms.bacnet.dto.ReadPropertyMultipleAck;
 import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleQuery;
 import cn.ecosync.ibms.device.command.CollectDeviceMetricCommand;
+import cn.ecosync.ibms.device.model.DeviceBacnetModel;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionModel;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionProperties;
-import cn.ecosync.ibms.device.model.DeviceExtra;
 import cn.ecosync.ibms.device.model.DeviceModel;
 import cn.ecosync.iframework.query.QueryBus;
 import cn.ecosync.iframework.serde.JsonSerde;
+import cn.ecosync.iframework.util.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -60,13 +61,18 @@ public class DeviceEventKafkaListener {
     }
 
     private void run(DeviceModel device, DeviceDataAcquisitionModel daq) {
-        Assert.isInstanceOf(DeviceExtra.BACnet.class, device.getDeviceExtra());
+        Assert.isInstanceOf(DeviceBacnetModel.class, device);
         Assert.isInstanceOf(DeviceDataAcquisitionProperties.BACnet.class, daq.getDaqProperties());
 
-        DeviceExtra.BACnet deviceProperties = (DeviceExtra.BACnet) device.getDeviceExtra();
+        DeviceBacnetModel bacnetDevice = (DeviceBacnetModel) device;
         DeviceDataAcquisitionProperties.BACnet daqProperties = (DeviceDataAcquisitionProperties.BACnet) daq.getDaqProperties();
+        if (CollectionUtils.isEmpty(daqProperties.getBacnetPoints())) {
+            log.warn("DAQ's bacnet points is empty: {}", daq.getDaqId());
+            return;
+        }
 
-        BacnetReadPropertyMultipleService readPropertyMultipleService = BacnetMapper.toReadPropertyMultipleService(deviceProperties, daqProperties);
+        BacnetReadPropertyMultipleService readPropertyMultipleService = BacnetMapper
+                .toReadPropertyMultipleService(bacnetDevice.getDeviceInstance(), daqProperties);
         BacnetReadPropertyMultipleQuery query = new BacnetReadPropertyMultipleQuery(readPropertyMultipleService);
         ReadPropertyMultipleAck ack = queryBus.execute(query);
         if (ack == null) {

@@ -1,13 +1,18 @@
 package cn.ecosync.ibms.device.model;
 
+import cn.ecosync.ibms.device.command.CreateDeviceCommand;
+import cn.ecosync.ibms.device.event.DeviceSavedEvent;
 import cn.ecosync.iframework.domain.ConcurrencySafeEntity;
+import cn.ecosync.iframework.event.Event;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import org.springframework.util.Assert;
 
+import java.util.Collection;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "device_daq")
@@ -32,6 +37,13 @@ public class DeviceDataAcquisition extends ConcurrencySafeEntity implements Devi
         if (daqProperties == null) return;
         Assert.isTrue(Objects.equals(this.daqProperties.getClass(), daqProperties.getClass()), "daqProperties class not match!");
         this.daqProperties = daqProperties;
+    }
+
+    @Override
+    public Collection<Event> createDevice(CreateDeviceCommand command) {
+        return command.devices(daqId).stream()
+                .map(DeviceSavedEvent::new)
+                .collect(Collectors.toList());
     }
 
     @Override

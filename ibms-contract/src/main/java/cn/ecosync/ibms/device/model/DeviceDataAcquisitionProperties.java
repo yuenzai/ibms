@@ -1,40 +1,50 @@
 package cn.ecosync.ibms.device.model;
 
-import cn.ecosync.ibms.bacnet.dto.BacnetObjectProperty;
-import cn.ecosync.iframework.util.CollectionDelegate;
+import cn.ecosync.ibms.bacnet.dto.BacnetObjectPropertyWithKey;
+import cn.ecosync.iframework.util.CollectionUtils;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.ToString;
+import org.springframework.util.Assert;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 
 import static cn.ecosync.ibms.device.model.DeviceDataAcquisitionProperties.BACnet;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = BACnet.class, name = "BACNET"),
+        @JsonSubTypes.Type(value = BACnet.class, name = BACnet.TYPE),
 })
 public interface DeviceDataAcquisitionProperties {
+    String getType();
+
     @ToString
-    class BACnet implements DeviceDataAcquisitionProperties, CollectionDelegate<BacnetObjectProperty> {
+    class BACnet implements DeviceDataAcquisitionProperties {
+        public static final String TYPE = "BACNET";
+
         @Valid
-        @JsonDeserialize(as = LinkedHashSet.class)
-        private Set<BacnetObjectProperty> points;
+        @NotEmpty
+        private List<BacnetObjectPropertyWithKey> bacnetPoints;
 
         protected BACnet() {
         }
 
-        @Override
-        public Collection<BacnetObjectProperty> delegate() {
-            return points;
+        public BACnet(List<BacnetObjectPropertyWithKey> bacnetPoints) {
+            Assert.notEmpty(bacnetPoints, "bacnetPoints must not be empty");
+            Assert.isTrue(CollectionUtils.hasUniqueElement(bacnetPoints, BacnetObjectPropertyWithKey::getKey), "bacnetPoints must contain unique key");
+            Assert.isTrue(CollectionUtils.hasUniqueElement(bacnetPoints, BacnetObjectPropertyWithKey::getBop), "bacnetPoints must contain unique point");
+            this.bacnetPoints = bacnetPoints;
         }
 
-        protected Set<BacnetObjectProperty> getPoints() {
-            return points;
+        public List<BacnetObjectPropertyWithKey> getBacnetPoints() {
+            return CollectionUtils.nullSafeOf(bacnetPoints);
+        }
+
+        @Override
+        public String getType() {
+            return TYPE;
         }
     }
 
@@ -43,6 +53,11 @@ public interface DeviceDataAcquisitionProperties {
         public static final Null INSTANCE = new Null();
 
         private Null() {
+        }
+
+        @Override
+        public String getType() {
+            return "";
         }
     }
 }

@@ -39,4 +39,8 @@ public class DeviceDataAcquisitionId {
     public String toString() {
         return daqName;
     }
+
+    public static DeviceDataAcquisitionId fromString(String str) {
+        return new DeviceDataAcquisitionId(str);
+    }
 }
