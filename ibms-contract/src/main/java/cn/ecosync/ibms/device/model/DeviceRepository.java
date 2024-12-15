@@ -21,5 +21,5 @@ public interface DeviceRepository<T extends DeviceModel> {
 
     Page<T> search(Example<T> example, Pageable pageable);
 
-    Example<T> newExample(DeviceId deviceIdProbe, DeviceProperties devicePropertiesProbe);
+    Example<T> newExample(DeviceId deviceIdProbe, DeviceDataAcquisitionId daqIdProbe, DeviceProperties devicePropertiesProbe);
 }

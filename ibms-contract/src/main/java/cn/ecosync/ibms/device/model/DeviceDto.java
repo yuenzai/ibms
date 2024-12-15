@@ -1,15 +1,14 @@
 package cn.ecosync.ibms.device.model;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import jakarta.validation.Valid;
 import lombok.ToString;
 
 @ToString
 public class DeviceDto implements DeviceModel {
-    @Valid
     @JsonUnwrapped
     private DeviceId deviceId;
-    @Valid
+    @JsonUnwrapped
+    private DeviceDataAcquisitionId daqId;
     @JsonUnwrapped
     private DeviceProperties deviceProperties;
 
@@ -18,12 +17,18 @@ public class DeviceDto implements DeviceModel {
 
     public DeviceDto(DeviceId deviceId, DeviceProperties deviceProperties) {
         this.deviceId = deviceId;
+        this.daqId = deviceId.toDaqId();
         this.deviceProperties = deviceProperties;
     }
 
     @Override
     public DeviceId getDeviceId() {
         return deviceId;
+    }
+
+    @Override
+    public DeviceDataAcquisitionId getDaqId() {
+        return daqId;
     }
 
     @Override

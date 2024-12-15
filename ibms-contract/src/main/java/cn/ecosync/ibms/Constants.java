@@ -7,6 +7,9 @@ public class Constants {
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String TIME_FORMAT = "HH:mm:ss";
 
+    // 匹配字符 ['A-Z', 'a-z', '0-9', '-'] 1~16次
+    public static final String REGEX_CODE = "[A-Za-z0-9-]{1,16}";
+
     public static final String AGGREGATE_TYPE_DEVICE = "device";
     public static final String AGGREGATE_TYPE_DEVICE_SCHEMA = "device-schema";
     public static final String AGGREGATE_TYPE_DEVICE_DAQ = "device-daq";

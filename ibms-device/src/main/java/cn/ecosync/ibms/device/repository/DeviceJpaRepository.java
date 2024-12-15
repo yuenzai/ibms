@@ -35,10 +35,10 @@ public interface DeviceJpaRepository extends JpaRepository<Device, Integer>, Dev
     }
 
     @Override
-    default Example<Device> newExample(DeviceId deviceIdProbe, DeviceProperties devicePropertiesProbe) {
-        Device probe = Device.newProbe(deviceIdProbe, devicePropertiesProbe);
+    default Example<Device> newExample(DeviceId deviceIdProbe, DeviceDataAcquisitionId daqIdProbe, DeviceProperties devicePropertiesProbe) {
+        Device probe = Device.newProbe(deviceIdProbe, daqIdProbe, devicePropertiesProbe);
         ExampleMatcher matcher = ExampleMatcher.matching()
-                .withMatcher("deviceId.daqName", ExampleMatcher.GenericPropertyMatcher::exact)
+                .withMatcher("daqId.daqName", ExampleMatcher.GenericPropertyMatcher::exact)
                 .withMatcher("deviceId.deviceCode", ExampleMatcher.GenericPropertyMatcher::exact)
                 .withMatcher("deviceProperties.deviceName", ExampleMatcher.GenericPropertyMatcher::contains)
                 .withMatcher("deviceProperties.path", ExampleMatcher.GenericPropertyMatcher::startsWith);

@@ -14,15 +14,18 @@ public class Device extends ConcurrencySafeEntity implements DeviceCommandModel 
     @Embedded
     private DeviceId deviceId;
     @Embedded
+    private DeviceDataAcquisitionId daqId;
+    @Embedded
     private DeviceProperties deviceProperties;
 
     protected Device() {
     }
 
     public Device(DeviceId deviceId, DeviceProperties deviceProperties) {
-        Assert.notNull(deviceId, "deviceId must be be null");
-        Assert.notNull(deviceProperties, "deviceProperties must be be null");
+        Assert.notNull(deviceId, "deviceId must not be null");
+        Assert.notNull(deviceProperties, "deviceProperties must not be null");
         this.deviceId = deviceId;
+        this.daqId = deviceId.toDaqId();
         this.deviceProperties = deviceProperties;
     }
 
@@ -35,6 +38,11 @@ public class Device extends ConcurrencySafeEntity implements DeviceCommandModel 
     @Override
     public DeviceId getDeviceId() {
         return deviceId;
+    }
+
+    @Override
+    public DeviceDataAcquisitionId getDaqId() {
+        return daqId;
     }
 
     @Override
@@ -54,9 +62,10 @@ public class Device extends ConcurrencySafeEntity implements DeviceCommandModel 
         return Objects.hashCode(deviceId);
     }
 
-    public static Device newProbe(DeviceId deviceIdProbe, DeviceProperties devicePropertiesProbe) {
+    public static Device newProbe(DeviceId deviceIdProbe, DeviceDataAcquisitionId daqIdProbe, DeviceProperties devicePropertiesProbe) {
         Device probe = new Device();
         probe.deviceId = deviceIdProbe;
+        probe.daqId = daqIdProbe;
         probe.deviceProperties = devicePropertiesProbe;
         return probe;
     }

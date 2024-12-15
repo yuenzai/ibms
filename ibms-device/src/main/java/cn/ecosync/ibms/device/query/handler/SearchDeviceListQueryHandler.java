@@ -1,9 +1,6 @@
 package cn.ecosync.ibms.device.query.handler;
 
-import cn.ecosync.ibms.device.model.DeviceId;
-import cn.ecosync.ibms.device.model.DeviceModel;
-import cn.ecosync.ibms.device.model.DeviceProperties;
-import cn.ecosync.ibms.device.model.DeviceRepository;
+import cn.ecosync.ibms.device.model.*;
 import cn.ecosync.ibms.device.query.ListSearchDeviceQuery;
 import cn.ecosync.iframework.query.QueryHandler;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +20,10 @@ public class SearchDeviceListQueryHandler implements QueryHandler<ListSearchDevi
     @Transactional(readOnly = true)
     public List<DeviceModel> handle(ListSearchDeviceQuery query) {
         Sort sort = query.toSort();
-        DeviceId deviceIdProbe = DeviceId.newProbe(query.getDaqName(), query.getDeviceCode());
+        DeviceId deviceIdProbe = DeviceId.newProbe(query.getDeviceCode());
+        DeviceDataAcquisitionId daqIdProbe = DeviceDataAcquisitionId.newProbe(query.getDaqName());
         DeviceProperties devicePropertiesProbe = DeviceProperties.newProbe(query.getDeviceName(), query.getPath());
-        Example<DeviceModel> example = deviceRepository.newExample(deviceIdProbe, devicePropertiesProbe);
+        Example<DeviceModel> example = deviceRepository.newExample(deviceIdProbe, daqIdProbe, devicePropertiesProbe);
         return deviceRepository.search(example, sort);
     }
 }
