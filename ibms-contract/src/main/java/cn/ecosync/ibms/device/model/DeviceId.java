@@ -1,43 +1,51 @@
 package cn.ecosync.ibms.device.model;
 
+import cn.ecosync.iframework.util.ToStringId;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import org.springframework.util.Assert;
 
+import java.util.Map;
 import java.util.Objects;
-import java.util.regex.Matcher;
 
-import static cn.ecosync.ibms.Constants.REGEX_CODE;
+import static cn.ecosync.ibms.Constants.PATH_MATCHER;
 
+/**
+ * DeviceId must contains device parameters
+ */
 @Getter
 @Embeddable
-public class DeviceId {
-    public static final String REGEX = "(" + DeviceDataAcquisitionId.REGEX + ")" + "\\|" + REGEX_CODE;
-    public static final java.util.regex.Pattern PATTERN = java.util.regex.Pattern.compile(REGEX);
-    public static final String ERROR_REGEX_NOT_MATCH = "deviceCode not match regex: " + REGEX;
+public class DeviceId implements ToStringId {
+    public static final String KEY_SID = "sid";
+    private static final String PATTERN = DeviceDataAcquisitionId.PATTERN + "/{sid}";
 
-    @Pattern(regexp = REGEX, message = ERROR_REGEX_NOT_MATCH)
     @Column(name = "device_code", nullable = false, updatable = false)
     private String deviceCode;
 
     protected DeviceId() {
     }
 
-    public DeviceId(String deviceCode) {
-        Assert.isTrue(PATTERN.matcher(deviceCode).matches(), ERROR_REGEX_NOT_MATCH);
+    public DeviceId(DeviceDataAcquisitionId daqId, DeviceSpecificId sid) {
+        Assert.notNull(daqId, "daqId must not be null");
+        Assert.notNull(sid, "sid must not be null");
+        String deviceCode = daqId.toStringId() + "/" + sid.toStringId();
+        Assert.isTrue(PATH_MATCHER.match(PATTERN, deviceCode), "deviceCode must match pattern: " + PATTERN);
         this.deviceCode = deviceCode;
     }
 
-    public DeviceDataAcquisitionId toDaqId() {
-        Matcher matcher = PATTERN.matcher(deviceCode);
-        Assert.isTrue(matcher.matches(), ERROR_REGEX_NOT_MATCH);
-        return new DeviceDataAcquisitionId(matcher.group(1));
+    public DeviceId(String deviceCode) {
+        Assert.isTrue(PATH_MATCHER.match(PATTERN, deviceCode), "deviceCode must match pattern: " + PATTERN);
+        this.deviceCode = deviceCode;
     }
 
     @Override
     public String toString() {
+        return toStringId();
+    }
+
+    @Override
+    public String toStringId() {
         return deviceCode;
     }
 
@@ -57,5 +65,10 @@ public class DeviceId {
         DeviceId probe = new DeviceId();
         probe.deviceCode = deviceCode;
         return probe;
+    }
+
+    public static String extractPathVariable(String path, String key) {
+        Map<String, String> variables = PATH_MATCHER.extractUriTemplateVariables(PATTERN, path);
+        return variables.get(key);
     }
 }

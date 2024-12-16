@@ -1,54 +1,59 @@
 package cn.ecosync.ibms.device.model;
 
+import cn.ecosync.iframework.util.ToStringId;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import org.springframework.util.Assert;
 
 import java.util.Objects;
 
-import static cn.ecosync.ibms.Constants.REGEX_CODE;
+import static cn.ecosync.ibms.Constants.PATH_MATCHER;
 
 @Getter
 @Embeddable
-public class DeviceDataAcquisitionId {
-    public static final String REGEX = REGEX_CODE + "\\|" + REGEX_CODE;
-    public static final java.util.regex.Pattern PATTERN = java.util.regex.Pattern.compile(REGEX);
-    public static final String ERROR_REGEX_NOT_MATCH = "daqName not match regex: " + REGEX;
+public class DeviceDataAcquisitionId implements ToStringId {
+    public static final String KEY_DAQ = "daq";
+    protected static final String PATTERN = "{daq}";
 
-    @Pattern(regexp = REGEX, message = ERROR_REGEX_NOT_MATCH)
-    @Column(name = "daq_name", nullable = false, updatable = false)
-    private String daqName;
+    @Column(name = "daq_code", nullable = false, updatable = false)
+    private String daqCode;
 
     protected DeviceDataAcquisitionId() {
     }
 
     public DeviceDataAcquisitionId(String daqName) {
-        Assert.isTrue(PATTERN.matcher(daqName).matches(), ERROR_REGEX_NOT_MATCH);
-        this.daqName = daqName;
+        Assert.hasText(daqName, "daqName must not be empty");
+        String daqCode = daqName;
+        Assert.isTrue(PATH_MATCHER.match(PATTERN, daqCode), "daqCode must match pattern: " + PATTERN);
+        this.daqCode = daqCode;
+    }
+
+    @Override
+    public String toString() {
+        return toStringId();
+    }
+
+    @Override
+    public String toStringId() {
+        return daqCode;
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof DeviceDataAcquisitionId)) return false;
         DeviceDataAcquisitionId that = (DeviceDataAcquisitionId) o;
-        return Objects.equals(daqName, that.daqName);
+        return Objects.equals(daqCode, that.daqCode);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(daqName);
+        return Objects.hashCode(daqCode);
     }
 
-    @Override
-    public String toString() {
-        return daqName;
-    }
-
-    public static DeviceDataAcquisitionId newProbe(String daqName) {
+    public static DeviceDataAcquisitionId newProbe(String daqCode) {
         DeviceDataAcquisitionId probe = new DeviceDataAcquisitionId();
-        probe.daqName = daqName;
+        probe.daqCode = daqCode;
         return probe;
     }
 }

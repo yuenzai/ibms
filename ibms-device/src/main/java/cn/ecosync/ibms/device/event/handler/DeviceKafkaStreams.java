@@ -135,7 +135,7 @@ public class DeviceKafkaStreams implements InitializingBean {
         return new DeviceKafkaStreams(
                 streamsBuilder,
                 topicPrefix,
-                new ToFromStringSerde<>(new ToStringSerializer<>(), new ParseStringDeserializer<>(DeviceId::new)),
+                new ToFromStringSerde<>(new ToStringSerializer<>(), new ParseStringDeserializer<>(str -> new DeviceId(str))),
                 new JsonSerde<>(AbstractDeviceEvent.class),
 //                new ToFromStringSerde<>(new ToStringSerializer<>(), new ParseStringDeserializer<>(DeviceSchemaId::new)),
 //                new JsonSerde<>(DeviceSchemaEvent.class),

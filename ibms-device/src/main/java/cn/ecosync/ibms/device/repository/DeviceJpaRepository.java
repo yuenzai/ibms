@@ -38,10 +38,9 @@ public interface DeviceJpaRepository extends JpaRepository<Device, Integer>, Dev
     default Example<Device> newExample(DeviceId deviceIdProbe, DeviceDataAcquisitionId daqIdProbe, DeviceProperties devicePropertiesProbe) {
         Device probe = Device.newProbe(deviceIdProbe, daqIdProbe, devicePropertiesProbe);
         ExampleMatcher matcher = ExampleMatcher.matching()
-                .withMatcher("daqId.daqName", ExampleMatcher.GenericPropertyMatcher::exact)
+                .withMatcher("daqId.daqCode", ExampleMatcher.GenericPropertyMatcher::exact)
                 .withMatcher("deviceId.deviceCode", ExampleMatcher.GenericPropertyMatcher::exact)
-                .withMatcher("deviceProperties.deviceName", ExampleMatcher.GenericPropertyMatcher::contains)
-                .withMatcher("deviceProperties.path", ExampleMatcher.GenericPropertyMatcher::startsWith);
+                .withMatcher("deviceProperties.deviceName", ExampleMatcher.GenericPropertyMatcher::contains);
         return Example.of(probe, matcher);
     }
 

@@ -15,9 +15,9 @@ public class DeviceDto implements DeviceModel {
     protected DeviceDto() {
     }
 
-    public DeviceDto(DeviceId deviceId, DeviceProperties deviceProperties) {
+    public DeviceDto(DeviceId deviceId, DeviceDataAcquisitionId daqId, DeviceProperties deviceProperties) {
         this.deviceId = deviceId;
-        this.daqId = deviceId.toDaqId();
+        this.daqId = daqId;
         this.deviceProperties = deviceProperties;
     }
 

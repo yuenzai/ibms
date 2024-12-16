@@ -5,9 +5,9 @@ import cn.ecosync.ibms.bacnet.dto.BacnetReadPropertyMultipleService;
 import cn.ecosync.ibms.bacnet.dto.ReadPropertyMultipleAck;
 import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleQuery;
 import cn.ecosync.ibms.device.command.CollectDeviceMetricCommand;
-import cn.ecosync.ibms.device.model.DeviceBacnetModel;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionModel;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionProperties;
+import cn.ecosync.ibms.device.model.DeviceId;
 import cn.ecosync.ibms.device.model.DeviceModel;
 import cn.ecosync.iframework.query.QueryBus;
 import cn.ecosync.iframework.serde.JsonSerde;
@@ -51,28 +51,33 @@ public class DeviceEventKafkaListener {
         }
     }
 
-    private void onMessage(CollectDeviceMetricCommand command) {
+    private void dispatch(CollectDeviceMetricCommand command) {
         Set<DeviceModel> devices = command.getAggregator().getDevices();
         DeviceDataAcquisitionModel daq = command.getDaq();
         Assert.notNull(daq, "daq must not be null");
-        for (DeviceModel device : devices) {
-            run(device, daq);
+        DeviceDataAcquisitionProperties daqProperties = daq.getDaqProperties();
+        if (daqProperties instanceof DeviceDataAcquisitionProperties.BACnet) {
+            for (DeviceModel device : devices) {
+                run(device, daq);
+            }
         }
     }
 
     private void run(DeviceModel device, DeviceDataAcquisitionModel daq) {
-        Assert.isInstanceOf(DeviceBacnetModel.class, device);
         Assert.isInstanceOf(DeviceDataAcquisitionProperties.BACnet.class, daq.getDaqProperties());
 
-        DeviceBacnetModel bacnetDevice = (DeviceBacnetModel) device;
         DeviceDataAcquisitionProperties.BACnet daqProperties = (DeviceDataAcquisitionProperties.BACnet) daq.getDaqProperties();
         if (CollectionUtils.isEmpty(daqProperties.getBacnetPoints())) {
             log.warn("DAQ's bacnet points is empty: {}", daq.getDaqId());
             return;
         }
 
+        DeviceId deviceId = device.getDeviceId();
+        String sid = DeviceId.extractPathVariable(deviceId.toStringId(), DeviceId.KEY_SID);
+        Integer deviceInstance = Integer.parseInt(sid);
+
         BacnetReadPropertyMultipleService readPropertyMultipleService = BacnetMapper
-                .toReadPropertyMultipleService(bacnetDevice.getDeviceInstance(), daqProperties);
+                .toReadPropertyMultipleService(deviceInstance, daqProperties);
         BacnetReadPropertyMultipleQuery query = new BacnetReadPropertyMultipleQuery(readPropertyMultipleService);
         ReadPropertyMultipleAck ack = queryBus.execute(query);
         if (ack == null) {

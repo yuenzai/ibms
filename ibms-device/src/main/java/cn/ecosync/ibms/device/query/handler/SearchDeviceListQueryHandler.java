@@ -22,7 +22,7 @@ public class SearchDeviceListQueryHandler implements QueryHandler<ListSearchDevi
         Sort sort = query.toSort();
         DeviceId deviceIdProbe = DeviceId.newProbe(query.getDeviceCode());
         DeviceDataAcquisitionId daqIdProbe = DeviceDataAcquisitionId.newProbe(query.getDaqName());
-        DeviceProperties devicePropertiesProbe = DeviceProperties.newProbe(query.getDeviceName(), query.getPath());
+        DeviceProperties devicePropertiesProbe = DeviceProperties.newProbe(query.getDeviceName());
         Example<DeviceModel> example = deviceRepository.newExample(deviceIdProbe, daqIdProbe, devicePropertiesProbe);
         return deviceRepository.search(example, sort);
     }

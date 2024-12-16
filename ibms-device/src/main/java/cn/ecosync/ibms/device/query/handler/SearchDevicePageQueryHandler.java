@@ -21,7 +21,7 @@ public class SearchDevicePageQueryHandler implements QueryHandler<PageSearchDevi
         Pageable pageable = query.toPageable();
         DeviceId deviceIdProbe = DeviceId.newProbe(query.getDeviceCode());
         DeviceDataAcquisitionId daqIdProbe = DeviceDataAcquisitionId.newProbe(query.getDaqName());
-        DeviceProperties devicePropertiesProbe = DeviceProperties.newProbe(query.getDeviceName(), query.getPath());
+        DeviceProperties devicePropertiesProbe = DeviceProperties.newProbe(query.getDeviceName());
         Example<DeviceModel> example = deviceRepository.newExample(deviceIdProbe, daqIdProbe, devicePropertiesProbe);
         return deviceRepository.search(example, pageable);
     }

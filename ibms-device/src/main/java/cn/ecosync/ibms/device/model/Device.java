@@ -21,11 +21,12 @@ public class Device extends ConcurrencySafeEntity implements DeviceCommandModel 
     protected Device() {
     }
 
-    public Device(DeviceId deviceId, DeviceProperties deviceProperties) {
+    public Device(DeviceId deviceId, DeviceDataAcquisitionId daqId, DeviceProperties deviceProperties) {
         Assert.notNull(deviceId, "deviceId must not be null");
+        Assert.notNull(daqId, "daqId must not be null");
         Assert.notNull(deviceProperties, "deviceProperties must not be null");
         this.deviceId = deviceId;
-        this.daqId = deviceId.toDaqId();
+        this.daqId = daqId;
         this.deviceProperties = deviceProperties;
     }
 
