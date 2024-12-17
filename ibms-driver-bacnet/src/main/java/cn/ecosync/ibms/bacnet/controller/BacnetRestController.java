@@ -1,4 +1,4 @@
-package cn.ecosync.ibms.controller;
+package cn.ecosync.ibms.bacnet.controller;
 
 import cn.ecosync.ibms.bacnet.command.BacnetWritePropertyCommand;
 import cn.ecosync.ibms.bacnet.dto.*;

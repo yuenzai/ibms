@@ -1,4 +1,4 @@
-package cn.ecosync.ibms.query.handler;
+package cn.ecosync.ibms.bacnet.query.handler;
 
 import cn.ecosync.ibms.bacnet.dto.BacnetReadPropertyMultipleService;
 import cn.ecosync.ibms.bacnet.dto.ReadPropertyMultipleAck;
