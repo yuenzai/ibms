@@ -6,6 +6,7 @@ import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleQuery;
 import cn.ecosync.iframework.query.QueryHandler;
 import cn.ecosync.iframework.serde.JsonSerde;
 import cn.ecosync.iframework.serde.TypeReference;
+import cn.ecosync.iframework.util.CollectionUtils;
 import cn.ecosync.iframework.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,8 @@ public class BacnetReadPropertyMultipleQueryHandler implements QueryHandler<Bacn
 
     private ReadPropertyMultipleAck handleImpl(BacnetReadPropertyMultipleService service) throws Exception {
         List<String> command = service.toCommand();
+        if (CollectionUtils.isEmpty(command)) return ReadPropertyMultipleAck.nullInstance(service.getDeviceInstance());
+
         ProcessBuilder processBuilder = new ProcessBuilder(command);
         Process process = processBuilder.start();
         String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8);

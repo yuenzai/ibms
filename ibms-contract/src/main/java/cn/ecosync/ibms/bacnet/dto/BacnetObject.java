@@ -1,5 +1,6 @@
 package cn.ecosync.ibms.bacnet.dto;
 
+import cn.ecosync.iframework.util.ToStringId;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import org.springframework.util.Assert;
@@ -7,7 +8,7 @@ import org.springframework.util.Assert;
 import java.util.Objects;
 
 @Getter
-public class BacnetObject {
+public class BacnetObject implements ToStringId {
     @NotNull
     private BacnetObjectType objectType;
     @NotNull
@@ -42,6 +43,11 @@ public class BacnetObject {
 
     @Override
     public String toString() {
+        return toStringId();
+    }
+
+    @Override
+    public String toStringId() {
         return objectType.getName() + "-" + objectInstance;
     }
 }

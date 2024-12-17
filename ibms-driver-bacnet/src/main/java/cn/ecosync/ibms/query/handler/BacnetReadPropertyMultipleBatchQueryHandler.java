@@ -6,6 +6,7 @@ import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleBatchQuery;
 import cn.ecosync.iframework.query.QueryHandler;
 import cn.ecosync.iframework.serde.JsonSerde;
 import cn.ecosync.iframework.serde.TypeReference;
+import cn.ecosync.iframework.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -27,18 +28,22 @@ public class BacnetReadPropertyMultipleBatchQueryHandler implements QueryHandler
     @Override
     public List<ReadPropertyMultipleAck> handle(BacnetReadPropertyMultipleBatchQuery query) {
         try {
-            List<BacnetReadPropertyMultipleService> services = query.getServices();
-            return handleImpl(services);
+            return handleImpl(query);
         } catch (Exception e) {
             log.error("", e);
             return Collections.emptyList();
         }
     }
 
-    private List<ReadPropertyMultipleAck> handleImpl(List<BacnetReadPropertyMultipleService> services) throws Exception {
-        String command = services.stream()
+    private List<ReadPropertyMultipleAck> handleImpl(BacnetReadPropertyMultipleBatchQuery query) throws Exception {
+        String command = query.stream()
+                .filter(Objects::nonNull)
                 .map(BacnetReadPropertyMultipleService::toCommandString)
+                .filter(StringUtils::hasText)
                 .collect(Collectors.joining("; echo; "));
+
+        if (!StringUtils.hasText(command)) return Collections.emptyList();
+
         List<String> commands = Arrays.asList("/bin/bash", "-c", command);
         ProcessBuilder processBuilder = new ProcessBuilder(commands);
         Process process = processBuilder.start();
@@ -46,10 +51,11 @@ public class BacnetReadPropertyMultipleBatchQueryHandler implements QueryHandler
         String stderr = StreamUtils.copyToString(process.getErrorStream(), StandardCharsets.UTF_8);
         process.waitFor();
         log.debug("command: {}\nstdout:\n{}\nstderr:\n{}", commands, stdout, stderr);
+
         return Arrays.stream(stdout.split("\n"))
                 .map(in -> jsonSerde.deserialize(in, new TypeReference<ReadPropertyMultipleAck>() {
                 }))
-                .filter(Objects::nonNull)
+                .filter(ReadPropertyMultipleAck::valuesNotEmpty)
                 .collect(Collectors.toList());
     }
 }

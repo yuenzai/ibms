@@ -7,6 +7,7 @@ import lombok.ToString;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,10 @@ public class ReadPropertyMultipleAck {
         return CollectionUtils.nullSafeOf(values);
     }
 
+    public boolean valuesNotEmpty() {
+        return CollectionUtils.notEmpty(getValues());
+    }
+
     public MultiValueMap<BacnetObjectProperty, BacnetPropertyValue> flatMap() {
         MultiValueMap<BacnetObjectProperty, BacnetPropertyValue> multiValueMap = new LinkedMultiValueMap<>();
         for (BacnetObjectProperties value : getValues()) {
@@ -30,6 +35,13 @@ public class ReadPropertyMultipleAck {
             }
         }
         return multiValueMap;
+    }
+
+    public static ReadPropertyMultipleAck nullInstance(Integer deviceInstance) {
+        ReadPropertyMultipleAck nullInstance = new ReadPropertyMultipleAck();
+        nullInstance.deviceInstance = deviceInstance;
+        nullInstance.values = Collections.emptyList();
+        return nullInstance;
     }
 
     @Getter

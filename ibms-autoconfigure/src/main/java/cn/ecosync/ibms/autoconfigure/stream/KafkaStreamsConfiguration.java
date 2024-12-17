@@ -1,5 +1,6 @@
 package cn.ecosync.ibms.autoconfigure.stream;
 
+import cn.ecosync.ibms.Topics;
 import cn.ecosync.ibms.device.event.handler.DeviceKafkaStreams;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -16,30 +17,22 @@ import org.apache.kafka.streams.state.KeyValueBytesStoreSupplier;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.StoreBuilder;
 import org.apache.kafka.streams.state.Stores;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafkaStreams;
 
 import static org.apache.kafka.common.serialization.Serdes.String;
 
-@AutoConfiguration
+@Configuration(proxyBeanMethods = false)
 @EnableKafkaStreams
 @ConditionalOnClass(KafkaStreams.class)
 @ConditionalOnProperty(prefix = "spring.kafka.streams", name = "bootstrap-servers")
-@EnableConfigurationProperties(StreamProperties.class)
-public class KafkaStreamsAutoConfiguration {
-    private final StreamProperties streamProperties;
-
-    public KafkaStreamsAutoConfiguration(StreamProperties streamProperties) {
-        this.streamProperties = streamProperties;
-    }
-
+public class KafkaStreamsConfiguration {
     @Bean
-    public DeviceKafkaStreams deviceKafkaStreams(StreamsBuilder streamsBuilder, ObjectMapper objectMapper) {
-        return DeviceKafkaStreams.newInstance(streamsBuilder, streamProperties.getTopicPrefix(), objectMapper);
+    public DeviceKafkaStreams deviceKafkaStreams(Topics topics, StreamsBuilder streamsBuilder, ObjectMapper objectMapper) {
+        return DeviceKafkaStreams.newInstance(topics, streamsBuilder, objectMapper);
     }
 
     /**
