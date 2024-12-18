@@ -1,37 +1,31 @@
 package cn.ecosync.ibms.scheduling.event;
 
-import cn.ecosync.ibms.Constants;
-import cn.ecosync.ibms.scheduling.dto.SchedulingTaskParams;
-import cn.ecosync.ibms.scheduling.dto.SchedulingTrigger;
-import cn.ecosync.iframework.event.AbstractEvent;
-import jakarta.validation.constraints.NotBlank;
+import cn.ecosync.ibms.scheduling.model.SchedulingId;
+import cn.ecosync.ibms.scheduling.model.SchedulingTaskParams;
+import cn.ecosync.ibms.scheduling.model.SchedulingTrigger;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 @Getter
 @ToString
-@RequiredArgsConstructor
-public class SchedulingRescheduledEvent extends AbstractEvent {
-    public static final String TYPE = "scheduling-rescheduled";
+public class SchedulingRescheduledEvent extends AbstractSchedulingEvent {
+    public static final String EVENT_TYPE = "scheduling-rescheduled-event";
 
-    @NotBlank
-    private final String schedulingName;
-    private final SchedulingTrigger schedulingTrigger;
-    private final SchedulingTaskParams schedulingTaskParams;
+    private SchedulingId schedulingId;
+    private SchedulingTrigger schedulingTrigger;
+    private SchedulingTaskParams schedulingTaskParams;
 
-    @Override
-    public String aggregateType() {
-        return Constants.AGGREGATE_TYPE_SCHEDULING;
+    protected SchedulingRescheduledEvent() {
+    }
+
+    public SchedulingRescheduledEvent(SchedulingId schedulingId, SchedulingTrigger schedulingTrigger, SchedulingTaskParams schedulingTaskParams) {
+        this.schedulingId = schedulingId;
+        this.schedulingTrigger = schedulingTrigger;
+        this.schedulingTaskParams = schedulingTaskParams;
     }
 
     @Override
-    public String aggregateId() {
-        return schedulingName;
-    }
-
-    @Override
-    public String eventType() {
-        return TYPE;
+    public String eventKey() {
+        return schedulingId.toStringId();
     }
 }

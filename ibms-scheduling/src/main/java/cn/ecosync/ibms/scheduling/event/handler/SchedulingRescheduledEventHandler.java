@@ -1,7 +1,6 @@
 package cn.ecosync.ibms.scheduling.event.handler;
 
-import cn.ecosync.ibms.scheduling.domain.SchedulingApplicationService;
-import cn.ecosync.ibms.scheduling.domain.SchedulingId;
+import cn.ecosync.ibms.scheduling.SchedulingApplicationService;
 import cn.ecosync.ibms.scheduling.event.SchedulingRescheduledEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -16,7 +15,6 @@ public class SchedulingRescheduledEventHandler {
     @Transactional
     @EventListener
     public void onEvent(SchedulingRescheduledEvent event) {
-        SchedulingId schedulingId = new SchedulingId(event.getSchedulingName());
-        schedulingApplicationService.schedule(schedulingId, event.getSchedulingTrigger(), event.getSchedulingTaskParams());
+        schedulingApplicationService.schedule(event.getSchedulingId(), event.getSchedulingTrigger(), event.getSchedulingTaskParams());
     }
 }

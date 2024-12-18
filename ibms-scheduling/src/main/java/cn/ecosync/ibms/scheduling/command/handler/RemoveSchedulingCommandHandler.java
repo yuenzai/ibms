@@ -1,10 +1,10 @@
 package cn.ecosync.ibms.scheduling.command.handler;
 
+import cn.ecosync.ibms.scheduling.SchedulingApplicationService;
 import cn.ecosync.ibms.scheduling.command.RemoveSchedulingCommand;
-import cn.ecosync.ibms.scheduling.domain.Scheduling;
-import cn.ecosync.ibms.scheduling.domain.SchedulingApplicationService;
-import cn.ecosync.ibms.scheduling.domain.SchedulingId;
-import cn.ecosync.ibms.scheduling.domain.SchedulingRepository;
+import cn.ecosync.ibms.scheduling.model.SchedulingCommandModel;
+import cn.ecosync.ibms.scheduling.model.SchedulingId;
+import cn.ecosync.ibms.scheduling.repository.SchedulingRepository;
 import cn.ecosync.iframework.command.CommandHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -20,9 +20,9 @@ public class RemoveSchedulingCommandHandler implements CommandHandler<RemoveSche
     @Override
     @Transactional
     public void handle(RemoveSchedulingCommand command) {
-        SchedulingId schedulingId = new SchedulingId(command.getSchedulingName());
-        Scheduling scheduling = schedulingRepository.get(schedulingId).orElse(null);
-        Assert.notNull(scheduling, "scheduling not found:" + schedulingId);
+        SchedulingId schedulingId = command.getSchedulingId();
+        SchedulingCommandModel scheduling = schedulingRepository.get(schedulingId).orElse(null);
+        Assert.notNull(scheduling, "scheduling not found: " + schedulingId);
         schedulingApplicationService.cancel(schedulingId);
         schedulingRepository.remove(scheduling);
     }

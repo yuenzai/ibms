@@ -9,7 +9,7 @@ import org.springframework.util.Assert;
 import java.util.Objects;
 
 @Entity
-@Table(name = "device")
+@Table(name = "DEVICE")
 public class Device extends ConcurrencySafeEntity implements DeviceCommandModel {
     @Embedded
     private DeviceId deviceId;
@@ -33,7 +33,7 @@ public class Device extends ConcurrencySafeEntity implements DeviceCommandModel 
     @Override
     public void update(DeviceProperties properties) {
         if (properties == null) return;
-        this.deviceProperties = properties;
+        this.deviceProperties = properties;//todo
     }
 
     @Override
@@ -63,11 +63,11 @@ public class Device extends ConcurrencySafeEntity implements DeviceCommandModel 
         return Objects.hashCode(deviceId);
     }
 
-    public static Device newProbe(DeviceId deviceIdProbe, DeviceDataAcquisitionId daqIdProbe, DeviceProperties devicePropertiesProbe) {
+    public static Device newProbe(DeviceModel model) {
         Device probe = new Device();
-        probe.deviceId = deviceIdProbe;
-        probe.daqId = daqIdProbe;
-        probe.deviceProperties = devicePropertiesProbe;
+        probe.deviceId = model.getDeviceId();
+        probe.daqId = model.getDaqId();
+        probe.deviceProperties = model.getDeviceProperties();
         return probe;
     }
 }

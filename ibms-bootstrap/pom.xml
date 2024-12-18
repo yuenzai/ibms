@@ -48,9 +48,17 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-streams</artifactId>
+        </dependency>
+        <!--<dependency>
             <groupId>cn.ecosync.ibms</groupId>
             <artifactId>ibms-orchestration</artifactId>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>cn.ecosync.ibms</groupId>
             <artifactId>ibms-autoconfigure</artifactId>
@@ -60,6 +68,16 @@
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
         </dependency>
+
+        <!--<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-otlp</artifactId>
+            <scope>runtime</scope>
+        </dependency>-->
     </dependencies>
 
     <build>
@@ -98,7 +116,7 @@
                 </dependency>
             </dependencies>
         </profile>
-        <profile>
+        <!--<profile>
             <id>debezium</id>
             <dependencies>
                 <dependency>
@@ -106,25 +124,9 @@
                     <artifactId>debezium-embedded</artifactId>
                 </dependency>
             </dependencies>
-        </profile>
-        <profile>
-            <id>kafka</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.springframework.kafka</groupId>
-                    <artifactId>spring-kafka</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.kafka</groupId>
-                    <artifactId>kafka-streams</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
+        </profile>-->
         <profile>
             <id>mysql</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <dependencies>
                 <dependency>
                     <groupId>com.mysql</groupId>
@@ -136,11 +138,11 @@
                     <groupId>org.flywaydb</groupId>
                     <artifactId>flyway-mysql</artifactId>
                 </dependency>
-                <dependency>
+                <!--<dependency>
                     <groupId>io.debezium</groupId>
                     <artifactId>debezium-connector-mysql</artifactId>
                     <scope>runtime</scope>
-                </dependency>
+                </dependency>-->
             </dependencies>
         </profile>
     </profiles>

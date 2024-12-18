@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.device.query.handler;
 
 import cn.ecosync.ibms.device.model.DeviceModel;
-import cn.ecosync.ibms.device.model.DeviceRepository;
+import cn.ecosync.ibms.device.repository.DeviceRepository;
 import cn.ecosync.ibms.device.query.GetDeviceQuery;
 import cn.ecosync.iframework.query.QueryHandler;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 public class GetDeviceQueryHandler implements QueryHandler<GetDeviceQuery, DeviceModel> {
-    private final DeviceRepository<DeviceModel> deviceRepository;
+    private final DeviceRepository deviceRepository;
 
     @Override
     @Transactional(readOnly = true)

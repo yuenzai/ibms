@@ -3,6 +3,8 @@ package cn.ecosync.ibms.device.command.handler;
 import cn.ecosync.ibms.device.command.CreateDeviceCommand;
 import cn.ecosync.ibms.device.event.DeviceSavedEvent;
 import cn.ecosync.ibms.device.model.*;
+import cn.ecosync.ibms.device.repository.DeviceDataAcquisitionRepository;
+import cn.ecosync.ibms.device.repository.DeviceRepository;
 import cn.ecosync.iframework.command.CommandHandler;
 import cn.ecosync.iframework.event.Event;
 import cn.ecosync.iframework.event.EventBus;
@@ -21,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CreateDeviceCommandHandler implements CommandHandler<CreateDeviceCommand> {
     private final DeviceDataAcquisitionRepository daqRepository;
-    private final DeviceRepository<DeviceModel> deviceRepository;
+    private final DeviceRepository deviceRepository;
     private final EventBus eventBus;
 
     @Override

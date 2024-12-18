@@ -78,11 +78,11 @@ public class DeviceKafkaStreams implements InitializingBean {
         Consumed<DeviceDataAcquisitionId, CollectDeviceMetricCommand> collectDeviceMetricCommandConsumed = Consumed.with(daqIdSerde, collectDeviceMetricCommandSerde).withOffsetResetPolicy(LATEST);
         KStream<DeviceDataAcquisitionId, CollectDeviceMetricCommand> collectDeviceMetricCommandStream = streamsBuilder.stream(collectDeviceMetricCommandTopic, collectDeviceMetricCommandConsumed);
 
-        String collectDeviceMetricCommandJoinedTopic = topics.getTopicName(TOPIC_COLLECT_DEVICE_METRIC_COMMAND_JOINED);
+        String collectDeviceMetricEnhancedCommandTopic = topics.getTopicName(TOPIC_COLLECT_DEVICE_METRIC_ENHANCED_COMMAND);
         collectDeviceMetricCommandStream
                 .join(daqTable, CollectDeviceMetricCommand::withDaq, Joined.with(daqIdSerde, collectDeviceMetricCommandSerde, daqSerde))
                 .join(devicesTable, CollectDeviceMetricCommand::withAggregator, Joined.with(daqIdSerde, collectDeviceMetricCommandSerde, deviceEventAggregatorSerde))
-                .to(collectDeviceMetricCommandJoinedTopic, Produced.with(daqIdSerde, collectDeviceMetricCommandSerde));
+                .to(collectDeviceMetricEnhancedCommandTopic, Produced.with(daqIdSerde, collectDeviceMetricCommandSerde));
     }
 
     private KTable<DeviceDataAcquisitionId, DeviceEventAggregator> devicesTable() {

@@ -61,29 +61,31 @@ public class DeviceKafkaListener {
         DeviceDataAcquisitionModel daq = command.getDaq();
         Assert.notNull(daq, "daq must not be null");
         DeviceDataAcquisitionProperties daqProperties = daq.getDaqProperties();
-
         if (daqProperties instanceof DeviceDataAcquisitionProperties.BACnet) {
             DeviceDataAcquisitionProperties.BACnet bacnetProperties = (DeviceDataAcquisitionProperties.BACnet) daqProperties;
+            handleByBacnet(devices, bacnetProperties);
+        }
+    }
 
-            Map<Integer, DeviceModel> deviceMap = CollectionUtils.newHashMap(devices.size());
-            List<BacnetReadPropertyMultipleService> services = new ArrayList<>(devices.size());
-            for (DeviceModel device : devices) {
-                Integer deviceInstance = toDeviceInstance(device.getDeviceId());
-                if (deviceInstance == null) continue;
-                deviceMap.put(deviceInstance, device);
-                BacnetReadPropertyMultipleService service = BacnetReadPropertyMultipleService.newInstance(deviceInstance, bacnetProperties.getBacnetPoints(), BacnetObjectPropertyWithKey::getBop);
-                services.add(service);
-            }
-            BacnetReadPropertyMultipleBatchQuery query = new BacnetReadPropertyMultipleBatchQuery(services);
-            List<ReadPropertyMultipleAck> acks = queryBus.execute(query);
-            for (ReadPropertyMultipleAck ack : acks) {
-                Integer deviceInstance = ack.getDeviceInstance();
-                DeviceModel device = deviceMap.get(deviceInstance);
-                Map<String, Object> values = ackToMap(ack, bacnetProperties.getBacnetPoints(), BacnetObjectPropertyWithKey::getKey, BacnetObjectPropertyWithKey::getBop);
-                DeviceMetricCollectedEvent event = new DeviceMetricCollectedEvent(device.getDeviceId(), device.getDaqId(), System.currentTimeMillis(), values);
-                String payload = jsonSerde.serialize(event);
-                kafkaTemplate.send(topics.getTopicName(TOPIC_DEVICE_METRIC_COLLECTED_EVENT), event.toStringId(), payload);
-            }
+    private void handleByBacnet(Set<DeviceModel> devices, DeviceDataAcquisitionProperties.BACnet bacnetProperties) {
+        Map<Integer, DeviceModel> deviceMap = CollectionUtils.newHashMap(devices.size());
+        List<BacnetReadPropertyMultipleService> services = new ArrayList<>(devices.size());
+        for (DeviceModel device : devices) {
+            Integer deviceInstance = toDeviceInstance(device.getDeviceId());
+            if (deviceInstance == null) continue;
+            deviceMap.put(deviceInstance, device);
+            BacnetReadPropertyMultipleService service = BacnetReadPropertyMultipleService.newInstance(deviceInstance, bacnetProperties.getBacnetPoints(), BacnetObjectPropertyWithKey::getBop);
+            services.add(service);
+        }
+        BacnetReadPropertyMultipleBatchQuery query = new BacnetReadPropertyMultipleBatchQuery(services);
+        List<ReadPropertyMultipleAck> acks = queryBus.execute(query);
+        for (ReadPropertyMultipleAck ack : acks) {
+            Integer deviceInstance = ack.getDeviceInstance();
+            DeviceModel device = deviceMap.get(deviceInstance);
+            Map<String, Object> values = ackToMap(ack, bacnetProperties.getBacnetPoints(), BacnetObjectPropertyWithKey::getKey, BacnetObjectPropertyWithKey::getBop);
+            DeviceMetricCollectedEvent event = new DeviceMetricCollectedEvent(device.getDeviceId(), device.getDaqId(), System.currentTimeMillis(), values);
+            String payload = jsonSerde.serialize(event);
+            kafkaTemplate.send(topics.getTopicName(TOPIC_DEVICE_METRIC_COLLECTED_EVENT), event.toStringId(), payload);
         }
     }
 

@@ -32,15 +32,13 @@ spring:
         enable.idempotence: true
     consumer:
       group-id: ${spring.application.name}
-      enable-auto-commit: false
       auto-offset-reset: latest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     listener:
-      ack-mode: manual_immediate
-      concurrency: 1
+      ack-mode: manual
     streams:
-      application-id: ${spring.application.name}
+      application-id: ${spring.application.name}-streams
       bootstrap-servers: ${spring.kafka.bootstrap-servers}
 #      cache-max-size-buffering: 10MB
       cleanup:

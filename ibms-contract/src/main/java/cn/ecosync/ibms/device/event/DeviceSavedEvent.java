@@ -35,7 +35,7 @@ public class DeviceSavedEvent extends AbstractDeviceEvent {
 
     @Override
     public String eventKey() {
-        return device.getDeviceId().toString();
+        return device.getDeviceId().toStringId();
     }
 
     @Override

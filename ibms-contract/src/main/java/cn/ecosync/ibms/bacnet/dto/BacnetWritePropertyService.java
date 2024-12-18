@@ -29,11 +29,11 @@ public class BacnetWritePropertyService {
 
         commands.add("writeprop");
         commands.add(deviceInstance.toString());
-        commands.add(objectProperty.getObjectType().getCode().toString());
-        commands.add(objectProperty.getObjectInstance().toString());
-        commands.add(objectProperty.getPropertyIdentifier().getCode().toString());
+        commands.add(objectProperty.getBacnetObject().getObjectType().getCode().toString());
+        commands.add(objectProperty.getBacnetObject().getObjectInstance().toString());
+        commands.add(objectProperty.getBacnetProperty().getPropertyIdentifier().getCode().toString());
         commands.add(getPriority().toString());
-        String index = Optional.ofNullable(objectProperty.getPropertyArrayIndex())
+        String index = Optional.ofNullable(objectProperty.getBacnetProperty().getPropertyArrayIndex())
                 .map(Object::toString)
                 .orElse("-1");
         commands.add(index);

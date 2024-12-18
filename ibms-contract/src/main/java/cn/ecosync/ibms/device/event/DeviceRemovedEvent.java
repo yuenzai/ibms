@@ -35,7 +35,7 @@ public class DeviceRemovedEvent extends AbstractDeviceEvent {
 
     @Override
     public String eventKey() {
-        return device.getDeviceId().toString();
+        return device.getDeviceId().toStringId();
     }
 
     @Override

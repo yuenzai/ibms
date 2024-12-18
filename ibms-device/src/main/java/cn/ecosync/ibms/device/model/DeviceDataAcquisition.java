@@ -10,7 +10,7 @@ import org.springframework.util.Assert;
 import java.util.Objects;
 
 @Entity
-@Table(name = "device_daq")
+@Table(name = "DEVICE_DAQ")
 public class DeviceDataAcquisition extends ConcurrencySafeEntity implements DeviceDataAcquisitionCommandModel {
     @Embedded
     private DeviceDataAcquisitionId daqId;
@@ -44,7 +44,7 @@ public class DeviceDataAcquisition extends ConcurrencySafeEntity implements Devi
         return daqProperties;
     }
 
-    public static DeviceDataAcquisition newProbe() {
+    public static DeviceDataAcquisition newProbe(DeviceDataAcquisitionModel model) {
         return new DeviceDataAcquisition();
     }
 }

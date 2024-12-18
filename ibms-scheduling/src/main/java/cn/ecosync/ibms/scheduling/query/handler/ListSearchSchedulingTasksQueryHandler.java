@@ -1,6 +1,6 @@
 package cn.ecosync.ibms.scheduling.query.handler;
 
-import cn.ecosync.ibms.scheduling.domain.SchedulingApplicationService;
+import cn.ecosync.ibms.scheduling.SchedulingApplicationService;
 import cn.ecosync.ibms.scheduling.query.ListSearchSchedulingTasksQuery;
 import cn.ecosync.iframework.query.QueryHandler;
 import lombok.RequiredArgsConstructor;

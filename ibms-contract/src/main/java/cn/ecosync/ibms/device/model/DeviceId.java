@@ -3,7 +3,6 @@ package cn.ecosync.ibms.device.model;
 import cn.ecosync.iframework.util.ToStringId;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.Getter;
 import org.springframework.util.Assert;
 
 import java.util.Map;
@@ -11,10 +10,6 @@ import java.util.Objects;
 
 import static cn.ecosync.ibms.Constants.PATH_MATCHER;
 
-/**
- * DeviceId must contains device parameters
- */
-@Getter
 @Embeddable
 public class DeviceId implements ToStringId {
     public static final String KEY_SID = "sid";
@@ -37,6 +32,10 @@ public class DeviceId implements ToStringId {
     public DeviceId(String deviceCode) {
         Assert.isTrue(PATH_MATCHER.match(PATTERN, deviceCode), "deviceCode must match pattern: " + PATTERN);
         this.deviceCode = deviceCode;
+    }
+
+    protected String getDeviceCode() {
+        return deviceCode;
     }
 
     @Override

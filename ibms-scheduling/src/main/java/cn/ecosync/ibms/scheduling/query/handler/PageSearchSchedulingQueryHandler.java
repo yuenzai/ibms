@@ -1,30 +1,24 @@
 package cn.ecosync.ibms.scheduling.query.handler;
 
-import cn.ecosync.ibms.scheduling.domain.SchedulingApplicationService;
-import cn.ecosync.ibms.scheduling.domain.SchedulingReadonlyRepository;
-import cn.ecosync.ibms.scheduling.dto.SchedulingDto;
+import cn.ecosync.ibms.scheduling.model.SchedulingDto;
+import cn.ecosync.ibms.scheduling.model.SchedulingQueryModel;
+import cn.ecosync.ibms.scheduling.repository.SchedulingRepository;
 import cn.ecosync.ibms.scheduling.query.PageSearchSchedulingQuery;
 import cn.ecosync.iframework.query.QueryHandler;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-public class PageSearchSchedulingQueryHandler extends SearchSchedulingQueryHandler implements QueryHandler<PageSearchSchedulingQuery, Page<SchedulingDto>> {
-    private final SchedulingReadonlyRepository schedulingReadonlyRepository;
-
-    public PageSearchSchedulingQueryHandler(SchedulingApplicationService schedulingApplicationService, SchedulingReadonlyRepository schedulingReadonlyRepository) {
-        super(schedulingApplicationService);
-        this.schedulingReadonlyRepository = schedulingReadonlyRepository;
-    }
+@RequiredArgsConstructor
+public class PageSearchSchedulingQueryHandler implements QueryHandler<PageSearchSchedulingQuery, Page<SchedulingQueryModel>> {
+    private final SchedulingRepository schedulingRepository;
 
     @Override
     @Transactional(readOnly = true)
-    public Page<SchedulingDto> handle(PageSearchSchedulingQuery query) {
-        Pageable pageable = query.toPageable();
-        Page<SchedulingDto> schedules = schedulingReadonlyRepository.pageSearch(pageable);
-        putStateFor(schedules, query.getMaxCount());
-        return schedules;
+    public Page<SchedulingQueryModel> handle(PageSearchSchedulingQuery query) {
+        SchedulingDto probe = new SchedulingDto();
+        return schedulingRepository.search(probe, query.toPageable());
     }
 }

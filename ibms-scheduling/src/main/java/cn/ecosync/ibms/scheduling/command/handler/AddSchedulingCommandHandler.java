@@ -1,10 +1,10 @@
 package cn.ecosync.ibms.scheduling.command.handler;
 
+import cn.ecosync.ibms.scheduling.SchedulingApplicationService;
 import cn.ecosync.ibms.scheduling.command.AddSchedulingCommand;
-import cn.ecosync.ibms.scheduling.domain.Scheduling;
-import cn.ecosync.ibms.scheduling.domain.SchedulingApplicationService;
-import cn.ecosync.ibms.scheduling.domain.SchedulingId;
-import cn.ecosync.ibms.scheduling.domain.SchedulingRepository;
+import cn.ecosync.ibms.scheduling.model.Scheduling;
+import cn.ecosync.ibms.scheduling.model.SchedulingCommandModel;
+import cn.ecosync.ibms.scheduling.repository.SchedulingRepository;
 import cn.ecosync.iframework.command.CommandHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -22,11 +22,10 @@ public class AddSchedulingCommandHandler implements CommandHandler<AddScheduling
     public void handle(AddSchedulingCommand command) {
         schedulingApplicationService.checkExists(command.getSchedulingTaskParams());
 
-        SchedulingId schedulingId = new SchedulingId(command.getSchedulingName());
-        Scheduling scheduling = schedulingRepository.get(schedulingId).orElse(null);
+        SchedulingCommandModel scheduling = schedulingRepository.get(command.getSchedulingId()).orElse(null);
         Assert.isNull(scheduling, "schedulingName already exists");
 
-        scheduling = new Scheduling(schedulingId, command.getSchedulingTrigger(), command.getSchedulingTaskParams(), command.getDescription());
+        scheduling = new Scheduling(command.getSchedulingId(), command.getSchedulingTrigger(), command.getSchedulingTaskParams(), command.getDescription());
         schedulingRepository.add(scheduling);
     }
 }

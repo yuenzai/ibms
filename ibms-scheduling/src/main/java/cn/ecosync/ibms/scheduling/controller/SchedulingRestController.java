@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.scheduling.controller;
 
 import cn.ecosync.ibms.scheduling.command.*;
-import cn.ecosync.ibms.scheduling.dto.SchedulingDto;
+import cn.ecosync.ibms.scheduling.model.SchedulingQueryModel;
 import cn.ecosync.ibms.scheduling.query.ListSearchSchedulingQuery;
 import cn.ecosync.ibms.scheduling.query.ListSearchSchedulingTasksQuery;
 import cn.ecosync.ibms.scheduling.query.PageSearchSchedulingQuery;
@@ -55,12 +55,12 @@ public class SchedulingRestController {
     }
 
     @PostMapping("/list-search")
-    public List<SchedulingDto> search(@RequestBody @Validated ListSearchSchedulingQuery query) {
+    public List<SchedulingQueryModel> search(@RequestBody @Validated ListSearchSchedulingQuery query) {
         return queryBus.execute(query);
     }
 
     @PostMapping("/page-search")
-    public Page<SchedulingDto> search(@RequestBody @Validated PageSearchSchedulingQuery query) {
+    public Page<SchedulingQueryModel> search(@RequestBody @Validated PageSearchSchedulingQuery query) {
         return queryBus.execute(query);
     }
 }

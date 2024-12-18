@@ -20,7 +20,7 @@ public class Topics {
         TOPIC_DEVICE("device"),
         TOPIC_AGGREGATE_TYPE_DEVICE_DAQ("device-daq"),
         TOPIC_COLLECT_DEVICE_METRIC_COMMAND("collect-device-metric-command"),
-        TOPIC_COLLECT_DEVICE_METRIC_COMMAND_JOINED("collect-device-metric-command-joined"),
+        TOPIC_COLLECT_DEVICE_METRIC_ENHANCED_COMMAND("collect-device-metric-enhanced-command"),
         TOPIC_DEVICE_METRIC_COLLECTED_EVENT("device-metric-collected-event"),
         ;
 
