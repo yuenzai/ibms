@@ -1,7 +1,6 @@
 package cn.ecosync.ibms.device.command;
 
 import cn.ecosync.ibms.device.model.*;
-import cn.ecosync.iframework.command.Command;
 import cn.ecosync.iframework.util.CollectionUtils;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import jakarta.validation.Valid;
@@ -14,11 +13,11 @@ import java.util.List;
 
 @Getter
 @ToString
-public class CreateBacnetDeviceCommand extends CreateDeviceCommand implements Command {
+public class AddBacnetDeviceCommand extends AddDeviceCommand {
     @Valid
     private List<BacnetDeviceProperties> devicesProperties;
 
-    protected CreateBacnetDeviceCommand() {
+    protected AddBacnetDeviceCommand() {
     }
 
     public List<BacnetDeviceProperties> getDevicesProperties() {

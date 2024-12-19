@@ -32,11 +32,11 @@ public class BacnetObjectProperty {
     public boolean equals(Object o) {
         if (!(o instanceof BacnetObjectProperty)) return false;
         BacnetObjectProperty that = (BacnetObjectProperty) o;
-        return Objects.equals(bacnetObject, that.bacnetObject) && Objects.equals(bacnetProperty, that.bacnetProperty);
+        return Objects.equals(bacnetObject, that.bacnetObject);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(bacnetObject, bacnetProperty);
+        return Objects.hash(bacnetObject);
     }
 }

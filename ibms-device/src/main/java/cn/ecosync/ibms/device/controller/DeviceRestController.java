@@ -1,6 +1,6 @@
 package cn.ecosync.ibms.device.controller;
 
-import cn.ecosync.ibms.device.command.CreateDeviceCommand;
+import cn.ecosync.ibms.device.command.AddDeviceCommand;
 import cn.ecosync.ibms.device.command.RemoveDeviceCommand;
 import cn.ecosync.ibms.device.command.UpdateDeviceCommand;
 import cn.ecosync.ibms.device.model.DeviceModel;
@@ -27,7 +27,7 @@ public class DeviceRestController {
     private final QueryBus queryBus;
 
     @PostMapping("/add")
-    public void execute(@RequestBody @Validated CreateDeviceCommand command) {
+    public void execute(@RequestBody @Validated AddDeviceCommand command) {
         commandBus.execute(command);
     }
 

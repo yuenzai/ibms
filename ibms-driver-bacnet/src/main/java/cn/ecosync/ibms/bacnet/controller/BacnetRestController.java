@@ -2,18 +2,17 @@ package cn.ecosync.ibms.bacnet.controller;
 
 import cn.ecosync.ibms.bacnet.command.BacnetWritePropertyCommand;
 import cn.ecosync.ibms.bacnet.dto.*;
-import cn.ecosync.ibms.bacnet.dto.BacnetReadPropertyMultipleService.BacnetObjectProperties;
 import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleBatchQuery;
 import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleQuery;
 import cn.ecosync.ibms.bacnet.query.BacnetWhoIsQuery;
 import cn.ecosync.ibms.bacnet.query.ListSearchBacnetDeviceObjectIdsQuery;
 import cn.ecosync.iframework.command.CommandBus;
 import cn.ecosync.iframework.query.QueryBus;
-import cn.ecosync.iframework.util.CollectionUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -64,18 +62,17 @@ public class BacnetRestController {
         BacnetReadPropertyMultipleService service = new BacnetReadPropertyMultipleService(deviceInstance, Collections.singleton(objectProperties));
         BacnetReadPropertyMultipleQuery readpropmQuery = new BacnetReadPropertyMultipleQuery(service);
         try {
-            ReadPropertyMultipleAck.Property objectIdsPropertyValue = Optional.ofNullable(queryBus.execute(readpropmQuery))
-                    .map(in -> CollectionUtils.firstElement(in.getValues()))
-                    .map(in -> CollectionUtils.firstElement(in.getProperties()))
-                    .orElse(null);
+            ReadPropertyMultipleAck ack = queryBus.execute(readpropmQuery);
+            MultiValueMap<BacnetObject, BacnetPropertyValues> multiValueMap = ack.toMultiValueMap();
+            BacnetPropertyValues objectIdsPropertyValue = multiValueMap.getFirst(deviceObject);
             if (objectIdsPropertyValue == null) {
                 return Collections.emptyList();
             }
-            BacnetError bacnetError = objectIdsPropertyValue.getError().orElse(null);
+            BacnetError bacnetError = objectIdsPropertyValue.getError();
             if (bacnetError != null) {
                 throw new RuntimeException(bacnetError.toString());
             }
-            return objectIdsPropertyValue.getPropertyValues().stream()
+            return objectIdsPropertyValue.stream()
                     .filter(in -> in instanceof BacnetPropertyValue.OBJECT_ID)
                     .map(in -> ((BacnetPropertyValue.OBJECT_ID) in).getValue())
                     .collect(Collectors.toList());

@@ -1,14 +1,15 @@
 package cn.ecosync.ibms.device.model;
 
-import cn.ecosync.ibms.bacnet.dto.BacnetObjectPropertyWithKey;
+import cn.ecosync.ibms.bacnet.dto.BacnetObjectPropertiesWithName;
 import cn.ecosync.iframework.util.CollectionUtils;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.AssertTrue;
 import lombok.ToString;
 import org.springframework.util.Assert;
 
+import java.util.Collection;
 import java.util.List;
 
 import static cn.ecosync.ibms.device.model.DeviceDataAcquisitionProperties.BACnet;
@@ -25,26 +26,34 @@ public interface DeviceDataAcquisitionProperties {
         public static final String TYPE = "BACNET";
 
         @Valid
-        @NotEmpty
-        private List<BacnetObjectPropertyWithKey> bacnetPoints;
+        private List<BacnetObjectPropertiesWithName> fields;
 
         protected BACnet() {
         }
 
-        public BACnet(List<BacnetObjectPropertyWithKey> bacnetPoints) {
-            Assert.notEmpty(bacnetPoints, "bacnetPoints must not be empty");
-            Assert.isTrue(CollectionUtils.hasUniqueElement(bacnetPoints, BacnetObjectPropertyWithKey::getKey), "bacnetPoints must contain unique key");
-            Assert.isTrue(CollectionUtils.hasUniqueElement(bacnetPoints, BacnetObjectPropertyWithKey::getBop), "bacnetPoints must contain unique point");
-            this.bacnetPoints = bacnetPoints;
+        public BACnet(List<BacnetObjectPropertiesWithName> fields) {
+            Assert.isTrue(CollectionUtils.hasUniqueElement(fields, BacnetObjectPropertiesWithName::getName), "fields must contain unique name");
+            Assert.isTrue(CollectionUtils.hasUniqueElement(fields), "fields must contain unique element");
+            this.fields = fields;
         }
 
-        public List<BacnetObjectPropertyWithKey> getBacnetPoints() {
-            return CollectionUtils.nullSafeOf(bacnetPoints);
+        public Collection<BacnetObjectPropertiesWithName> getFields() {
+            return CollectionUtils.nullSafeOf(fields);
         }
 
         @Override
         public String getType() {
             return TYPE;
+        }
+
+        @AssertTrue(message = "fields must contain unique name")
+        public boolean isUniqueName() {
+            return CollectionUtils.hasUniqueElement(fields, BacnetObjectPropertiesWithName::getName);
+        }
+
+        @AssertTrue(message = "fields must contain unique element")
+        public boolean isUniqueElement() {
+            return CollectionUtils.hasUniqueElement(fields);
         }
     }
 

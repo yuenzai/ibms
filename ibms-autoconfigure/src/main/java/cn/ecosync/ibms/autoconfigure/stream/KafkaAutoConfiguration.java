@@ -2,6 +2,7 @@ package cn.ecosync.ibms.autoconfigure.stream;
 
 import cn.ecosync.ibms.Topics;
 import cn.ecosync.ibms.device.controller.DeviceKafkaListener;
+import cn.ecosync.iframework.event.EventBus;
 import cn.ecosync.iframework.query.QueryBus;
 import cn.ecosync.iframework.serde.JsonSerde;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -43,8 +44,8 @@ public class KafkaAutoConfiguration {
     }
 
     @Bean
-    public DeviceKafkaListener deviceKafkaListener(Topics topics, QueryBus queryBus, JsonSerde jsonSerde, KafkaTemplate<String, String> kafkaTemplate) {
-        return new DeviceKafkaListener(topics, queryBus, jsonSerde, kafkaTemplate);
+    public DeviceKafkaListener deviceKafkaListener(Topics topics, QueryBus queryBus, JsonSerde jsonSerde, EventBus eventBus) {
+        return new DeviceKafkaListener(topics, queryBus, jsonSerde, eventBus);
     }
 
     private NewTopic newTopic(Topics.TopicEnum topicEnum, Topics topics) {
