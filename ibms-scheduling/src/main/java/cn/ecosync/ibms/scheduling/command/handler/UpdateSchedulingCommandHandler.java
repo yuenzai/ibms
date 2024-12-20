@@ -34,6 +34,6 @@ public class UpdateSchedulingCommandHandler implements CommandHandler<UpdateSche
         Assert.notNull(scheduling, "scheduling doesn't exist");
 
         Collection<Event> events = scheduling.update(command.getDescription(), command.getSchedulingTrigger(), command.getSchedulingTaskParams());
-        events.forEach(eventBus::handle);
+        events.forEach(eventBus::publish);
     }
 }

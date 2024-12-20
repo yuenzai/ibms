@@ -1,4 +1,4 @@
-CREATE TABLE DEVICE
+CREATE TABLE device
 (
     id                 INT AUTO_INCREMENT NOT NULL COMMENT '主键',
     device_code        VARCHAR(64)        NOT NULL COMMENT '设备编码',
@@ -8,13 +8,13 @@ CREATE TABLE DEVICE
     version            INT                NOT NULL COMMENT '乐观锁版本',
     created_date       BIGINT             NOT NULL COMMENT '创建时间',
     last_modified_date BIGINT             NOT NULL COMMENT '修改时间',
-    CONSTRAINT PK_DEVICE PRIMARY KEY (id)
+    CONSTRAINT pk_device PRIMARY KEY (id)
 ) COMMENT '设备';
 
-ALTER TABLE DEVICE
-    ADD CONSTRAINT UK_DEVICE UNIQUE (device_code);
+ALTER TABLE device
+    ADD CONSTRAINT uk_device UNIQUE (device_code);
 
-CREATE TABLE DEVICE_DAQ
+CREATE TABLE device_daq
 (
     id                 INT AUTO_INCREMENT NOT NULL COMMENT '主键',
     daq_code           VARCHAR(64)        NOT NULL COMMENT '数据采集编码',
@@ -22,11 +22,22 @@ CREATE TABLE DEVICE_DAQ
     version            INT                NOT NULL COMMENT '乐观锁版本',
     created_date       BIGINT             NOT NULL COMMENT '创建时间',
     last_modified_date BIGINT             NOT NULL COMMENT '修改时间',
-    CONSTRAINT PK_DEVICE_DAQ PRIMARY KEY (id)
+    CONSTRAINT pk_device_daq PRIMARY KEY (id)
 ) COMMENT '设备数据采集';
 
-ALTER TABLE DEVICE_DAQ
-    ADD CONSTRAINT UK_DEVICE_DAQ UNIQUE (daq_code);
+ALTER TABLE device_daq
+    ADD CONSTRAINT uk_device_daq UNIQUE (daq_code);
+
+CREATE TABLE device_daq_deleted
+(
+    id             INT AUTO_INCREMENT NOT NULL COMMENT '主键',
+    daq_code       VARCHAR(64)        NOT NULL COMMENT '数据采集编码',
+    daq_properties JSON               NOT NULL COMMENT '数据采集属性',
+    CONSTRAINT pk_device_daq PRIMARY KEY (id)
+) COMMENT '设备数据采集（已删除）';
+
+-- ALTER TABLE device_daq_deleted
+--     ADD CONSTRAINT uk_device_daq_deleted UNIQUE (daq_code);
 
 -- CREATE TABLE device_point
 -- (
@@ -72,7 +83,7 @@ ALTER TABLE DEVICE_DAQ
 -- ALTER TABLE dictionary
 --     ADD CONSTRAINT uk_dictionary UNIQUE (dict_key);
 
-CREATE TABLE OUTBOX_EVENT
+CREATE TABLE outbox_event
 (
     id                INT AUTO_INCREMENT NOT NULL COMMENT '主键',
     event_id          CHAR(32)           NOT NULL COMMENT '事件唯一标识',
@@ -80,7 +91,7 @@ CREATE TABLE OUTBOX_EVENT
     event_key         VARCHAR(64)        NOT NULL COMMENT '事件分区键',
     event_time        BIGINT             NOT NULL COMMENT '事件时间',
     event_payload     JSON               NOT NULL COMMENT '事件内容',
-    CONSTRAINT PK_OUTBOX_EVENT PRIMARY KEY (id)
+    CONSTRAINT pk_outbox_event PRIMARY KEY (id)
 ) COMMENT '发件箱事件';
 
 -- CREATE TABLE OUTBOX_PROCESSED
@@ -93,7 +104,7 @@ CREATE TABLE OUTBOX_EVENT
 -- ALTER TABLE OUTBOX_PROCESSED
 --     ADD CONSTRAINT UK_OUTBOX_PROCESSED UNIQUE (event_id);
 
-CREATE TABLE SCHEDULING
+CREATE TABLE scheduling
 (
     id                     INT AUTO_INCREMENT NOT NULL COMMENT '主键',
     scheduling_name        VARCHAR(64)        NOT NULL COMMENT '计划任务名称',
@@ -103,8 +114,8 @@ CREATE TABLE SCHEDULING
     version                INT                NOT NULL COMMENT '乐观锁版本',
     created_date           BIGINT             NOT NULL COMMENT '创建时间',
     last_modified_date     BIGINT             NOT NULL COMMENT '修改时间',
-    CONSTRAINT PK_SCHEDULING PRIMARY KEY (id)
+    CONSTRAINT pk_scheduling PRIMARY KEY (id)
 ) COMMENT '计划任务';
 
-ALTER TABLE SCHEDULING
-    ADD CONSTRAINT UK_SCHEDULING UNIQUE (scheduling_name);
+ALTER TABLE scheduling
+    ADD CONSTRAINT uk_scheduling UNIQUE (scheduling_name);

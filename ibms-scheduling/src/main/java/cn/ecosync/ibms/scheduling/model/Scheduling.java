@@ -20,7 +20,7 @@ import java.util.Collections;
  * @since 2024
  */
 @Entity
-@Table(name = "SCHEDULING")
+@Table(name = "scheduling")
 public class Scheduling extends ConcurrencySafeEntity implements SchedulingCommandModel {
     @Embedded
     private SchedulingId schedulingId;

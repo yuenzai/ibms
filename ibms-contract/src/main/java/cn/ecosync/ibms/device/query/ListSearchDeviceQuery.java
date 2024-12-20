@@ -19,8 +19,6 @@ public class ListSearchDeviceQuery implements Query<List<DeviceModel>> {
     private String deviceCode;
     @Size(min = 1)
     private String deviceName;
-    @Size(min = 1)
-    private String path;
 
     protected ListSearchDeviceQuery() {
     }
@@ -29,11 +27,9 @@ public class ListSearchDeviceQuery implements Query<List<DeviceModel>> {
         Assert.isTrue(daqName != null && daqName.isEmpty(), "daqName must not be empty");
         Assert.isTrue(deviceCode != null && deviceCode.isEmpty(), "deviceCode must not be empty");
         Assert.isTrue(deviceName != null && deviceName.isEmpty(), "deviceName must not be empty");
-        Assert.isTrue(path != null && path.isEmpty(), "path must not be empty");
         this.daqName = daqName;
         this.deviceCode = deviceCode;
         this.deviceName = deviceName;
-        this.path = path;
     }
 
     public Sort toSort() {

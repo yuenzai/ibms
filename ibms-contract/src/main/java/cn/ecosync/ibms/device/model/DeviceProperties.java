@@ -12,6 +12,8 @@ import java.util.Objects;
 @ToString
 @Embeddable
 public class DeviceProperties {
+    public static final DeviceProperties NULL = new DeviceProperties(null, null);
+
     @Column(name = "device_name", nullable = false)
     private String deviceName;
     @Column(name = "description", nullable = false)

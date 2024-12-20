@@ -1,6 +1,5 @@
 package cn.ecosync.ibms.device.controller;
 
-import cn.ecosync.ibms.device.command.AddDeviceCommand;
 import cn.ecosync.ibms.device.command.RemoveDeviceCommand;
 import cn.ecosync.ibms.device.command.UpdateDeviceCommand;
 import cn.ecosync.ibms.device.model.DeviceModel;
@@ -22,14 +21,9 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/device")
-public class DeviceRestController {
+public class DeviceWebController {
     private final CommandBus commandBus;
     private final QueryBus queryBus;
-
-    @PostMapping("/add")
-    public void execute(@RequestBody @Validated AddDeviceCommand command) {
-        commandBus.execute(command);
-    }
 
     @PostMapping("/update")
     public void execute(@RequestBody @Validated UpdateDeviceCommand command) {
@@ -40,16 +34,6 @@ public class DeviceRestController {
     public void execute(@RequestBody @Validated RemoveDeviceCommand command) {
         commandBus.execute(command);
     }
-
-//    @PostMapping("/point/put")
-//    public void execute(@RequestBody @Validated PutDevicePointCommand command) {
-//        commandBus.execute(command);
-//    }
-//
-//    @PostMapping("/point/remove")
-//    public void execute(@RequestBody @Validated RemoveDevicePointCommand command) {
-//        commandBus.execute(command);
-//    }
 
     @PostMapping("/get")
     public DeviceModel get(@RequestBody @Validated GetDeviceQuery query) {

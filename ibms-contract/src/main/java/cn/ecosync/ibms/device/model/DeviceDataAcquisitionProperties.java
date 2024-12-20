@@ -2,6 +2,7 @@ package cn.ecosync.ibms.device.model;
 
 import cn.ecosync.ibms.bacnet.dto.BacnetObjectPropertiesWithName;
 import cn.ecosync.iframework.util.CollectionUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.Valid;
@@ -46,11 +47,13 @@ public interface DeviceDataAcquisitionProperties {
             return TYPE;
         }
 
+        @JsonIgnore
         @AssertTrue(message = "fields must contain unique name")
         public boolean isUniqueName() {
             return CollectionUtils.hasUniqueElement(fields, BacnetObjectPropertiesWithName::getName);
         }
 
+        @JsonIgnore
         @AssertTrue(message = "fields must contain unique element")
         public boolean isUniqueElement() {
             return CollectionUtils.hasUniqueElement(fields);

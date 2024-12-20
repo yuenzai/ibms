@@ -41,7 +41,7 @@ public class AddDeviceCommandHandler implements CommandHandler<AddDeviceCommand>
             DeviceId deviceId = device.getDeviceId();
             DeviceCommandModel deviceCommandModel = deviceRepository.get(deviceId).orElse(null);
             if (deviceCommandModel != null) {
-                log.debug("device exists: {}", deviceId.toStringId());
+                log.debug("device already exists: {}", deviceId.toStringId());
                 continue;
             }
 

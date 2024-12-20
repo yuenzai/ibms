@@ -11,6 +11,8 @@ import static cn.ecosync.ibms.Constants.AGGREGATE_TYPE_DEVICE_DAQ;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "eventType", visible = true)
 @JsonSubTypes({
+        @JsonSubTypes.Type(value = DeviceDataAcquisitionSavedEvent.class, name = DeviceDataAcquisitionSavedEvent.EVENT_TYPE),
+        @JsonSubTypes.Type(value = DeviceDataAcquisitionRemovedEvent.class, name = DeviceDataAcquisitionRemovedEvent.EVENT_TYPE),
 })
 public abstract class DeviceDataAcquisitionEvent extends AbstractEvent {
     public DeviceDataAcquisitionEvent() {

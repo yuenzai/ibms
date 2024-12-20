@@ -24,25 +24,21 @@ public class PageSearchDeviceQuery implements Query<Page<DeviceModel>> {
     private String deviceCode;
     @Size(min = 1)
     private String deviceName;
-    @Size(min = 1)
-    private String path;
 
     protected PageSearchDeviceQuery() {
     }
 
-    public PageSearchDeviceQuery(Integer page, Integer pagesize, String daqName, String deviceCode, String deviceName, String path) {
+    public PageSearchDeviceQuery(Integer page, Integer pagesize, String daqName, String deviceCode, String deviceName) {
         Assert.notNull(page, "page must not be null");
         Assert.notNull(pagesize, "pagesize must not be null");
         Assert.isTrue(daqName != null && daqName.isEmpty(), "daqName must not be empty");
         Assert.isTrue(deviceCode != null && deviceCode.isEmpty(), "deviceCode must not be empty");
         Assert.isTrue(deviceName != null && deviceName.isEmpty(), "deviceName must not be empty");
-        Assert.isTrue(path != null && path.isEmpty(), "path must not be empty");
         this.page = page;
         this.pagesize = pagesize;
         this.daqName = daqName;
         this.deviceCode = deviceCode;
         this.deviceName = deviceName;
-        this.path = path;
     }
 
     public Pageable toPageable() {
