@@ -1,60 +1,38 @@
 package cn.ecosync.ibms.device.model;
 
-import cn.ecosync.iframework.util.ToStringId;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
 import org.springframework.util.Assert;
 
 import java.util.Objects;
 
-import static cn.ecosync.ibms.Constants.PATH_MATCHER;
-
-@Getter
 @Embeddable
-public class DeviceDataAcquisitionId implements ToStringId {
-    public static final String KEY_DAQ = "daq";
-    protected static final String PATTERN = "{daq}";
-
-    @NotBlank
+public class DeviceDataAcquisitionId {
     @Column(name = "daq_code", nullable = false, updatable = false)
-    private String daqCode;
+    private String dataAcquisitionCode;
 
     protected DeviceDataAcquisitionId() {
     }
 
-    public DeviceDataAcquisitionId(String daqCode) {
-        Assert.hasText(daqCode, "daqCode must not be empty");
-        Assert.isTrue(PATH_MATCHER.match(PATTERN, daqCode), "daqCode must match pattern: " + PATTERN);
-        this.daqCode = daqCode;
-    }
-
-    @Override
-    public String toString() {
-        return toStringId();
-    }
-
-    @Override
-    public String toStringId() {
-        return daqCode;
+    public DeviceDataAcquisitionId(String dataAcquisitionCode) {
+        Assert.hasText(dataAcquisitionCode, "dataAcquisitionCode must not be null");
+        this.dataAcquisitionCode = dataAcquisitionCode;
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof DeviceDataAcquisitionId)) return false;
         DeviceDataAcquisitionId that = (DeviceDataAcquisitionId) o;
-        return Objects.equals(daqCode, that.daqCode);
+        return Objects.equals(this.dataAcquisitionCode, that.dataAcquisitionCode);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(daqCode);
+        return Objects.hashCode(dataAcquisitionCode);
     }
 
-    public static DeviceDataAcquisitionId newProbe(String daqCode) {
-        DeviceDataAcquisitionId probe = new DeviceDataAcquisitionId();
-        probe.daqCode = daqCode;
-        return probe;
+    @Override
+    public String toString() {
+        return dataAcquisitionCode;
     }
 }

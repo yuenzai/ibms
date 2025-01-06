@@ -1,6 +1,5 @@
 package cn.ecosync.ibms.bacnet.dto;
 
-import cn.ecosync.iframework.util.ToStringId;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
@@ -8,7 +7,9 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Getter
-public class BacnetProperty implements ToStringId {
+public class BacnetProperty {
+    public static final BacnetProperty PROPERTY_PRESENT_VALUE = new BacnetProperty(BacnetPropertyId.PROP_PRESENT_VALUE, null);
+
     @NotNull
     private BacnetPropertyId propertyIdentifier;
     private Integer propertyArrayIndex;
@@ -40,11 +41,6 @@ public class BacnetProperty implements ToStringId {
 
     @Override
     public String toString() {
-        return toStringId();
-    }
-
-    @Override
-    public String toStringId() {
         String idStr = String.valueOf(propertyIdentifier.getCode());
         if (propertyArrayIndex != null) idStr += "[" + propertyArrayIndex + "]";
         return idStr;

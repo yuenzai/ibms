@@ -1,45 +1,43 @@
 package cn.ecosync.ibms.bacnet.dto;
 
+import cn.ecosync.ibms.bacnet.model.BacnetSchema;
+import cn.ecosync.ibms.bacnet.model.BacnetSchemas;
 import cn.ecosync.iframework.util.CollectionUtils;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.ToString;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
 @ToString
 public class BacnetReadPropertyMultipleService {
-    @NotNull
     private Integer deviceInstance;
-    @Valid
-    @NotEmpty
-    private Collection<BacnetObjectProperties> bopss;
+    private Collection<BacnetObjectProperties> objectPropertiesCollection;
 
     protected BacnetReadPropertyMultipleService() {
     }
 
-    public BacnetReadPropertyMultipleService(Integer deviceInstance, Collection<? extends BacnetObjectProperties> bopss) {
+    public BacnetReadPropertyMultipleService(Integer deviceInstance, Collection<BacnetObjectProperties> objectPropertiesCollection) {
+        Assert.notNull(deviceInstance, "deviceInstance must not be null");
+        Assert.notEmpty(objectPropertiesCollection, "objectPropertiesCollection must not be empty");
         this.deviceInstance = deviceInstance;
-        this.bopss = new HashSet<>(bopss);
-    }
-
-    public Collection<BacnetObjectProperties> getBopss() {
-        return CollectionUtils.nullSafeOf(bopss);
+        this.objectPropertiesCollection = objectPropertiesCollection;
     }
 
     public List<String> toCommand() {
-        if (CollectionUtils.isEmpty(getBopss())) return Collections.emptyList();
+        if (CollectionUtils.isEmpty(objectPropertiesCollection)) return Collections.emptyList();
 
         List<String> commands = new ArrayList<>();
         commands.add("readpropm");
         commands.add(String.valueOf(getDeviceInstance()));
 
-        for (BacnetObjectProperties bacnetObject : getBopss()) {
+        for (BacnetObjectProperties bacnetObject : objectPropertiesCollection) {
             commands.add(String.valueOf(bacnetObject.getBacnetObject().getObjectType().getCode()));
             commands.add(bacnetObject.getBacnetObject().getObjectInstance().toString());
             String propCmdArg = bacnetObject.getProperties().stream()
@@ -63,5 +61,12 @@ public class BacnetReadPropertyMultipleService {
             prop += "[" + index + "]";
         }
         return prop;
+    }
+
+    public static BacnetReadPropertyMultipleService newInstance(Integer deviceInstance, BacnetSchemas bacnetSchemas) {
+        Collection<BacnetObjectProperties> objectPropertiesCollection = CollectionUtils.nullSafeOf(bacnetSchemas.getSchemaItems()).stream()
+                .map(BacnetSchema::getSchemaProperties)
+                .collect(Collectors.toSet());
+        return new BacnetReadPropertyMultipleService(deviceInstance, objectPropertiesCollection);
     }
 }

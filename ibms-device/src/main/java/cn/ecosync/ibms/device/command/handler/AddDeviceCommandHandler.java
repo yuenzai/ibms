@@ -1,56 +1,51 @@
 package cn.ecosync.ibms.device.command.handler;
 
 import cn.ecosync.ibms.device.command.AddDeviceCommand;
-import cn.ecosync.ibms.device.event.DeviceSavedEvent;
-import cn.ecosync.ibms.device.model.*;
-import cn.ecosync.ibms.device.repository.DeviceDataAcquisitionRepository;
-import cn.ecosync.ibms.device.repository.DeviceRepository;
+import cn.ecosync.ibms.device.model.Device;
+import cn.ecosync.ibms.device.jpa.DeviceEntity;
+import cn.ecosync.ibms.device.model.DeviceId;
+import cn.ecosync.ibms.device.jpa.DeviceSchemasEntity;
+import cn.ecosync.ibms.device.model.DeviceSchemasId;
+import cn.ecosync.ibms.device.repository.jpa.DeviceJpaRepository;
+import cn.ecosync.ibms.device.repository.jpa.DeviceSchemasJpaRepository;
 import cn.ecosync.iframework.command.CommandHandler;
-import cn.ecosync.iframework.event.Event;
-import cn.ecosync.iframework.event.EventBus;
+import cn.ecosync.iframework.util.CollectionUtils;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AddDeviceCommandHandler implements CommandHandler<AddDeviceCommand> {
-    private final DeviceDataAcquisitionRepository daqRepository;
-    private final DeviceRepository deviceRepository;
-    private final EventBus eventBus;
+    private final DeviceJpaRepository deviceRepository;
+    private final DeviceSchemasJpaRepository schemasRepository;
 
     @Override
     @Transactional
     public void handle(AddDeviceCommand command) {
-        DeviceDataAcquisitionId daqId = command.getDaqId();
-        DeviceDataAcquisitionCommandModel daq = daqRepository.get(daqId).orElse(null);
-        Assert.notNull(daq, "daq does not exist: " + daqId.toStringId());
+        DeviceSchemasId schemasId = new DeviceSchemasId(command.getSchemasCode());
+        Collection<? extends Device> devices = command.toDevices();
+        DeviceSchemasEntity schemas;
+        Set<DeviceId> deviceIds;
 
-        List<DeviceModel> devices = command.newDevices();
-        if (CollectionUtils.isEmpty(devices)) return;
+        schemas = schemasRepository.findBySchemasId(schemasId).orElse(null);
+        Assert.notNull(schemas, "Schemas not exists");
+        deviceIds = devices.stream()
+                .map(Device::getDeviceId)
+                .collect(LinkedHashSet::new, Set::add, Set::addAll);
+        List<DeviceEntity> existsDevices = deviceRepository.findByDeviceIdIn(deviceIds);
+        Assert.isTrue(CollectionUtils.isEmpty(existsDevices), "Device already exists: " + existsDevices);
 
-        List<Event> events = new ArrayList<>();
-        for (DeviceModel device : devices) {
-            DeviceId deviceId = device.getDeviceId();
-            DeviceCommandModel deviceCommandModel = deviceRepository.get(deviceId).orElse(null);
-            if (deviceCommandModel != null) {
-                log.debug("device already exists: {}", deviceId.toStringId());
-                continue;
-            }
-
-            Device deviceEntity = new Device(deviceId, daqId, device.getDeviceProperties());
-            deviceRepository.add(deviceEntity);
-            DeviceSavedEvent event = new DeviceSavedEvent(deviceEntity);
-            events.add(event);
-        }
-
-        events.forEach(eventBus::publish);
+        List<DeviceEntity> deviceEntities = devices.stream()
+                .map(DeviceEntity::new)
+                .collect(Collectors.toList());
+        deviceRepository.saveAll(deviceEntities);
     }
 }

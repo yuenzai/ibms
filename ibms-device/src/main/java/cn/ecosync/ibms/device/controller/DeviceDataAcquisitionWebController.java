@@ -1,17 +1,17 @@
 package cn.ecosync.ibms.device.controller;
 
-import cn.ecosync.ibms.device.command.AddBacnetDeviceCommand;
-import cn.ecosync.ibms.device.command.AddDeviceDataAcquisitionCommand;
-import cn.ecosync.ibms.device.command.RemoveDeviceDataAcquisitionCommand;
-import cn.ecosync.ibms.device.command.UpdateDeviceDataAcquisitionCommand;
-import cn.ecosync.ibms.device.model.DeviceDataAcquisitionModel;
-import cn.ecosync.ibms.device.query.GetDeviceDataAcquisitionQuery;
-import cn.ecosync.ibms.device.query.ListSearchDeviceDataAcquisitionQuery;
-import cn.ecosync.ibms.device.query.PageSearchDeviceDataAcquisitionQuery;
+import cn.ecosync.ibms.device.command.AddDataAcquisitionCommand;
+import cn.ecosync.ibms.device.command.RemoveDataAcquisitionCommand;
+import cn.ecosync.ibms.device.command.UpdateDataAcquisitionCommand;
+import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
+import cn.ecosync.ibms.device.dto.DeviceDataAcquisitionView;
+import cn.ecosync.ibms.device.query.GetDataAcquisitionQuery;
+import cn.ecosync.ibms.device.query.SearchDataAcquisitionQuery;
 import cn.ecosync.iframework.command.CommandBus;
 import cn.ecosync.iframework.query.QueryBus;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,37 +28,30 @@ public class DeviceDataAcquisitionWebController {
     private final QueryBus queryBus;
 
     @PostMapping("/add")
-    public void execute(@RequestBody @Validated AddDeviceDataAcquisitionCommand command) {
-        commandBus.execute(command);
-    }
-
-    @PostMapping("/add-bacnet-device")
-    public void execute(@RequestBody @Validated AddBacnetDeviceCommand command) {
+    public void execute(@RequestBody @Validated AddDataAcquisitionCommand command) {
         commandBus.execute(command);
     }
 
     @PostMapping("/update")
-    public void execute(@RequestBody @Validated UpdateDeviceDataAcquisitionCommand command) {
+    public void execute(@RequestBody @Validated UpdateDataAcquisitionCommand command) {
         commandBus.execute(command);
     }
 
     @PostMapping("/remove")
-    public void execute(@RequestBody @Validated RemoveDeviceDataAcquisitionCommand command) {
+    public void execute(@RequestBody @Validated RemoveDataAcquisitionCommand command) {
         commandBus.execute(command);
     }
 
     @PostMapping("/get")
-    public DeviceDataAcquisitionModel get(@RequestBody @Validated GetDeviceDataAcquisitionQuery query) {
-        return queryBus.execute(query);
+    public DeviceDataAcquisitionView get(@RequestBody @Validated GetDataAcquisitionQuery query) {
+        DeviceDataAcquisition dataAcquisition = queryBus.execute(query);
+        return new DeviceDataAcquisitionView(dataAcquisition, query.toPageable());
     }
 
-    @PostMapping("/list-search")
-    public List<DeviceDataAcquisitionModel> search(@RequestBody @Validated ListSearchDeviceDataAcquisitionQuery query) {
-        return queryBus.execute(query);
-    }
-
-    @PostMapping("/page-search")
-    public Page<DeviceDataAcquisitionModel> search(@RequestBody @Validated PageSearchDeviceDataAcquisitionQuery query) {
-        return queryBus.execute(query);
+    @PostMapping("/search")
+    public Iterable<DeviceDataAcquisition> search(@RequestBody @Validated SearchDataAcquisitionQuery query) {
+        List<DeviceDataAcquisition> list = queryBus.execute(query);
+        Pageable pageable = query.toPageable();
+        return pageable.isPaged() ? new PageImpl<>(list, pageable, list.size()) : list;
     }
 }

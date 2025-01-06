@@ -1,6 +1,5 @@
 package cn.ecosync.ibms.scheduling.model;
 
-import cn.ecosync.iframework.util.ToStringId;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import org.springframework.util.Assert;
@@ -8,7 +7,7 @@ import org.springframework.util.Assert;
 import java.util.Objects;
 
 @Embeddable
-public class SchedulingId implements ToStringId {
+public class SchedulingId {
     @Column(name = "scheduling_name", nullable = false, updatable = false)
     private String schedulingName;
 
@@ -20,17 +19,8 @@ public class SchedulingId implements ToStringId {
         this.schedulingName = schedulingName;
     }
 
-    protected String getSchedulingName() {
-        return schedulingName;
-    }
-
     @Override
     public String toString() {
-        return toStringId();
-    }
-
-    @Override
-    public String toStringId() {
         return schedulingName;
     }
 

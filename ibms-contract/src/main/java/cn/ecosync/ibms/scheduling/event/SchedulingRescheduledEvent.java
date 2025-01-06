@@ -26,6 +26,6 @@ public class SchedulingRescheduledEvent extends AbstractSchedulingEvent {
 
     @Override
     public String eventKey() {
-        return schedulingId.toStringId();
+        return schedulingId.toString();
     }
 }

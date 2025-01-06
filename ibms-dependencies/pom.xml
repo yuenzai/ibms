@@ -17,7 +17,8 @@
     <properties>
         <java.version>8</java.version>
         <avro.version>1.12.0</avro.version>
-        <iceberg.version>1.7.1</iceberg.version>
+        <!--<iceberg.version>1.7.1</iceberg.version>-->
+        <opentelemetry.version>1.45.0</opentelemetry.version>
     </properties>
 
     <dependencies>
@@ -65,15 +66,10 @@
                 <artifactId>ibms-driver-bacnet</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
-            <dependency>
+            <!--<dependency>
                 <groupId>org.apache.iceberg</groupId>
                 <artifactId>iceberg-core</artifactId>
                 <version>${iceberg.version}</version>
-            </dependency>
-            <!--<dependency>
-                <groupId>org.apache.avro</groupId>
-                <artifactId>avro</artifactId>
-                <version>${avro.version}</version>
             </dependency>-->
         </dependencies>
     </dependencyManagement>

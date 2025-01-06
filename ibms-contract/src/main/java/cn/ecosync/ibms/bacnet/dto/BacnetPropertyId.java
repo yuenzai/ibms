@@ -560,8 +560,10 @@ public enum BacnetPropertyId {
 
     @JsonValue
     private final Integer code;
+    private final String name;
 
     BacnetPropertyId(Integer code) {
         this.code = code;
+        this.name = String.valueOf(code);//todo
     }
 }

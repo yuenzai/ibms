@@ -1,53 +1,51 @@
 package cn.ecosync.ibms.bacnet.dto;
 
 import cn.ecosync.iframework.util.CollectionUtils;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Getter;
 import lombok.ToString;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Getter
 @ToString
 public class ReadPropertyMultipleAck {
     private Integer deviceInstance;
-    private List<BacnetObjectPropertiesValues> bopsValues;
-
-    public List<BacnetObjectPropertiesValues> getBopsValues() {
-        return CollectionUtils.nullSafeOf(bopsValues);
-    }
+    private List<BacnetObjectPropertiesResult> results;
 
     public boolean valuesNotEmpty() {
-        return CollectionUtils.notEmpty(getBopsValues());
+        return CollectionUtils.notEmpty(getResults());
     }
 
-    public MultiValueMap<BacnetObject, BacnetPropertyValues> toMultiValueMap() {
-        MultiValueMap<BacnetObject, BacnetPropertyValues> multiValueMap = new LinkedMultiValueMap<>();
-        // 遍历每个 BacnetObject
-        for (BacnetObjectPropertiesValues bops : getBopsValues()) {
-            for (BacnetPropertyValues propertyValues : bops.propertiesValues) {
-                multiValueMap.add(bops.bacnetObject, propertyValues);
-            }
-        }
-        return multiValueMap;
+    public Map<BacnetObject, Map<BacnetProperty, BacnetPropertyResult>> toMap() {
+        return CollectionUtils.nullSafeOf(results).stream()
+                .collect(Collectors.toMap(BacnetObjectPropertiesResult::getBacnetObject, BacnetObjectPropertiesResult::toPropertyMap));
     }
 
     public static ReadPropertyMultipleAck nullInstance(Integer deviceInstance) {
         ReadPropertyMultipleAck nullInstance = new ReadPropertyMultipleAck();
         nullInstance.deviceInstance = deviceInstance;
-        nullInstance.bopsValues = Collections.emptyList();
+        nullInstance.results = Collections.emptyList();
         return nullInstance;
     }
 
     @ToString
-    public static class BacnetObjectPropertiesValues {
+    public static class BacnetObjectPropertiesResult {
         @JsonUnwrapped
         private BacnetObject bacnetObject;
-        @JsonAlias("properties")
-        private List<BacnetPropertyValues> propertiesValues;
+        private List<BacnetPropertyResult> properties;
+
+        private BacnetObject getBacnetObject() {
+            return bacnetObject;
+        }
+
+        private Map<BacnetProperty, BacnetPropertyResult> toPropertyMap() {
+            return CollectionUtils.nullSafeOf(properties).stream()
+                    .collect(Collectors.toMap(BacnetPropertyResult::getProperty, Function.identity()));
+        }
     }
 }

@@ -1,24 +1,18 @@
 package cn.ecosync.ibms.device.command;
 
-import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
-import cn.ecosync.ibms.device.model.DeviceModel;
+import cn.ecosync.ibms.device.model.Device;
 import cn.ecosync.iframework.command.Command;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.List;
+import java.util.Collection;
 
 @Getter
 @ToString
 public abstract class AddDeviceCommand implements Command {
-    @Valid
-    @JsonUnwrapped
-    private DeviceDataAcquisitionId daqId;
+    @NotBlank
+    private String schemasCode;
 
-    protected AddDeviceCommand() {
-    }
-
-    public abstract List<DeviceModel> newDevices();
+    public abstract Collection<? extends Device> toDevices();
 }

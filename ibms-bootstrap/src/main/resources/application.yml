@@ -1,6 +1,6 @@
 spring:
   application:
-    name: ibms
+    name: dev
   datasource:
     url: jdbc:mysql://mysql:3306/IBMS?serverTimezone=Asia/Shanghai
     username: root

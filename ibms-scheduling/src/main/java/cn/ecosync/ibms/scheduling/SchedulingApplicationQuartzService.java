@@ -178,6 +178,6 @@ public class SchedulingApplicationQuartzService implements SchedulingApplication
     }
 
     private TriggerKey toTriggerKey(SchedulingId schedulingId) {
-        return TriggerKey.triggerKey(schedulingId.toStringId());
+        return TriggerKey.triggerKey(schedulingId.toString());
     }
 }

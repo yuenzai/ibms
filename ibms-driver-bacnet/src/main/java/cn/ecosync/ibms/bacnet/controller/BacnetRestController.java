@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.MultiValueMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -61,18 +61,21 @@ public class BacnetRestController {
         BacnetObjectProperties objectProperties = new BacnetObjectProperties(deviceObject, Collections.singleton(objectIdsProperty));
         BacnetReadPropertyMultipleService service = new BacnetReadPropertyMultipleService(deviceInstance, Collections.singleton(objectProperties));
         BacnetReadPropertyMultipleQuery readpropmQuery = new BacnetReadPropertyMultipleQuery(service);
+        ReadPropertyMultipleAck ack;
         try {
-            ReadPropertyMultipleAck ack = queryBus.execute(readpropmQuery);
-            MultiValueMap<BacnetObject, BacnetPropertyValues> multiValueMap = ack.toMultiValueMap();
-            BacnetPropertyValues objectIdsPropertyValue = multiValueMap.getFirst(deviceObject);
-            if (objectIdsPropertyValue == null) {
+            ack = queryBus.execute(readpropmQuery);
+            BacnetPropertyResult objectIdsPropertyResult = Optional.ofNullable(ack.toMap())
+                    .map(in -> in.get(deviceObject))
+                    .map(in -> in.get(objectIdsProperty))
+                    .orElse(null);
+            if (objectIdsPropertyResult == null) {
                 return Collections.emptyList();
             }
-            BacnetError bacnetError = objectIdsPropertyValue.getError();
+            BacnetError bacnetError = objectIdsPropertyResult.getError();
             if (bacnetError != null) {
                 throw new RuntimeException(bacnetError.toString());
             }
-            return objectIdsPropertyValue.stream()
+            return objectIdsPropertyResult.getValues().stream()
                     .filter(in -> in instanceof BacnetPropertyValue.OBJECT_ID)
                     .map(in -> ((BacnetPropertyValue.OBJECT_ID) in).getValue())
                     .collect(Collectors.toList());

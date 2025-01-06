@@ -1,16 +1,22 @@
 package cn.ecosync.ibms.device.command;
 
-import cn.ecosync.ibms.device.model.DeviceId;
 import cn.ecosync.iframework.command.Command;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import jakarta.validation.Valid;
-import lombok.Getter;
+import cn.ecosync.iframework.util.CollectionUtils;
 import lombok.ToString;
 
-@Getter
+import java.util.List;
+
 @ToString
 public class RemoveDeviceCommand implements Command {
-    @Valid
-    @JsonUnwrapped
-    private DeviceId deviceId;
+    private List<String> deviceCodes;
+
+    public List<String> getDeviceCodes() {
+        return CollectionUtils.nullSafeOf(deviceCodes);
+    }
+
+//    @JsonIgnore
+//    @AssertTrue(message = "Device code duplicated")
+//    public boolean isUniqueDeviceCode() {
+//        return CollectionUtils.hasUniqueElement(getDeviceCodes());
+//    }
 }

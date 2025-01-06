@@ -22,5 +22,6 @@
         <module>ibms-orchestration</module>
         <module>ibms-autoconfigure</module>
         <module>ibms-bootstrap</module>
+        <module>ibms-gateway</module>
     </modules>
 </project>
