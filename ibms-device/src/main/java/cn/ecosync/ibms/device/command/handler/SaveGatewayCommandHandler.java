@@ -42,7 +42,7 @@ public class SaveGatewayCommandHandler implements CommandHandler<SaveGatewayComm
                 .map(DeviceDataAcquisitionEntity::getDataAcquisition)
                 .map(DeviceDataAcquisition::toReference)
                 .collect(Collectors.toList());
-        DeviceGateway gateway = new DeviceGateway(gatewayId, dataAcquisitionReferences);
+        DeviceGateway gateway = gatewayEntity.getGateway().withDataAcquisitions(dataAcquisitionReferences);
         gatewayEntity.save(gateway);
     }
 }

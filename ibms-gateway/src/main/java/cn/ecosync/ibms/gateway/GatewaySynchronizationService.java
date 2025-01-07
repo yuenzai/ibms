@@ -39,7 +39,6 @@ public class GatewaySynchronizationService implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        gatewayService.register();
         scheduleSynchronize();
     }
 
@@ -57,7 +56,7 @@ public class GatewaySynchronizationService implements ApplicationRunner {
     }
 
     private ResponseEntity<DeviceGateway> doRequest() {
-        return gatewayService.getOnWebhook(gatewayProperties.getGatewayCode());
+        return gatewayService.get(gatewayProperties.getGatewayCode());
     }
 
     private void handle(ResponseEntity<DeviceGateway> responseEntity) {

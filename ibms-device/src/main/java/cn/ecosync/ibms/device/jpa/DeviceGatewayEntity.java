@@ -17,6 +17,8 @@ import java.util.Objects;
 public class DeviceGatewayEntity extends ConcurrencySafeEntity implements IDeviceGateway {
     @Embedded
     private DeviceGatewayId gatewayId;
+    @Column(name = "synchronization_state", nullable = false)
+    private String synchronizationState;
     @Getter
     @Convert(converter = DeviceGatewayConverter.class)
     @Column(name = "gateway", nullable = false, updatable = false)
@@ -28,7 +30,7 @@ public class DeviceGatewayEntity extends ConcurrencySafeEntity implements IDevic
     public DeviceGatewayEntity(DeviceGateway gateway) {
         Assert.notNull(gateway, "gateway must not be null");
         this.gatewayId = gateway.getGatewayId();
-        this.gateway = gateway;
+        save(gateway);
     }
 
     @Override
@@ -36,8 +38,19 @@ public class DeviceGatewayEntity extends ConcurrencySafeEntity implements IDevic
         return gateway.getDataAcquisitions();
     }
 
+    @Override
+    public SynchronizationStateEnum getSynchronizationState() {
+        return gateway.getSynchronizationState();
+    }
+
+    @Override
+    public Long getPreviousSynchronizedDate() {
+        return gateway.getPreviousSynchronizedDate();
+    }
+
     public void save(DeviceGateway gateway) {
         Assert.notNull(gateway, "gateway must not be null");
+        this.synchronizationState = gateway.getSynchronizationState().toString();
         this.gateway = gateway;
     }
 
