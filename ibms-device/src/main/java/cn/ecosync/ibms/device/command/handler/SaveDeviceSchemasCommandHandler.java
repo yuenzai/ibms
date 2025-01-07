@@ -1,8 +1,8 @@
 package cn.ecosync.ibms.device.command.handler;
 
 import cn.ecosync.ibms.device.command.SaveDeviceSchemasCommand;
-import cn.ecosync.ibms.device.model.DeviceSchemas;
 import cn.ecosync.ibms.device.jpa.DeviceSchemasEntity;
+import cn.ecosync.ibms.device.model.DeviceSchemas;
 import cn.ecosync.ibms.device.model.DeviceSchemasId;
 import cn.ecosync.ibms.device.repository.jpa.DeviceSchemasJpaRepository;
 import cn.ecosync.iframework.command.CommandHandler;

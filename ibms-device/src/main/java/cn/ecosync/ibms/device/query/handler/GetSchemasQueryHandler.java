@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.device.query.handler;
 
-import cn.ecosync.ibms.device.model.DeviceSchemas;
 import cn.ecosync.ibms.device.jpa.DeviceSchemasEntity;
+import cn.ecosync.ibms.device.model.DeviceSchemas;
 import cn.ecosync.ibms.device.model.DeviceSchemasId;
 import cn.ecosync.ibms.device.query.GetSchemasQuery;
 import cn.ecosync.ibms.device.repository.jpa.DeviceSchemasJpaRepository;

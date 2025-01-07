@@ -1,10 +1,10 @@
 package cn.ecosync.ibms.device.command.handler;
 
 import cn.ecosync.ibms.device.command.AddDataAcquisitionCommand;
-import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.device.jpa.DeviceDataAcquisitionEntity;
-import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
 import cn.ecosync.ibms.device.jpa.DeviceSchemasEntity;
+import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
+import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
 import cn.ecosync.ibms.device.model.DeviceSchemasId;
 import cn.ecosync.ibms.device.repository.jpa.DeviceDataAcquisitionJpaRepository;
 import cn.ecosync.ibms.device.repository.jpa.DeviceSchemasJpaRepository;
