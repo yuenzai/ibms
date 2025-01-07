@@ -16,7 +16,7 @@
         <module>ibms-contract</module>
         <!-- functional -->
         <module>ibms-device</module>
-        <module>ibms-scheduling</module>
+        <!--<module>ibms-scheduling</module>-->
         <module>ibms-driver-bacnet</module>
         <!-- other -->
         <module>ibms-orchestration</module>

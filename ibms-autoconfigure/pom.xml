@@ -29,11 +29,11 @@
             <artifactId>ibms-device</artifactId>
             <optional>true</optional>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>cn.ecosync.ibms</groupId>
             <artifactId>ibms-scheduling</artifactId>
             <optional>true</optional>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>cn.ecosync.ibms.driver</groupId>
             <artifactId>ibms-driver-bacnet</artifactId>

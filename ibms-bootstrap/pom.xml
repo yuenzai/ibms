@@ -38,10 +38,10 @@
             <groupId>cn.ecosync.ibms</groupId>
             <artifactId>ibms-device</artifactId>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>cn.ecosync.ibms</groupId>
             <artifactId>ibms-scheduling</artifactId>
-        </dependency>
+        </dependency>-->
 
         <!--<dependency>
             <groupId>org.springframework.kafka</groupId>
@@ -89,7 +89,7 @@
                 </dependency>
             </dependencies>
         </profile>
-        <profile>
+        <!--<profile>
             <id>outbox</id>
             <dependencies>
                 <dependency>
@@ -97,7 +97,7 @@
                     <artifactId>iframework-outbox</artifactId>
                 </dependency>
             </dependencies>
-        </profile>
+        </profile>-->
         <!--<profile>
             <id>debezium</id>
             <dependencies>
