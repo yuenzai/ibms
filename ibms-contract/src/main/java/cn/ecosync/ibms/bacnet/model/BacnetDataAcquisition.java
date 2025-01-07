@@ -73,7 +73,7 @@ public class BacnetDataAcquisition extends DeviceDataAcquisition {
     }
 
     @Override
-    public BacnetDataAcquisition withDevices(List<Device> devices) {
+    public BacnetDataAcquisition withDevices(Collection<Device> devices) {
         List<BacnetDevice> bacnetDevices = devices.stream()
                 .filter(BacnetDevice.class::isInstance)
                 .map(BacnetDevice.class::cast)

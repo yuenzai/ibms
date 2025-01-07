@@ -1,6 +1,7 @@
 package cn.ecosync.ibms.device.command.handler;
 
 import cn.ecosync.ibms.device.command.RemoveDeviceCommand;
+import cn.ecosync.ibms.device.jpa.DeviceEntity;
 import cn.ecosync.ibms.device.model.DeviceId;
 import cn.ecosync.ibms.device.repository.jpa.DeviceJpaRepository;
 import cn.ecosync.iframework.command.CommandHandler;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,6 +26,10 @@ public class RemoveDeviceCommandHandler implements CommandHandler<RemoveDeviceCo
                 .filter(StringUtils::hasText)
                 .map(DeviceId::new)
                 .collect(Collectors.toSet());
-        deviceRepository.removeByDeviceIdIn(deviceIds);
+        List<DeviceEntity> deviceEntities = deviceRepository.findByDeviceIdIn(deviceIds);
+        for (DeviceEntity deviceEntity : deviceEntities) {
+            deviceEntity.clear();
+            deviceRepository.delete(deviceEntity);
+        }
     }
 }

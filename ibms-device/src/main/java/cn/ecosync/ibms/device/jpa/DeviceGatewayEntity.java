@@ -36,7 +36,7 @@ public class DeviceGatewayEntity extends ConcurrencySafeEntity implements IDevic
         return gateway.getDataAcquisitions();
     }
 
-    public void saveGateway(DeviceGateway gateway) {
+    public void save(DeviceGateway gateway) {
         Assert.notNull(gateway, "gateway must not be null");
         this.gateway = gateway;
     }

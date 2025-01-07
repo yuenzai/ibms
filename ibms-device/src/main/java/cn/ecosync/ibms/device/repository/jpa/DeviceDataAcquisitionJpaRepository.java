@@ -12,6 +12,4 @@ public interface DeviceDataAcquisitionJpaRepository extends JpaRepository<Device
     Optional<DeviceDataAcquisitionEntity> findByDataAcquisitionId(DeviceDataAcquisitionId dataAcquisitionId);
 
     List<DeviceDataAcquisitionEntity> findByDataAcquisitionIdIn(Set<DeviceDataAcquisitionId> dataAcquisitionIds);
-
-    void removeByDataAcquisitionId(DeviceDataAcquisitionId dataAcquisitionId);
 }

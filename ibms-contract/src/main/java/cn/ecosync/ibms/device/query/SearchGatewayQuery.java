@@ -5,10 +5,9 @@ import cn.ecosync.iframework.query.PageQuery;
 import cn.ecosync.iframework.query.Query;
 import lombok.Getter;
 import lombok.ToString;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 @Getter
 @ToString(callSuper = true)
-public class SearchGatewayQuery extends PageQuery implements Query<List<DeviceGateway>> {
+public class SearchGatewayQuery extends PageQuery implements Query<Page<DeviceGateway>> {
 }

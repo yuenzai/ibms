@@ -1,14 +1,13 @@
 package cn.ecosync.ibms.device.dto;
 
-import cn.ecosync.ibms.device.model.*;
+import cn.ecosync.ibms.device.model.Device;
+import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
+import cn.ecosync.ibms.device.model.DeviceSchemas;
+import cn.ecosync.ibms.device.model.IDeviceDataAcquisition;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-
-import java.util.List;
 
 @Getter
 @ToString
@@ -21,11 +20,10 @@ public class DeviceDataAcquisitionView implements IDeviceDataAcquisition {
     protected DeviceDataAcquisitionView() {
     }
 
-    public DeviceDataAcquisitionView(DeviceDataAcquisition dataAcquisition, Pageable pageable) {
-        this.dataAcquisitionId = dataAcquisition.getDataAcquisitionId();
-        this.schemas = dataAcquisition.getSchemas();
-        List<? extends Device> devices = dataAcquisition.getDevices();
-        this.devices = new PageImpl<>(devices, pageable, devices.size());
+    public DeviceDataAcquisitionView(DeviceDataAcquisitionId dataAcquisitionId, DeviceSchemas schemas, Page<? extends Device> devices) {
+        this.dataAcquisitionId = dataAcquisitionId;
+        this.schemas = schemas;
+        this.devices = devices;
     }
 
     @Override

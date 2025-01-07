@@ -44,7 +44,7 @@ public abstract class DeviceDataAcquisition implements IDeviceDataAcquisition {
 
     public abstract DeviceDataAcquisition withSchemas(DeviceSchemas schemas);
 
-    public abstract DeviceDataAcquisition withDevices(List<Device> devices);
+    public abstract DeviceDataAcquisition withDevices(Collection<Device> devices);
 
     public abstract DeviceDataAcquisition toReference();
 

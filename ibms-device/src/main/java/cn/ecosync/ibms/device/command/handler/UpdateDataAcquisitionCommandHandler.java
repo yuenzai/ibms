@@ -1,11 +1,9 @@
 package cn.ecosync.ibms.device.command.handler;
 
 import cn.ecosync.ibms.device.command.UpdateDataAcquisitionCommand;
-import cn.ecosync.ibms.device.model.Device;
-import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.device.jpa.DeviceDataAcquisitionEntity;
-import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
 import cn.ecosync.ibms.device.jpa.DeviceEntity;
+import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
 import cn.ecosync.ibms.device.model.DeviceId;
 import cn.ecosync.ibms.device.repository.jpa.DeviceDataAcquisitionJpaRepository;
 import cn.ecosync.ibms.device.repository.jpa.DeviceJpaRepository;
@@ -19,7 +17,6 @@ import org.springframework.util.Assert;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -40,18 +37,15 @@ public class UpdateDataAcquisitionCommandHandler implements CommandHandler<Updat
                 .map(DeviceId::new)
                 .collect(LinkedHashSet::new, Set::add, Set::addAll);
         if (CollectionUtils.isEmpty(deviceIds)) return;
-        List<Device> devices = deviceRepository.findByDeviceIdIn(deviceIds).stream()
-                .map(DeviceEntity::getDevice)
-                .collect(Collectors.toList());
-        if (CollectionUtils.isEmpty(devices)) return;
+        List<DeviceEntity> deviceEntities = deviceRepository.findByDeviceIdIn(deviceIds);
+        if (CollectionUtils.isEmpty(deviceEntities)) return;
 
-        DeviceDataAcquisition dataAcquisition = dataAcquisitionEntity.getDataAcquisition();
         switch (updateDeviceParams.getOperation()) {
             case ADD:
-                dataAcquisitionEntity.save(dataAcquisition.addDeviceReferences(devices));
+                dataAcquisitionEntity.add(deviceEntities);
                 break;
             case REMOVE:
-                dataAcquisitionEntity.save(dataAcquisition.removeDeviceReferences(devices));
+                dataAcquisitionEntity.remove(deviceEntities);
                 break;
         }
     }

@@ -4,9 +4,8 @@ import cn.ecosync.ibms.device.model.DeviceSchemas;
 import cn.ecosync.iframework.query.PageQuery;
 import cn.ecosync.iframework.query.Query;
 import lombok.ToString;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 @ToString
-public class SearchSchemasQuery extends PageQuery implements Query<List<DeviceSchemas>> {
+public class SearchSchemasQuery extends PageQuery implements Query<Page<DeviceSchemas>> {
 }

@@ -1,6 +1,7 @@
 package cn.ecosync.ibms.device.repository.jpa;
 
 import cn.ecosync.ibms.device.dto.DeviceProbe;
+import cn.ecosync.ibms.device.jpa.DeviceDataAcquisitionEntity;
 import cn.ecosync.ibms.device.jpa.DeviceEntity;
 import cn.ecosync.ibms.device.model.DeviceId;
 import org.springframework.data.domain.Example;
@@ -9,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -26,7 +26,5 @@ public interface DeviceJpaRepository extends JpaRepository<DeviceEntity, Integer
 
     List<DeviceEntity> findByDeviceIdIn(Set<DeviceId> deviceIds);
 
-    Page<DeviceEntity> findByDeviceIdIn(Set<DeviceId> deviceIds, Pageable pageable);
-
-    void removeByDeviceIdIn(Collection<DeviceId> deviceIds);
+    Page<DeviceEntity> findByDataAcquisitionEntities(Set<DeviceDataAcquisitionEntity> dataAcquisitionEntities, Pageable pageable);
 }

@@ -8,15 +8,12 @@ import cn.ecosync.ibms.device.query.SearchSchemasQuery;
 import cn.ecosync.iframework.command.CommandBus;
 import cn.ecosync.iframework.query.QueryBus;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,9 +38,7 @@ public class DeviceSchemasWebController {
     }
 
     @PostMapping("/search")
-    public Iterable<DeviceSchemas> search(@RequestBody @Validated SearchSchemasQuery query) {
-        Pageable pageable = query.toPageable();
-        List<DeviceSchemas> deviceschemasList = queryBus.execute(query);
-        return pageable.isPaged() ? new PageImpl<>(deviceschemasList, pageable, deviceschemasList.size()) : deviceschemasList;
+    public Page<DeviceSchemas> search(@RequestBody @Validated SearchSchemasQuery query) {
+        return queryBus.execute(query);
     }
 }
