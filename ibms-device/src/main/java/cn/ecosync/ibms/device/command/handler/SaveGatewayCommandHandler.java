@@ -30,6 +30,8 @@ public class SaveGatewayCommandHandler implements CommandHandler<SaveGatewayComm
     @Override
     @Transactional
     public void handle(SaveGatewayCommand command) {
+        List<DeviceDataAcquisition> dataAcquisitionReferences = null;
+
         DeviceGatewayId gatewayId = new DeviceGatewayId(command.getGatewayCode());
         DeviceGatewayEntity gatewayEntity = gatewayRepository.findByGatewayId(gatewayId).orElse(null);
         Assert.notNull(gatewayEntity, "Gateway not exists");
@@ -37,11 +39,12 @@ public class SaveGatewayCommandHandler implements CommandHandler<SaveGatewayComm
         Set<DeviceDataAcquisitionId> dataAcquisitionIds = command.getDataAcquisitionCodes().stream()
                 .map(DeviceDataAcquisitionId::new)
                 .collect(LinkedHashSet::new, Set::add, Set::addAll);
-        if (CollectionUtils.isEmpty(dataAcquisitionIds)) return;
-        List<DeviceDataAcquisition> dataAcquisitionReferences = dataAcquisitionRepository.findByDataAcquisitionIdIn(dataAcquisitionIds).stream()
-                .map(DeviceDataAcquisitionEntity::getDataAcquisition)
-                .map(DeviceDataAcquisition::toReference)
-                .collect(Collectors.toList());
+        if (CollectionUtils.notEmpty(dataAcquisitionIds)) {
+            dataAcquisitionReferences = dataAcquisitionRepository.findByDataAcquisitionIdIn(dataAcquisitionIds).stream()
+                    .map(DeviceDataAcquisitionEntity::getDataAcquisition)
+                    .map(DeviceDataAcquisition::toReference)
+                    .collect(Collectors.toList());
+        }
         DeviceGateway gateway = gatewayEntity.getGateway().withDataAcquisitions(dataAcquisitionReferences);
         gatewayEntity.save(gateway);
     }

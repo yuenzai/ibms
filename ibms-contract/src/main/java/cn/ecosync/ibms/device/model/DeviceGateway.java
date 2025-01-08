@@ -25,7 +25,7 @@ public class DeviceGateway implements IDeviceGateway {
     protected DeviceGateway() {
     }
 
-    private DeviceGateway(DeviceGatewayId gatewayId, List<DeviceDataAcquisition> dataAcquisitions, SynchronizationStateEnum synchronizationState, Long previousSynchronizedDate) {
+    public DeviceGateway(DeviceGatewayId gatewayId, List<DeviceDataAcquisition> dataAcquisitions, SynchronizationStateEnum synchronizationState, Long previousSynchronizedDate) {
         this.gatewayId = gatewayId;
         this.dataAcquisitions = dataAcquisitions;
         this.synchronizationState = synchronizationState;

@@ -1,5 +1,6 @@
 package cn.ecosync.ibms.device.controller;
 
+import cn.ecosync.ibms.device.command.AddGatewayCommand;
 import cn.ecosync.ibms.device.command.RemoveGatewayCommand;
 import cn.ecosync.ibms.device.command.SaveGatewayCommand;
 import cn.ecosync.ibms.device.command.SetGatewaySynchronizationStateCommand;
@@ -26,10 +27,15 @@ import static cn.ecosync.ibms.device.model.IDeviceGateway.SynchronizationStateEn
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/gateway")
+@RequestMapping("/device-gateway")
 public class DeviceGatewayWebController {
     private final CommandBus commandBus;
     private final QueryBus queryBus;
+
+    @PostMapping("/add")
+    public void execute(@RequestBody @Validated AddGatewayCommand command) {
+        commandBus.execute(command);
+    }
 
     @PostMapping("/save")
     public void execute(@RequestBody @Validated SaveGatewayCommand command) {
@@ -59,14 +65,10 @@ public class DeviceGatewayWebController {
 
     @GetMapping("/{gateway-code}")
     public DeferredResult<ResponseEntity<DeviceGateway>> get(@PathVariable("gateway-code") String gatewayCode) {
-        DeferredResult<ResponseEntity<DeviceGateway>> result = new DeferredResult<>();
+        DeferredResult<ResponseEntity<DeviceGateway>> result = new DeferredResult<>(null, () -> new ResponseEntity<>(HttpStatus.NO_CONTENT));
         GetGatewayQuery query = new GetGatewayQuery(gatewayCode);
         DeviceGateway gateway = doExecute(query, true);
-        if (gateway != null) {
-            result.setResult(new ResponseEntity<>(gateway, HttpStatus.OK));
-        } else {
-            result.setResult(new ResponseEntity<>(HttpStatus.NO_CONTENT));
-        }
+        if (gateway != null) result.setResult(new ResponseEntity<>(gateway, HttpStatus.OK));
         return result;
     }
 
