@@ -64,7 +64,7 @@ public class BacnetReadPropertyMultipleService {
     }
 
     public static BacnetReadPropertyMultipleService newInstance(Integer deviceInstance, BacnetSchemas bacnetSchemas) {
-        Collection<BacnetObjectProperties> objectPropertiesCollection = CollectionUtils.nullSafeOf(bacnetSchemas.getSchemaItems()).stream()
+        Collection<BacnetObjectProperties> objectPropertiesCollection = CollectionUtils.nullSafeOf(bacnetSchemas.getSchemas()).stream()
                 .map(BacnetSchema::getSchemaProperties)
                 .collect(Collectors.toSet());
         return new BacnetReadPropertyMultipleService(deviceInstance, objectPropertiesCollection);

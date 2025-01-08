@@ -13,10 +13,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public interface IDeviceSchemas {
-    Collection<? extends DeviceSchema> getSchemaItems();
+    Collection<? extends DeviceSchema> getSchemas();
 
     default Map<String, ObservableMeasurement> toObservableMeasurements(Meter meter, Collection<DeviceId> deviceIds) {
-        Collection<? extends DeviceSchema> schemas = getSchemaItems();
+        Collection<? extends DeviceSchema> schemas = getSchemas();
         Map<String, ObservableMeasurement> observableMeasurements = new LinkedHashMap<>();
 
         for (DeviceId deviceId : deviceIds) {
@@ -36,6 +36,6 @@ public interface IDeviceSchemas {
     }
 
     default boolean isUniqueName() {
-        return CollectionUtils.hasUniqueElement(getSchemaItems(), DeviceSchema::getName);
+        return CollectionUtils.hasUniqueElement(getSchemas(), DeviceSchema::getName);
     }
 }

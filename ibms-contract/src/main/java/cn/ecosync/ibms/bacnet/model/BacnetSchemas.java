@@ -35,7 +35,7 @@ public class BacnetSchemas extends DeviceSchemas {
     }
 
     @Override
-    public List<BacnetSchema> getSchemaItems() {
+    public List<BacnetSchema> getSchemas() {
         return CollectionUtils.nullSafeOf(schemas);
     }
 
@@ -48,6 +48,6 @@ public class BacnetSchemas extends DeviceSchemas {
 
     @Override
     public BacnetSchemas toReference() {
-        return new BacnetSchemas(getSchemasId());
+        return new BacnetSchemas(toSchemasId());
     }
 }

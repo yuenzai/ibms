@@ -46,7 +46,7 @@ public class GatewayTelemetryService implements GatewayRepository {
         ObservableMeasurement[] additionalMeasurements;
 
         DeviceSchemas schemas = dataAcquisition.getSchemas();
-        Meter meter = openTelemetry.getMeter(schemas.getSchemasId().toString());
+        Meter meter = openTelemetry.getMeter(schemas.toSchemasId().toString());
         Collection<DeviceId> deviceIds = dataAcquisition.getDevices().stream()
                 .map(Device::getDeviceId)
                 .collect(Collectors.toList());
@@ -65,7 +65,7 @@ public class GatewayTelemetryService implements GatewayRepository {
         }
 
         BatchCallback batchCallback = meter.batchCallback(callback, observableMeasurement, additionalMeasurements);
-        return new DeviceSchemasCallback(schemas.getSchemasId(), batchCallback);
+        return new DeviceSchemasCallback(schemas.toSchemasId(), batchCallback);
     }
 
     private void saveCallback(DeviceSchemasCallback callback) {

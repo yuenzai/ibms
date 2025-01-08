@@ -31,7 +31,7 @@ public class AddDataAcquisitionCommandHandler implements CommandHandler<AddDataA
         DeviceSchemasEntity schemasEntity = schemasRepository.findBySchemasId(schemasId).orElse(null);
         Assert.notNull(schemasEntity, "SchemasEntity not exist");
 
-        DeviceDataAcquisition deviceDataAcquisition = schemasEntity.getSchemas().newDataAcquisition(dataAcquisitionId);
+        DeviceDataAcquisition deviceDataAcquisition = schemasEntity.getDeviceSchemas().newDataAcquisition(dataAcquisitionId);
         dataAcquisitionEntity = new DeviceDataAcquisitionEntity(deviceDataAcquisition);
         dataAcquisitionRepository.save(dataAcquisitionEntity);
     }

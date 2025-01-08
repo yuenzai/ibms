@@ -20,38 +20,38 @@ public class DeviceSchemasEntity extends ConcurrencySafeEntity implements IDevic
     @Getter
     @Convert(converter = DeviceSchemasConverter.class)
     @Column(name = "device_schemas", nullable = false)
-    private DeviceSchemas schemas;
+    private DeviceSchemas deviceSchemas;
 
     protected DeviceSchemasEntity() {
     }
 
-    public DeviceSchemasEntity(DeviceSchemas schemas) {
-        Assert.notNull(schemas, "schemas must not be null");
-        this.schemasId = schemas.getSchemasId();
-        this.schemas = schemas;
+    public DeviceSchemasEntity(DeviceSchemas deviceSchemas) {
+        Assert.notNull(deviceSchemas, "deviceSchemas must not be null");
+        this.schemasId = deviceSchemas.toSchemasId();
+        this.deviceSchemas = deviceSchemas;
     }
 
-    public void save(DeviceSchemas schemas) {
-        Assert.notNull(schemas, "schemas must not be null");
-        Assert.isTrue(Objects.equals(getSchemas().getSchemasId(), schemas.getSchemasId()), "");
-        Assert.isTrue(schemas.isUniqueName(), "Schema name duplicated");
-        this.schemas = schemas;
+    public void save(DeviceSchemas deviceSchemas) {
+        Assert.notNull(deviceSchemas, "deviceSchemas must not be null");
+        Assert.isTrue(Objects.equals(getDeviceSchemas().toSchemasId(), deviceSchemas.toSchemasId()), "");
+        Assert.isTrue(deviceSchemas.isUniqueName(), "Schema name duplicated");
+        this.deviceSchemas = deviceSchemas;
     }
 
     @Override
-    public Collection<? extends DeviceSchema> getSchemaItems() {
-        return getSchemas().getSchemaItems();
+    public Collection<? extends DeviceSchema> getSchemas() {
+        return getDeviceSchemas().getSchemas();
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof DeviceSchemasEntity)) return false;
-        DeviceSchemasEntity other = (DeviceSchemasEntity) o;
-        return Objects.equals(this.schemas, other.schemas);
+        DeviceSchemasEntity that = (DeviceSchemasEntity) o;
+        return Objects.equals(this.deviceSchemas, that.deviceSchemas);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(schemas);
+        return Objects.hashCode(deviceSchemas);
     }
 }

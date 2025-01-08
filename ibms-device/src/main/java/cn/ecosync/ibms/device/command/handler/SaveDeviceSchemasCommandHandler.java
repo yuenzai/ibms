@@ -19,7 +19,7 @@ public class SaveDeviceSchemasCommandHandler implements CommandHandler<SaveDevic
     @Transactional
     public void handle(SaveDeviceSchemasCommand command) {
         DeviceSchemas schemas = command.getSchemas();
-        DeviceSchemasId schemasId = schemas.getSchemasId();
+        DeviceSchemasId schemasId = schemas.toSchemasId();
         DeviceSchemasEntity schemasEntity = schemasRepository.findBySchemasId(schemasId).orElse(null);
         if (schemasEntity == null) {
             schemasEntity = new DeviceSchemasEntity(schemas);

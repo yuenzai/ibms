@@ -21,6 +21,6 @@ public class SearchSchemasQueryHandler implements QueryHandler<SearchSchemasQuer
     public Page<DeviceSchemas> handle(SearchSchemasQuery query) {
         Pageable pageable = query.toPageable();
         return schemasRepository.findAll(pageable)
-                .map(DeviceSchemasEntity::getSchemas);
+                .map(DeviceSchemasEntity::getDeviceSchemas);
     }
 }

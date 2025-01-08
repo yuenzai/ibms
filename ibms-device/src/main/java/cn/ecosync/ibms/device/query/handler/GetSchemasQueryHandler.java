@@ -20,7 +20,7 @@ public class GetSchemasQueryHandler implements QueryHandler<GetSchemasQuery, Dev
     public DeviceSchemas handle(GetSchemasQuery query) {
         DeviceSchemasId schemasId = new DeviceSchemasId(query.getSchemasCode());
         return schemasRepository.findBySchemasId(schemasId)
-                .map(DeviceSchemasEntity::getSchemas)
+                .map(DeviceSchemasEntity::getDeviceSchemas)
                 .orElse(null);
     }
 }

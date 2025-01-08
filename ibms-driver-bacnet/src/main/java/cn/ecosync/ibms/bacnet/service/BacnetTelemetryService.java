@@ -65,7 +65,7 @@ public class BacnetTelemetryService implements Runnable {
 
     private void record(BacnetDevice device, ReadPropertyMultipleAck ack) {
         BacnetSchemas bacnetSchemas = bacnetDataAcquisition.getSchemas();
-        List<BacnetSchema> schemas = bacnetSchemas.getSchemaItems();
+        List<BacnetSchema> schemas = bacnetSchemas.getSchemas();
         Map<BacnetObject, Map<BacnetProperty, BacnetPropertyResult>> propertiesMap = ack.toMap();
 
         for (BacnetSchema schema : schemas) {
@@ -83,7 +83,7 @@ public class BacnetTelemetryService implements Runnable {
 
             AttributesBuilder builder = Attributes.builder();
             builder.put(DEVICE_ID, deviceId.toString());
-            builder.put(DEVICE_SCHEMAS_ID, bacnetSchemas.getSchemasId().toString());
+            builder.put(DEVICE_SCHEMAS_ID, bacnetSchemas.toSchemasId().toString());
             propertyMap.values().forEach(in -> in.accept(builder));
             Attributes attributes = builder.build();
 

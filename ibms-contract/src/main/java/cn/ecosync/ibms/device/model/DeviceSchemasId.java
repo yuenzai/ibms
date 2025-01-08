@@ -2,14 +2,14 @@ package cn.ecosync.ibms.device.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
 import org.springframework.util.Assert;
 
 import java.util.Objects;
 
+@Getter
 @Embeddable
 public class DeviceSchemasId {
-    @NotBlank
     @Column(name = "schemas_code", nullable = false, updatable = false)
     private String schemasCode;
 

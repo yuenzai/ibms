@@ -37,13 +37,13 @@ public class SearchDataAcquisitionQueryHandler implements QueryHandler<SearchDat
                 .map(DeviceDataAcquisitionEntity::getDataAcquisition);
         schemasIds = dataAcquisitions.stream()
                 .map(DeviceDataAcquisition::getSchemas)
-                .map(DeviceSchemas::getSchemasId)
+                .map(DeviceSchemas::toSchemasId)
                 .collect(LinkedHashSet::new, Set::add, Set::addAll);
         schemasMap = schemasRepository.findBySchemasIdIn(schemasIds).stream()
-                .map(DeviceSchemasEntity::getSchemas)
-                .collect(Collectors.toMap(DeviceSchemas::getSchemasId, Function.identity()));
+                .map(DeviceSchemasEntity::getDeviceSchemas)
+                .collect(Collectors.toMap(DeviceSchemas::toSchemasId, Function.identity()));
         return dataAcquisitions.map(in -> {
-            DeviceSchemasId schemasId = in.getSchemas().getSchemasId();
+            DeviceSchemasId schemasId = in.getSchemas().toSchemasId();
             DeviceSchemas deviceSchemas = schemasMap.get(schemasId);
             return in.withSchemas(deviceSchemas);
         });
