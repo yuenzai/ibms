@@ -23,10 +23,8 @@ public class GatewayTelemetryService implements GatewayRepository {
     private final Map<DeviceSchemasId, BatchCallback> batchCallbacks = new ConcurrentHashMap<>();
 
     @Override
-    public void save(DeviceGateway gateway) {
-        DeviceGateway ref = gatewayRef.updateAndGet(in -> gateway);
-        batchCallbacks.values().forEach(BatchCallback::close);
-        observeMeasurements(ref);
+    public DeviceGateway saveAndGet(DeviceGateway gateway) {
+        return gatewayRef.updateAndGet(in -> gateway);
     }
 
     @Override
@@ -34,7 +32,8 @@ public class GatewayTelemetryService implements GatewayRepository {
         return Optional.ofNullable(gatewayRef.get());
     }
 
-    private void observeMeasurements(DeviceGateway gateway) {
+    public void observeMeasurements(DeviceGateway gateway) {
+        batchCallbacks.values().forEach(BatchCallback::close);
         if (gateway == null) return;
         gateway.getDataAcquisitions().stream()
                 .map(this::observeMeasurements)
@@ -70,7 +69,7 @@ public class GatewayTelemetryService implements GatewayRepository {
     }
 
     private void saveCallback(DeviceSchemasCallback callback) {
-        if (callback == DeviceSchemasCallback.NULL) return;
+        if (callback == null || callback == DeviceSchemasCallback.NULL) return;
         Optional.ofNullable(batchCallbacks.get(callback.schemasId))
                 .ifPresent(BatchCallback::close);
         batchCallbacks.put(callback.schemasId, callback.callback);

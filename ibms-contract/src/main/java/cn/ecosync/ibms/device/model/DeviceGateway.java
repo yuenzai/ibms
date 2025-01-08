@@ -9,7 +9,6 @@ import lombok.ToString;
 
 import java.util.List;
 
-import static cn.ecosync.ibms.device.model.IDeviceGateway.SynchronizationStateEnum.SYNCHRONIZED;
 import static cn.ecosync.ibms.device.model.IDeviceGateway.SynchronizationStateEnum.UNSYNCHRONIZED;
 
 @Getter
@@ -26,10 +25,11 @@ public class DeviceGateway implements IDeviceGateway {
     protected DeviceGateway() {
     }
 
-    public DeviceGateway(DeviceGatewayId gatewayId, List<DeviceDataAcquisition> dataAcquisitions, SynchronizationStateEnum synchronizationState) {
+    private DeviceGateway(DeviceGatewayId gatewayId, List<DeviceDataAcquisition> dataAcquisitions, SynchronizationStateEnum synchronizationState, Long previousSynchronizedDate) {
         this.gatewayId = gatewayId;
         this.dataAcquisitions = dataAcquisitions;
         this.synchronizationState = synchronizationState;
+        this.previousSynchronizedDate = previousSynchronizedDate;
     }
 
     @Override
@@ -48,13 +48,21 @@ public class DeviceGateway implements IDeviceGateway {
     }
 
     public DeviceGateway withDataAcquisitions(List<DeviceDataAcquisition> dataAcquisitions) {
-        return new DeviceGateway(getGatewayId(), dataAcquisitions, getSynchronizationState());
+        return new DeviceGateway(getGatewayId(), dataAcquisitions, getSynchronizationState(), getPreviousSynchronizedDate());
     }
 
     public DeviceGateway withSynchronizationState(SynchronizationStateEnum synchronizationState) {
-        DeviceGateway deviceGateway = new DeviceGateway(getGatewayId(), getDataAcquisitions(), synchronizationState);
-        deviceGateway.previousSynchronizedDate = synchronizationState == SYNCHRONIZED && getSynchronizationState() != synchronizationState ?
-                System.currentTimeMillis() : getPreviousSynchronizedDate();
-        return deviceGateway;
+        if (synchronizationState == null || synchronizationState == UNSYNCHRONIZED) return this;
+        switch (synchronizationState) {
+            case SYNCHRONIZING:
+                return new DeviceGateway(getGatewayId(), getDataAcquisitions(), synchronizationState, getPreviousSynchronizedDate());
+            case SYNCHRONIZED:
+                Long previousSynchronizedDate = getPreviousSynchronizedDate();
+                if (synchronizationState != getSynchronizationState()) {
+                    previousSynchronizedDate = System.currentTimeMillis();
+                }
+                return new DeviceGateway(getGatewayId(), getDataAcquisitions(), synchronizationState, previousSynchronizedDate);
+        }
+        throw new IllegalStateException("Unsupported synchronization state: " + synchronizationState);
     }
 }

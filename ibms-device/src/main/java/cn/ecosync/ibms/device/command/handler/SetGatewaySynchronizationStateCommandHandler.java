@@ -1,6 +1,6 @@
 package cn.ecosync.ibms.device.command.handler;
 
-import cn.ecosync.ibms.device.command.SyncGatewayCommand;
+import cn.ecosync.ibms.device.command.SetGatewaySynchronizationStateCommand;
 import cn.ecosync.ibms.device.jpa.DeviceGatewayEntity;
 import cn.ecosync.ibms.device.model.DeviceGateway;
 import cn.ecosync.ibms.device.model.DeviceGatewayId;
@@ -11,20 +11,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import static cn.ecosync.ibms.device.model.IDeviceGateway.SynchronizationStateEnum.SYNCHRONIZING;
-
 @Component
 @RequiredArgsConstructor
-public class SyncGatewayCommandHandler implements CommandHandler<SyncGatewayCommand> {
+public class SetGatewaySynchronizationStateCommandHandler implements CommandHandler<SetGatewaySynchronizationStateCommand> {
     private final DeviceGatewayJpaRepository gatewayRepository;
 
     @Override
     @Transactional
-    public void handle(SyncGatewayCommand command) {
+    public void handle(SetGatewaySynchronizationStateCommand command) {
         DeviceGatewayId gatewayId = new DeviceGatewayId(command.getGatewayCode());
         DeviceGatewayEntity gatewayEntity = gatewayRepository.findByGatewayId(gatewayId).orElse(null);
         Assert.notNull(gatewayEntity, "Gateway not exists");
-        DeviceGateway gateway = gatewayEntity.getGateway().withSynchronizationState(SYNCHRONIZING);
+        DeviceGateway gateway = gatewayEntity.getGateway()
+                .withSynchronizationState(command.getSynchronizationState());
         gatewayEntity.save(gateway);
     }
 }
