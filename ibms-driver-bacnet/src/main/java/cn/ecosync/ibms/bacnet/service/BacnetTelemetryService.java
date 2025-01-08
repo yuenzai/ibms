@@ -83,7 +83,7 @@ public class BacnetTelemetryService implements Runnable {
 
             AttributesBuilder builder = Attributes.builder();
             builder.put(DEVICE_ID, deviceId.toString());
-            builder.put(DEVICE_SCHEMAS_ID, bacnetSchemas.toSchemasId().toString());
+            builder.put(DEVICE_SCHEMAS_ID, bacnetSchemas.getSchemasId().toString());
             propertyMap.values().forEach(in -> in.accept(builder));
             Attributes attributes = builder.build();
 

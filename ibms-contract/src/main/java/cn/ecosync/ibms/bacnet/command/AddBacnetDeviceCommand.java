@@ -14,6 +14,7 @@ import lombok.ToString;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Getter
 @ToString(callSuper = true)
 public class AddBacnetDeviceCommand extends AddDeviceCommand {
     @Valid
@@ -27,9 +28,7 @@ public class AddBacnetDeviceCommand extends AddDeviceCommand {
     }
 
     private BacnetDevice toBacnetDeviceDto(BacnetDeviceProperties device) {
-        BacnetDevice bacnetDevice = new BacnetDevice(device.getDeviceCode(), this.getSchemasCode(), device.getDeviceInstance());
-        bacnetDevice.setDeviceName(device.getDeviceName());
-        return bacnetDevice;
+        return new BacnetDevice(device.getDeviceCode(), this.getSchemasCode(), device.getDeviceName(), device.getDeviceInstance());
     }
 
     @JsonIgnore

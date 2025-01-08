@@ -27,13 +27,13 @@ public class DeviceSchemasEntity extends ConcurrencySafeEntity implements IDevic
 
     public DeviceSchemasEntity(DeviceSchemas deviceSchemas) {
         Assert.notNull(deviceSchemas, "deviceSchemas must not be null");
-        this.schemasId = deviceSchemas.toSchemasId();
+        this.schemasId = deviceSchemas.getSchemasId();
         this.deviceSchemas = deviceSchemas;
     }
 
     public void save(DeviceSchemas deviceSchemas) {
         Assert.notNull(deviceSchemas, "deviceSchemas must not be null");
-        Assert.isTrue(Objects.equals(getDeviceSchemas().toSchemasId(), deviceSchemas.toSchemasId()), "");
+        Assert.isTrue(Objects.equals(getDeviceSchemas().getSchemasId(), deviceSchemas.getSchemasId()), "");
         Assert.isTrue(deviceSchemas.isUniqueName(), "Schema name duplicated");
         this.deviceSchemas = deviceSchemas;
     }

@@ -38,7 +38,7 @@ public class GetDataAcquisitionQueryHandler implements QueryHandler<GetDataAcqui
         dataAcquisitionEntity = dataAcquisitionRepository.findByDataAcquisitionId(dataAcquisitionId).orElse(null);
         if (dataAcquisitionEntity == null) return null;
         DeviceDataAcquisition dataAcquisition = dataAcquisitionEntity.getDataAcquisition();
-        schemasId = dataAcquisitionEntity.getSchemas().toSchemasId();
+        schemasId = dataAcquisitionEntity.getSchemas().getSchemasId();
         schemas = deviceSchemasRepository.findBySchemasId(schemasId)
                 .map(DeviceSchemasEntity::getDeviceSchemas)
                 .orElse(dataAcquisition.getSchemas());

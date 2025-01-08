@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.Optional;
+
 @Getter
 @ToString
 public class DeviceProbe implements IDevice {
@@ -15,6 +17,8 @@ public class DeviceProbe implements IDevice {
     private String deviceName;
 
     public DeviceSchemasId getSchemasId() {
-        return new DeviceSchemasId(schemasCode);
+        return Optional.ofNullable(schemasCode)
+                .map(DeviceSchemasId::new)
+                .orElse(null);
     }
 }

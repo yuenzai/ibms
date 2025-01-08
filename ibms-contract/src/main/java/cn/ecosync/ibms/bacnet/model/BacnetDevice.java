@@ -21,12 +21,12 @@ public class BacnetDevice extends Device {
         super(deviceId);
     }
 
-    public BacnetDevice(String deviceCode, String schemasCode, Integer deviceInstance) {
-        this(new DeviceId(deviceCode), new DeviceSchemasId(schemasCode), deviceInstance);
+    public BacnetDevice(String deviceCode, String schemasCode, String deviceName, Integer deviceInstance) {
+        this(new DeviceId(deviceCode), new DeviceSchemasId(schemasCode), deviceName, deviceInstance);
     }
 
-    public BacnetDevice(DeviceId deviceId, DeviceSchemasId schemasId, Integer deviceInstance) {
-        super(deviceId, schemasId);
+    public BacnetDevice(DeviceId deviceId, DeviceSchemasId schemasId, String deviceName, Integer deviceInstance) {
+        super(deviceId, schemasId, deviceName);
         Assert.notNull(deviceInstance, "deviceInstance must not be null");
         this.deviceInstance = deviceInstance;
     }

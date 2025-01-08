@@ -2,10 +2,12 @@ package cn.ecosync.ibms.device.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
 import org.springframework.util.Assert;
 
 import java.util.Objects;
 
+@Getter
 @Embeddable
 public class DeviceDataAcquisitionId {
     @Column(name = "daq_code", nullable = false, updatable = false)

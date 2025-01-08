@@ -18,9 +18,9 @@ public class SaveDeviceCommandHandler implements CommandHandler<SaveDeviceComman
     @Override
     @Transactional
     public void handle(SaveDeviceCommand command) {
-        Device device = command.getDevice();
-        DeviceEntity deviceEntity = deviceRepository.findByDeviceId(device.getDeviceId()).orElse(null);
+        DeviceEntity deviceEntity = deviceRepository.findByDeviceId(command.getDeviceId()).orElse(null);
         Assert.notNull(deviceEntity, "Device does not exist");
+        Device device = command.toDevice(deviceEntity.getDevice().getSchemasId());
         deviceEntity.save(device);
     }
 }

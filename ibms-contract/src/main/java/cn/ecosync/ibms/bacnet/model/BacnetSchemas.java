@@ -48,6 +48,6 @@ public class BacnetSchemas extends DeviceSchemas {
 
     @Override
     public BacnetSchemas toReference() {
-        return new BacnetSchemas(toSchemasId());
+        return new BacnetSchemas(getSchemasId());
     }
 }
