@@ -19,7 +19,7 @@ public class DeviceSchemasEntity extends ConcurrencySafeEntity implements IDevic
     private DeviceSchemasId schemasId;
     @Getter
     @Convert(converter = DeviceSchemasConverter.class)
-    @Column(name = "schemas", nullable = false, updatable = false)
+    @Column(name = "schemas", nullable = false)
     private DeviceSchemas schemas;
 
     protected DeviceSchemasEntity() {

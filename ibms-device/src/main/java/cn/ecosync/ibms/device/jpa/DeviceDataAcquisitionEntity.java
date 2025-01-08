@@ -17,7 +17,7 @@ public class DeviceDataAcquisitionEntity extends ConcurrencySafeEntity implement
     private DeviceDataAcquisitionId dataAcquisitionId;
     @Getter
     @Convert(converter = DeviceDataAcquisitionConverter.class)
-    @Column(name = "data_acquisition", nullable = false, updatable = false)
+    @Column(name = "data_acquisition", nullable = false)
     private DeviceDataAcquisition dataAcquisition;
 
     @ManyToMany

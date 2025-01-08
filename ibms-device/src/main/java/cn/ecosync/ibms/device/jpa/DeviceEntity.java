@@ -26,7 +26,7 @@ public class DeviceEntity extends ConcurrencySafeEntity implements IDevice {
     private String deviceName;
     @Getter
     @Convert(converter = DeviceConverter.class)
-    @Column(name = "device", nullable = false, updatable = false)
+    @Column(name = "device", nullable = false)
     private Device device;
 
     @ManyToMany(mappedBy = "deviceEntities")
