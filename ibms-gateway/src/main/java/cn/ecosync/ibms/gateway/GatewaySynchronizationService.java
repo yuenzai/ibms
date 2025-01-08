@@ -1,7 +1,6 @@
 package cn.ecosync.ibms.gateway;
 
 import cn.ecosync.ibms.device.model.DeviceGateway;
-import cn.ecosync.ibms.device.model.IDeviceGateway.SynchronizationStateEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -66,7 +65,7 @@ public class GatewaySynchronizationService implements ApplicationRunner {
         if (statusCode.isSameCodeAs(HttpStatus.OK)) {
             DeviceGateway gateway = gatewayTelemetryService.saveAndGet(responseEntity.getBody());
             taskScheduler.schedule(() -> gatewayTelemetryService.observeMeasurements(gateway), Instant.now());
-            gatewayService.get(gatewayProperties.getGatewayCode(), SynchronizationStateEnum.SYNCHRONIZED.toString());
+            gatewayService.notifySynchronized(gatewayProperties.getGatewayCode());
             return;
         }
         log.error("", new ResponseStatusException(statusCode, responseEntity.toString()));

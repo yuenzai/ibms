@@ -17,13 +17,13 @@ public class DeviceDataAcquisitionEntity extends ConcurrencySafeEntity implement
     private DeviceDataAcquisitionId dataAcquisitionId;
     @Getter
     @Convert(converter = DeviceDataAcquisitionConverter.class)
-    @Column(name = "data_acquisition", nullable = false)
+    @Column(name = "device_daq", nullable = false)
     private DeviceDataAcquisition dataAcquisition;
 
     @ManyToMany
     @JoinTable(name = "rel_daq_device",
-            joinColumns = @JoinColumn(name = "daq_id", nullable = false, updatable = false),
-            inverseJoinColumns = @JoinColumn(name = "device_id", nullable = false, updatable = false))
+            joinColumns = @JoinColumn(name = "daq_id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "device_id", nullable = false))
     private Set<DeviceEntity> deviceEntities = new LinkedHashSet<>();
 
     protected DeviceDataAcquisitionEntity() {

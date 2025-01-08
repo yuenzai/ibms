@@ -21,7 +21,7 @@ public class DeviceGatewayEntity extends ConcurrencySafeEntity implements IDevic
     private String synchronizationState;
     @Getter
     @Convert(converter = DeviceGatewayConverter.class)
-    @Column(name = "gateway", nullable = false)
+    @Column(name = "device_gateway", nullable = false)
     private DeviceGateway gateway;
 
     protected DeviceGatewayEntity() {

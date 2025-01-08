@@ -14,13 +14,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static cn.ecosync.ibms.device.model.IDeviceGateway.SynchronizationStateEnum.SYNCHRONIZED;
@@ -72,9 +70,8 @@ public class DeviceGatewayWebController {
         return result;
     }
 
-    @GetMapping("/{gateway-code}")
-    public void onEvent(@PathVariable("gateway-code") String gatewayCode, @RequestParam("synchronization-state") String synchronizationState) {
-        Assert.isTrue(Objects.equals(synchronizationState, SYNCHRONIZED.toString()), "");
+    @GetMapping("/{gateway-code}/synchronized")
+    public void onEvent(@PathVariable("gateway-code") String gatewayCode) {
         SetGatewaySynchronizationStateCommand command = new SetGatewaySynchronizationStateCommand(gatewayCode, SYNCHRONIZED);
         commandBus.execute(command);
     }

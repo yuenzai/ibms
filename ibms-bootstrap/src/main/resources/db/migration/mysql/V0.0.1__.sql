@@ -2,9 +2,9 @@ CREATE TABLE device
 (
     id                 INT AUTO_INCREMENT NOT NULL COMMENT '主键',
     device_code        VARCHAR(64)        NOT NULL COMMENT '设备编码',
-    daq_code           VARCHAR(64)        NOT NULL COMMENT '数据采集编码',
+    schemas_code       VARCHAR(64)        NOT NULL COMMENT '设备模型编码',
     device_name        VARCHAR(255)       NOT NULL COMMENT '设备名称',
-    description        VARCHAR(255)       NOT NULL COMMENT '描述',
+    device             JSON               NOT NULL COMMENT '设备',
     version            INT                NOT NULL COMMENT '乐观锁版本',
     created_date       BIGINT             NOT NULL COMMENT '创建时间',
     last_modified_date BIGINT             NOT NULL COMMENT '修改时间',
@@ -14,11 +14,25 @@ CREATE TABLE device
 ALTER TABLE device
     ADD CONSTRAINT uk_device UNIQUE (device_code);
 
+CREATE TABLE device_schemas
+(
+    id                 INT AUTO_INCREMENT NOT NULL COMMENT '主键',
+    schemas_code       VARCHAR(64)        NOT NULL COMMENT '设备模型编码',
+    device_schemas     JSON               NOT NULL COMMENT '设备模型',
+    version            INT                NOT NULL COMMENT '乐观锁版本',
+    created_date       BIGINT             NOT NULL COMMENT '创建时间',
+    last_modified_date BIGINT             NOT NULL COMMENT '修改时间',
+    CONSTRAINT pk_device_schemas PRIMARY KEY (id)
+) COMMENT '设备模型';
+
+ALTER TABLE device_schemas
+    ADD CONSTRAINT uk_device_schemas UNIQUE (schemas_code);
+
 CREATE TABLE device_daq
 (
     id                 INT AUTO_INCREMENT NOT NULL COMMENT '主键',
-    daq_code           VARCHAR(64)        NOT NULL COMMENT '数据采集编码',
-    daq_properties     JSON               NOT NULL COMMENT '数据采集属性',
+    daq_code           VARCHAR(64)        NOT NULL COMMENT '设备数据采集编码',
+    device_daq         JSON               NOT NULL COMMENT '设备数据采集',
     version            INT                NOT NULL COMMENT '乐观锁版本',
     created_date       BIGINT             NOT NULL COMMENT '创建时间',
     last_modified_date BIGINT             NOT NULL COMMENT '修改时间',
@@ -28,60 +42,28 @@ CREATE TABLE device_daq
 ALTER TABLE device_daq
     ADD CONSTRAINT uk_device_daq UNIQUE (daq_code);
 
-CREATE TABLE device_daq_deleted
+CREATE TABLE device_gateway
 (
-    id             INT AUTO_INCREMENT NOT NULL COMMENT '主键',
-    daq_code       VARCHAR(64)        NOT NULL COMMENT '数据采集编码',
-    daq_properties JSON               NOT NULL COMMENT '数据采集属性',
-    CONSTRAINT pk_device_daq PRIMARY KEY (id)
-) COMMENT '设备数据采集（已删除）';
+    id                    INT AUTO_INCREMENT NOT NULL COMMENT '主键',
+    gateway_code          VARCHAR(64)        NOT NULL COMMENT '设备网关编码',
+    synchronization_state VARCHAR(32)        NOT NULL COMMENT '设备网关同步状态',
+    device_gateway        JSON               NOT NULL COMMENT '设备网关',
+    version               INT                NOT NULL COMMENT '乐观锁版本',
+    created_date          BIGINT             NOT NULL COMMENT '创建时间',
+    last_modified_date    BIGINT             NOT NULL COMMENT '修改时间',
+    CONSTRAINT pk_device_gateway PRIMARY KEY (id)
+) COMMENT '设备网关';
 
--- ALTER TABLE device_daq_deleted
---     ADD CONSTRAINT uk_device_daq_deleted UNIQUE (daq_code);
+ALTER TABLE device_gateway
+    ADD CONSTRAINT uk_device_gateway UNIQUE (gateway_code);
 
--- CREATE TABLE device_point
--- (
---     id          INT AUTO_INCREMENT NOT NULL COMMENT '主键',
---     point_code  VARCHAR(64)        NOT NULL COMMENT '点位编码',
---     point_name  VARCHAR(255)       NOT NULL COMMENT '点位名称',
---     point_extra JSON               NOT NULL COMMENT '其他属性',
---     device_id   INT                NOT NULL COMMENT '设备主键',
---     CONSTRAINT pk_device_point PRIMARY KEY (id)
--- ) COMMENT '设备点位';
---
--- ALTER TABLE device_point
---     ADD CONSTRAINT uk_device_point UNIQUE (device_id, point_code);
---
--- CREATE TABLE device_readonly
--- (
---     id            INT AUTO_INCREMENT NOT NULL COMMENT '主键',
---     device_code   VARCHAR(64)        NOT NULL COMMENT '设备编码',
---     device_name   VARCHAR(255)       NOT NULL COMMENT '设备名称',
---     path          VARCHAR(255)       NOT NULL COMMENT '目录路径',
---     description   VARCHAR(255)       NOT NULL COMMENT '描述',
---     enabled       TINYINT            NOT NULL COMMENT '是否启用',
---     device_extra  JSON               NOT NULL COMMENT '其他属性',
---     device_points JSON               NOT NULL COMMENT '设备点位',
---     device_status JSON               NULL COMMENT '设备状态',
---     CONSTRAINT pk_device_readonly PRIMARY KEY (id)
--- ) COMMENT '设备（读模型）';
---
--- ALTER TABLE device_readonly
---     ADD CONSTRAINT uk_device_readonly UNIQUE (device_code);
---
--- CREATE TABLE dictionary
--- (
---     id                 INT AUTO_INCREMENT NOT NULL COMMENT '主键',
---     dict_key           VARCHAR(64)        NOT NULL COMMENT '字典Key',
---     dict_value         JSON               NOT NULL COMMENT '字典Value',
---     version            INT                NOT NULL COMMENT '乐观锁版本',
---     created_date       BIGINT             NOT NULL COMMENT '创建时间',
---     last_modified_date BIGINT             NOT NULL COMMENT '修改时间',
---     CONSTRAINT pk_dictionary PRIMARY KEY (id)
--- ) COMMENT '系统字典';
---
--- ALTER TABLE dictionary
---     ADD CONSTRAINT uk_dictionary UNIQUE (dict_key);
+CREATE TABLE rel_daq_device
+(
+    id        INT AUTO_INCREMENT NOT NULL COMMENT '主键',
+    daq_id    INT                NOT NULL COMMENT '设备数据采集主键',
+    device_id INT                NOT NULL COMMENT '设备主键',
+    CONSTRAINT pk_rel_daq_device PRIMARY KEY (id)
+) COMMENT '设备数据采集和设备关联表';
 
 CREATE TABLE outbox_event
 (
