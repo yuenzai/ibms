@@ -11,6 +11,8 @@ import cn.ecosync.ibms.device.query.GetGatewayQuery;
 import cn.ecosync.ibms.device.query.SearchGatewayQuery;
 import cn.ecosync.iframework.command.CommandBus;
 import cn.ecosync.iframework.query.QueryBus;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 import static cn.ecosync.ibms.device.model.IDeviceGateway.SynchronizationStateEnum.SYNCHRONIZED;
 import static cn.ecosync.ibms.device.model.IDeviceGateway.SynchronizationStateEnum.SYNCHRONIZING;
 
+@Tag(name = "设备网关")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/device-gateway")
@@ -32,37 +35,44 @@ public class DeviceGatewayWebController {
     private final CommandBus commandBus;
     private final QueryBus queryBus;
 
+    @Operation(hidden = true)
     @PostMapping("/add")
     public void execute(@RequestBody @Validated AddGatewayCommand command) {
         commandBus.execute(command);
     }
 
+    @Operation(summary = "更新网关")
     @PostMapping("/save")
     public void execute(@RequestBody @Validated SaveGatewayCommand command) {
         commandBus.execute(command);
     }
 
+    @Operation(hidden = true)
     @PostMapping("/remove")
     public void execute(@RequestBody @Validated RemoveGatewayCommand command) {
         commandBus.execute(command);
     }
 
+    @Operation(summary = "同步网关")
     @PostMapping("/sync")
     public void execute(@RequestBody @Validated SetGatewaySynchronizationStateCommand command) {
         command.setSynchronizationState(SYNCHRONIZING);
         commandBus.execute(command);
     }
 
+    @Operation(summary = "获取网关")
     @PostMapping("/get")
     public DeviceGateway execute(@RequestBody @Validated GetGatewayQuery query) {
         return doExecute(query, false);
     }
 
+    @Operation(summary = "查询网关")
     @PostMapping("/search")
     public Page<DeviceGateway> execute(@RequestBody @Validated SearchGatewayQuery query) {
         return queryBus.execute(query);
     }
 
+    @Operation(hidden = true)
     @GetMapping("/{gateway-code}")
     public DeferredResult<ResponseEntity<DeviceGateway>> get(@PathVariable("gateway-code") String gatewayCode) {
         DeferredResult<ResponseEntity<DeviceGateway>> result = new DeferredResult<>(null, () -> new ResponseEntity<>(HttpStatus.NO_CONTENT));
@@ -72,6 +82,7 @@ public class DeviceGatewayWebController {
         return result;
     }
 
+    @Operation(hidden = true)
     @GetMapping("/{gateway-code}/synchronized")
     public void onEvent(@PathVariable("gateway-code") String gatewayCode) {
         SetGatewaySynchronizationStateCommand command = new SetGatewaySynchronizationStateCommand(gatewayCode, SYNCHRONIZED);

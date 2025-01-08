@@ -78,7 +78,7 @@ public class DeviceEntity extends ConcurrencySafeEntity implements IDevice {
 
     public static DeviceEntity newProbe(DeviceProbe probe) {
         DeviceEntity probeEntity = new DeviceEntity();
-        probeEntity.schemasId = probe.getSchemasId();
+        probeEntity.schemasId = probe.toSchemasId();
         probeEntity.deviceName = probe.getDeviceName();
         return probeEntity;
     }

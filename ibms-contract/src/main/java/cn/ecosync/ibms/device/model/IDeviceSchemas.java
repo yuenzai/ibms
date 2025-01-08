@@ -35,7 +35,7 @@ public interface IDeviceSchemas {
         return observableMeasurements;
     }
 
-    default boolean isUniqueName() {
+    default boolean checkUniqueName() {
         return CollectionUtils.hasUniqueElement(getSchemas(), DeviceSchema::getName);
     }
 }

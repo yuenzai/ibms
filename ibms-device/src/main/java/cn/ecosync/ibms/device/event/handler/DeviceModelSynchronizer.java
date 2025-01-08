@@ -12,7 +12,7 @@
 //import org.springframework.transaction.annotation.Transactional;
 //import org.springframework.util.Assert;
 //
-///**
+/// **
 // * AggregateRemovedEvent没用了
 // */
 //@Deprecated

@@ -16,7 +16,7 @@ public class DeviceProbe implements IDevice {
     @Size(min = 1)
     private String deviceName;
 
-    public DeviceSchemasId getSchemasId() {
+    public DeviceSchemasId toSchemasId() {
         return Optional.ofNullable(schemasCode)
                 .map(DeviceSchemasId::new)
                 .orElse(null);

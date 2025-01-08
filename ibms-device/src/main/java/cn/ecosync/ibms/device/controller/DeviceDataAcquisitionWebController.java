@@ -9,6 +9,8 @@ import cn.ecosync.ibms.device.query.GetDataAcquisitionQuery;
 import cn.ecosync.ibms.device.query.SearchDataAcquisitionQuery;
 import cn.ecosync.iframework.command.CommandBus;
 import cn.ecosync.iframework.query.QueryBus;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "设备数据采集")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/device-daq")
@@ -24,26 +27,31 @@ public class DeviceDataAcquisitionWebController {
     private final CommandBus commandBus;
     private final QueryBus queryBus;
 
+    @Operation(summary = "新增数据采集")
     @PostMapping("/add")
     public void execute(@RequestBody @Validated AddDataAcquisitionCommand command) {
         commandBus.execute(command);
     }
 
+    @Operation(summary = "修改数据采集")
     @PostMapping("/update")
     public void execute(@RequestBody @Validated UpdateDataAcquisitionCommand command) {
         commandBus.execute(command);
     }
 
+    @Operation(summary = "删除数据采集")
     @PostMapping("/remove")
     public void execute(@RequestBody @Validated RemoveDataAcquisitionCommand command) {
         commandBus.execute(command);
     }
 
+    @Operation(summary = "获取数据采集")
     @PostMapping("/get")
     public IDeviceDataAcquisition get(@RequestBody @Validated GetDataAcquisitionQuery query) {
         return queryBus.execute(query);
     }
 
+    @Operation(summary = "查询数据采集")
     @PostMapping("/search")
     public Page<DeviceDataAcquisition> search(@RequestBody @Validated SearchDataAcquisitionQuery query) {
         return queryBus.execute(query);

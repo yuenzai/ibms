@@ -4,7 +4,6 @@ import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
 import cn.ecosync.ibms.device.model.DeviceSchemas;
 import cn.ecosync.ibms.device.model.DeviceSchemasId;
 import cn.ecosync.iframework.util.CollectionUtils;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
 import lombok.ToString;
@@ -40,10 +39,9 @@ public class BacnetSchemas extends DeviceSchemas {
     }
 
     @Override
-    @JsonIgnore
     @AssertTrue(message = "Schema name duplicated")
-    public boolean isUniqueName() {
-        return super.isUniqueName();
+    public boolean checkUniqueName() {
+        return super.checkUniqueName();
     }
 
     @Override
