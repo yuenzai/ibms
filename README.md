@@ -25,13 +25,13 @@ cd ibms
 要编译和构建所有的 jar 文件：
 
 ```shell
-./mvnw clean package
+./mvnw clean package -P openapi,mysql
 ```
 
 项目中包含了一个 [settings.xml](.mvn/wrapper/settings.xml) 文件，可以从阿里云镜像仓库下载依赖项，提高国内的下载速度：
 
 ```shell
-./mvnw --settings .mvn/wrapper/settings.xml clean package
+./mvnw --settings .mvn/wrapper/settings.xml clean package -P openapi,mysql
 ```
 
 第一次运行构建时，可能需要一段时间来下载 Maven 和所有构建依赖项。 一旦您启动了 Maven 并下载了依赖项，这些就会缓存在您的 `$HOME/.m2` 目录中。
