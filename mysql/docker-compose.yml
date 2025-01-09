@@ -1,7 +1,7 @@
 services:
   database:
     image: mysql:8.0
-    container_name: mysql
+    container_name: database
     environment:
       MYSQL_ROOT_PASSWORD: CJVixCszaS+7raa/5326YJDq3xrSBXHg
 #      MYSQL_RANDOM_ROOT_PASSWORD: yes
