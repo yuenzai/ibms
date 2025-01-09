@@ -9,7 +9,7 @@ services:
     container_name: ibms
     restart: always
     depends_on:
-      mysql:
+      database:
         condition: service_healthy
     extra_hosts:
       - "host.docker.internal:host-gateway"
