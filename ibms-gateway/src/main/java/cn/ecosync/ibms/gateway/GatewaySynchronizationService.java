@@ -4,6 +4,7 @@ import cn.ecosync.ibms.device.model.DeviceGateway;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -20,20 +21,21 @@ import java.util.concurrent.CompletableFuture;
 public class GatewaySynchronizationService implements ApplicationRunner {
     private final GatewayService gatewayService;
     private final GatewayTelemetryService gatewayTelemetryService;
-    private final GatewayConfigurationProperties gatewayProperties;
+    private final String GATEWAY_ID;
     private final TaskScheduler taskScheduler;
 
     public GatewaySynchronizationService(
+            Environment environment,
             RestClient.Builder restClientBuilder,
             GatewayTelemetryService gatewayTelemetryService,
-            GatewayConfigurationProperties gatewayProperties,
             TaskScheduler taskScheduler) {
-        RestClient restClient = restClientBuilder.baseUrl("http://" + gatewayProperties.getIbmsHost()).build();
+        this.GATEWAY_ID = environment.getRequiredProperty("GATEWAY_ID");
+        String IBMS_HOST = environment.getRequiredProperty("IBMS_HOST");
+        RestClient restClient = restClientBuilder.baseUrl("http://" + IBMS_HOST).build();
         RestClientAdapter adapter = RestClientAdapter.create(restClient);
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
         this.gatewayService = factory.createClient(GatewayService.class);
         this.gatewayTelemetryService = gatewayTelemetryService;
-        this.gatewayProperties = gatewayProperties;
         this.taskScheduler = taskScheduler;
     }
 
@@ -43,11 +45,12 @@ public class GatewaySynchronizationService implements ApplicationRunner {
     }
 
     private void scheduleSynchronize() {
-        taskScheduler.schedule(this::synchronize, Instant.now());
+        synchronize(true);
+        taskScheduler.schedule(() -> synchronize(false), Instant.now());
     }
 
-    private void synchronize() {
-        CompletableFuture.supplyAsync(this::doRequest)
+    private void synchronize(boolean initial) {
+        CompletableFuture.supplyAsync(() -> doRequest(initial))
                 .thenAccept(this::handle)
                 .whenComplete((v, e) -> {
                     if (e != null) log.error("", e);
@@ -55,8 +58,8 @@ public class GatewaySynchronizationService implements ApplicationRunner {
                 });
     }
 
-    private ResponseEntity<DeviceGateway> doRequest() {
-        return gatewayService.get(gatewayProperties.getGatewayCode());
+    private ResponseEntity<DeviceGateway> doRequest(boolean initial) {
+        return gatewayService.get(GATEWAY_ID, initial);
     }
 
     private void handle(ResponseEntity<DeviceGateway> responseEntity) {
@@ -65,7 +68,7 @@ public class GatewaySynchronizationService implements ApplicationRunner {
         if (statusCode.isSameCodeAs(HttpStatus.OK)) {
             DeviceGateway gateway = gatewayTelemetryService.saveAndGet(responseEntity.getBody());
             taskScheduler.schedule(() -> gatewayTelemetryService.observeMeasurements(gateway), Instant.now());
-            gatewayService.notifySynchronized(gatewayProperties.getGatewayCode());
+            gatewayService.notifySynchronized(GATEWAY_ID);
             return;
         }
         log.error("", new ResponseStatusException(statusCode, responseEntity.toString()));

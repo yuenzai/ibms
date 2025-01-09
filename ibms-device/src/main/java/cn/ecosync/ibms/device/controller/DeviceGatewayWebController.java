@@ -74,10 +74,15 @@ public class DeviceGatewayWebController {
 
     @Operation(hidden = true)
     @GetMapping("/{gateway-code}")
-    public DeferredResult<ResponseEntity<DeviceGateway>> get(@PathVariable("gateway-code") String gatewayCode) {
+    public DeferredResult<ResponseEntity<DeviceGateway>> get(@PathVariable("gateway-code") String gatewayCode, @RequestParam(name = "initial", defaultValue = "false") Boolean initial) {
         DeferredResult<ResponseEntity<DeviceGateway>> result = new DeferredResult<>(null, () -> new ResponseEntity<>(HttpStatus.NO_CONTENT));
         GetGatewayQuery query = new GetGatewayQuery(gatewayCode);
-        DeviceGateway gateway = doExecute(query, true);
+        DeviceGateway gateway;
+        if (initial) {
+            gateway = doExecute(query, false);
+        } else {
+            gateway = doExecute(query, true);
+        }
         if (gateway != null) result.setResult(new ResponseEntity<>(gateway, HttpStatus.OK));
         return result;
     }

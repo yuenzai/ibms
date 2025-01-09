@@ -8,8 +8,6 @@ import cn.ecosync.ibms.bacnet.query.BacnetWhoIsQuery;
 import cn.ecosync.ibms.bacnet.query.ListSearchBacnetDeviceObjectIdsQuery;
 import cn.ecosync.iframework.command.CommandBus;
 import cn.ecosync.iframework.query.QueryBus;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -27,7 +25,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/bacnet")
-@Tag(name = "bacnet", description = "BACnet API")
 public class BacnetRestController {
     private final CommandBus commandBus;
     private final QueryBus queryBus;
@@ -38,7 +35,6 @@ public class BacnetRestController {
     }
 
     @PostMapping("/service/read-property-multiple")
-    @Operation(summary = "Execute ReadPropertyMultiple service", description = "Execute ReadPropertyMultiple service", tags = {"bacnet"})
     public ReadPropertyMultipleAck execute(@RequestBody @Validated BacnetReadPropertyMultipleQuery query) {
         return queryBus.execute(query);
     }
