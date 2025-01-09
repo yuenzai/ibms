@@ -1,3 +1,9 @@
+server:
+  servlet:
+    context-path: /ibms
+  forward-headers-strategy: framework
+
+---
 spring:
   application:
     name: dev
@@ -40,7 +46,7 @@ spring:
     streams:
       application-id: ${spring.application.name}-streams
       bootstrap-servers: ${spring.kafka.bootstrap-servers}
-#      cache-max-size-buffering: 10MB
+      #      cache-max-size-buffering: 10MB
       cleanup:
         on-startup: true
         on-shutdown: true
