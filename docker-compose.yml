@@ -5,28 +5,28 @@ include:
 services:
   ibms:
     build: .
-    image: ecosync/ibms:0.0.1
+    image: ecosync/ibms:0.0.2
     container_name: ibms
     restart: always
     depends_on:
       database:
         condition: service_healthy
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    environment:
-      - BACNET_SERVICE_HOST=host.docker.internal:47808
+#    extra_hosts:
+#      - "host.docker.internal:host-gateway"
+#    environment:
+#      - BACNET_SERVICE_HOST=host.docker.internal:47808
     volumes:
-      - ./bootstrap/target/ibms-bootstrap-0.0.1-SNAPSHOT.jar:/opt/app/ibms-bootstrap-0.0.1-SNAPSHOT.jar
-      - ./bootstrap/src/main/resources/application.yml:/opt/app/application.yml
+      - ./ibms-bootstrap/target/ibms-bootstrap-0.0.1-SNAPSHOT.jar:/opt/app/ibms-bootstrap-0.0.1-SNAPSHOT.jar
+      - ./ibms-bootstrap/src/main/resources/application.yml:/opt/app/application.yml
     command: ["java", "-jar", "ibms-bootstrap-0.0.1-SNAPSHOT.jar"]
 
-  bacnet:
-    build: ./bacnet
-    image: ecosync/bacnet:0.0.1
-    container_name: bacnet
-    restart: always
-    network_mode: host
-    volumes:
-      - ./bacnet/application/target/ibms-driver-bacnet-0.0.1-SNAPSHOT.jar:/opt/app/ibms-driver-bacnet-0.0.1-SNAPSHOT.jar
-      - ./bacnet/application/src/main/resources/application.yml:/opt/app/application.yml
-    command: ["java", "-Xms32m", "-Xmx32m", "-Xss256k", "-jar", 'ibms-driver-bacnet-0.0.1-SNAPSHOT.jar']
+#  bacnet:
+#    build: ./bacnet
+#    image: ecosync/bacnet:0.0.1
+#    container_name: bacnet
+#    restart: always
+#    network_mode: host
+#    volumes:
+#      - ./bacnet/application/target/ibms-driver-bacnet-0.0.1-SNAPSHOT.jar:/opt/app/ibms-driver-bacnet-0.0.1-SNAPSHOT.jar
+#      - ./bacnet/application/src/main/resources/application.yml:/opt/app/application.yml
+#    command: ["java", "-Xms32m", "-Xmx32m", "-Xss256k", "-jar", 'ibms-driver-bacnet-0.0.1-SNAPSHOT.jar']

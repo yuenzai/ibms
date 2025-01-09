@@ -3,8 +3,8 @@ services:
     image: nginx:1.27-bookworm
     container_name: nginx
     restart: always
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+#    extra_hosts:
+#      - "host.docker.internal:host-gateway"
     ports:
       - '80:80'
     volumes:

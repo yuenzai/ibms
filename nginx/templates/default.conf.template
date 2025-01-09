@@ -3,15 +3,7 @@ server {
     listen  [::]:80;
     server_name  localhost;
 
-    location /bacnet {
-        proxy_pass http://host.docker.internal:47808;
-    }
-
     location /device {
-        proxy_pass http://ibms:8080;
-    }
-
-    location /scheduling {
         proxy_pass http://ibms:8080;
     }
 
