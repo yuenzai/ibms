@@ -2,8 +2,7 @@ package cn.ecosync.ibms.gateway;
 
 import cn.ecosync.ibms.device.model.DeviceGateway;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -18,7 +17,7 @@ import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
-public class GatewaySynchronizationService implements ApplicationRunner {
+public class GatewaySynchronizationService implements CommandLineRunner {
     private final GatewayService gatewayService;
     private final GatewayTelemetryService gatewayTelemetryService;
     private final String GATEWAY_ID;
@@ -40,22 +39,28 @@ public class GatewaySynchronizationService implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) {
-        scheduleSynchronize();
+    public void run(String... args) {
+        try {
+            synchronize(true).get();
+            log.info("开启定时任务");
+            scheduleSynchronize();
+        } catch (Exception e) {
+            log.error("", e);
+        }
     }
 
     private void scheduleSynchronize() {
-        synchronize(true);
-        taskScheduler.schedule(() -> synchronize(false), Instant.now());
-    }
-
-    private void synchronize(boolean initial) {
-        CompletableFuture.supplyAsync(() -> doRequest(initial))
-                .thenAccept(this::handle)
+        Runnable task = () -> synchronize(false)
                 .whenComplete((v, e) -> {
                     if (e != null) log.error("", e);
                     scheduleSynchronize();
                 });
+        taskScheduler.schedule(task, Instant.now());
+    }
+
+    private CompletableFuture<Void> synchronize(boolean initial) {
+        return CompletableFuture.supplyAsync(() -> doRequest(initial))
+                .thenAccept(this::handle);
     }
 
     private ResponseEntity<DeviceGateway> doRequest(boolean initial) {
@@ -68,6 +73,7 @@ public class GatewaySynchronizationService implements ApplicationRunner {
         if (statusCode.isSameCodeAs(HttpStatus.OK)) {
             DeviceGateway gateway = gatewayTelemetryService.saveAndGet(responseEntity.getBody());
             taskScheduler.schedule(() -> gatewayTelemetryService.observeMeasurements(gateway), Instant.now());
+            log.info("通知 IBMS 已同步...");
             gatewayService.notifySynchronized(GATEWAY_ID);
             return;
         }

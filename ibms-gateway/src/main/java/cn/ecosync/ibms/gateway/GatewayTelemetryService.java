@@ -9,12 +9,14 @@ import io.opentelemetry.api.metrics.BatchCallback;
 import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.api.metrics.ObservableMeasurement;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 public class GatewayTelemetryService implements GatewayRepository {
     private final OpenTelemetry openTelemetry;
@@ -24,6 +26,7 @@ public class GatewayTelemetryService implements GatewayRepository {
 
     @Override
     public DeviceGateway saveAndGet(DeviceGateway gateway) {
+        log.info("同步网关配置成功: {}", gateway);
         return gatewayRef.updateAndGet(in -> gateway);
     }
 
