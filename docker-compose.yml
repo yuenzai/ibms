@@ -20,6 +20,15 @@ services:
       - ./ibms-bootstrap/src/main/resources/application.yml:/opt/app/application.yml
     command: ["java", "-jar", "ibms-bootstrap-0.0.1-SNAPSHOT.jar"]
 
+  ibms-gateway:
+    build: ./ibms-gateway
+    image: ecosync/ibms-gateway:0.0.1
+    container_name: gateway
+    network_mode: host
+    volumes:
+      - ./ibms-gateway/target/ibms-gateway-0.0.1-SNAPSHOT.jar:/opt/app/ibms-gateway-0.0.1-SNAPSHOT.jar
+    command: ["java", "-Xms32m", "-Xmx32m", "-Xss256k", "-jar", 'ibms-gateway-0.0.1-SNAPSHOT.jar']
+
 #  bacnet:
 #    build: ./bacnet
 #    image: ecosync/bacnet:0.0.1
