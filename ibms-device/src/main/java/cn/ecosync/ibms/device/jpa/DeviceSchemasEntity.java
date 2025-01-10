@@ -47,11 +47,11 @@ public class DeviceSchemasEntity extends ConcurrencySafeEntity implements IDevic
     public boolean equals(Object o) {
         if (!(o instanceof DeviceSchemasEntity)) return false;
         DeviceSchemasEntity that = (DeviceSchemasEntity) o;
-        return Objects.equals(this.deviceSchemas, that.deviceSchemas);
+        return Objects.equals(this.schemasId, that.schemasId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(deviceSchemas);
+        return Objects.hashCode(schemasId);
     }
 }

@@ -10,8 +10,6 @@ import lombok.Getter;
 import lombok.ToString;
 import org.springframework.util.Assert;
 
-import java.util.Objects;
-
 @Getter
 @ToString
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
@@ -33,16 +31,4 @@ public abstract class DeviceSchemas implements IDeviceSchemas {
     public abstract DeviceDataAcquisition newDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId);
 
     public abstract DeviceSchemas toReference();
-
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof DeviceSchemas)) return false;
-        DeviceSchemas that = (DeviceSchemas) o;
-        return Objects.equals(this.schemasId, that.schemasId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(schemasId);
-    }
 }

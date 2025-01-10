@@ -82,11 +82,11 @@ public class DeviceDataAcquisitionEntity extends ConcurrencySafeEntity implement
     public boolean equals(Object o) {
         if (!(o instanceof DeviceDataAcquisitionEntity)) return false;
         DeviceDataAcquisitionEntity that = (DeviceDataAcquisitionEntity) o;
-        return Objects.equals(this.dataAcquisition, that.dataAcquisition);
+        return Objects.equals(this.dataAcquisitionId, that.dataAcquisitionId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(dataAcquisition);
+        return Objects.hashCode(dataAcquisitionId);
     }
 }

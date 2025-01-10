@@ -40,7 +40,7 @@ public class BacnetReadPropertyMultipleService {
         for (BacnetObjectProperties bacnetObject : objectPropertiesCollection) {
             commands.add(String.valueOf(bacnetObject.getBacnetObject().getObjectType().getCode()));
             commands.add(bacnetObject.getBacnetObject().getObjectInstance().toString());
-            String propCmdArg = bacnetObject.getProperties().stream()
+            String propCmdArg = bacnetObject.toProperties().stream()
                     .map(this::commandArgOf)
                     .filter(StringUtils::hasText)
                     .collect(Collectors.joining(","));

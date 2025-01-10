@@ -11,8 +11,6 @@ import lombok.Getter;
 import lombok.ToString;
 import org.springframework.util.Assert;
 
-import java.util.Objects;
-
 @Getter
 @ToString
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
@@ -49,16 +47,4 @@ public abstract class Device implements IDevice {
     }
 
     public abstract Device toReference();
-
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Device)) return false;
-        Device that = (Device) o;
-        return Objects.equals(this.deviceId, that.deviceId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(deviceId);
-    }
 }

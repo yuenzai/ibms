@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static cn.ecosync.ibms.bacnet.dto.BacnetPropertyId.PROP_OBJECT_LIST;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -53,8 +55,8 @@ public class BacnetRestController {
     public List<BacnetObject> getDeviceObjectIds(@RequestBody @Validated ListSearchBacnetDeviceObjectIdsQuery query) {
         Integer deviceInstance = query.getDeviceInstance();
         BacnetObject deviceObject = new BacnetObject(BacnetObjectType.OBJECT_DEVICE, deviceInstance);
-        BacnetProperty objectIdsProperty = new BacnetProperty(BacnetPropertyId.PROP_OBJECT_LIST, null);
-        BacnetObjectProperties objectProperties = new BacnetObjectProperties(deviceObject, Collections.singleton(objectIdsProperty));
+        BacnetProperty objectIdsProperty = new BacnetProperty(PROP_OBJECT_LIST, null);
+        BacnetObjectProperties objectProperties = new BacnetObjectProperties(deviceObject, Collections.singletonList(objectIdsProperty.toString()));
         BacnetReadPropertyMultipleService service = new BacnetReadPropertyMultipleService(deviceInstance, Collections.singleton(objectProperties));
         BacnetReadPropertyMultipleQuery readpropmQuery = new BacnetReadPropertyMultipleQuery(service);
         ReadPropertyMultipleAck ack;

@@ -2,12 +2,17 @@ package cn.ecosync.ibms.bacnet.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import org.springframework.util.Assert;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Getter
 public class BacnetProperty {
+    public static final String REGEXP = "(\\d+)(?:\\[(\\d+)\\])?";
+    private static final Pattern PATTERN = Pattern.compile(REGEXP);
     public static final BacnetProperty PROPERTY_PRESENT_VALUE = new BacnetProperty(BacnetPropertyId.PROP_PRESENT_VALUE, null);
 
     @NotNull
@@ -44,5 +49,15 @@ public class BacnetProperty {
         String idStr = String.valueOf(propertyIdentifier.getCode());
         if (propertyArrayIndex != null) idStr += "[" + propertyArrayIndex + "]";
         return idStr;
+    }
+
+    public static BacnetProperty fromString(String propertyString) {
+        Matcher matcher = PATTERN.matcher(propertyString);
+        Assert.isTrue(matcher.matches(), "REGEXP not match");
+        BacnetPropertyId propertyIdentifier = BacnetPropertyId.of(Integer.parseInt(matcher.group(1)));
+        Integer propertyArrayIndex = Optional.ofNullable(matcher.group(2))
+                .map(Integer::parseInt)
+                .orElse(null);
+        return new BacnetProperty(propertyIdentifier, propertyArrayIndex);
     }
 }

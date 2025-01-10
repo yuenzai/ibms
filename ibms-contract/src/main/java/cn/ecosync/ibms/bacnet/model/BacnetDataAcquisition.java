@@ -1,14 +1,13 @@
 package cn.ecosync.ibms.bacnet.model;
 
-import cn.ecosync.ibms.device.model.Device;
-import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
-import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
-import cn.ecosync.ibms.device.model.DeviceSchemas;
+import cn.ecosync.ibms.device.model.*;
 import cn.ecosync.iframework.util.CollectionUtils;
 import lombok.ToString;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ToString(callSuper = true)
 public class BacnetDataAcquisition extends DeviceDataAcquisition {
@@ -39,23 +38,22 @@ public class BacnetDataAcquisition extends DeviceDataAcquisition {
     }
 
     @Override
-    public BacnetDataAcquisition addDeviceReferences(Collection<Device> devices) {
-        Set<BacnetDevice> deviceReferences = getDevices().stream()
-                .map(BacnetDevice::toReference)
-                .collect(LinkedHashSet::new, Set::add, Set::addAll);
-        Set<BacnetDevice> newReferences = convertToReference(devices);
-        deviceReferences.addAll(newReferences);
-        return withDevices(new ArrayList<>(deviceReferences));
+    public BacnetDataAcquisition addDeviceReferences(List<Device> devices) {
+        Stream<BacnetDevice> oldReferences = convertToReference(getDevices());
+        Stream<BacnetDevice> newReferences = convertToReference(devices);
+        List<BacnetDevice> references = Stream.concat(oldReferences, newReferences)
+                .collect(Collectors.toList());
+        return withDevices(references);
     }
 
     @Override
-    public BacnetDataAcquisition removeDeviceReferences(Collection<Device> devices) {
-        Set<BacnetDevice> deviceReferences = getDevices().stream()
-                .map(BacnetDevice::toReference)
-                .collect(LinkedHashSet::new, Set::add, Set::addAll);
-        Set<BacnetDevice> newReferences = convertToReference(devices);
-        deviceReferences.removeAll(newReferences);
-        return withDevices(new ArrayList<>(deviceReferences));
+    public BacnetDataAcquisition removeDeviceReferences(List<Device> devices) {
+        Map<DeviceId, BacnetDevice> oldReferences = convertToReference(getDevices())
+                .collect(Collectors.toMap(Device::getDeviceId, Function.identity(), (foo, bar) -> bar, LinkedHashMap::new));
+        convertToReference(devices)
+                .map(Device::getDeviceId)
+                .forEach(oldReferences::remove);
+        return withDevices(new ArrayList<>(oldReferences.values()));
     }
 
     @Override
@@ -73,19 +71,16 @@ public class BacnetDataAcquisition extends DeviceDataAcquisition {
     }
 
     @Override
-    public BacnetDataAcquisition withDevices(Collection<Device> devices) {
+    public BacnetDataAcquisition withDevices(List<? extends Device> devices) {
         List<BacnetDevice> bacnetDevices = devices.stream()
-                .filter(BacnetDevice.class::isInstance)
                 .map(BacnetDevice.class::cast)
                 .collect(Collectors.toList());
         return new BacnetDataAcquisition(getDataAcquisitionId(), getSchemas(), bacnetDevices);
     }
 
-    private Set<BacnetDevice> convertToReference(Collection<Device> devices) {
+    private Stream<BacnetDevice> convertToReference(List<? extends Device> devices) {
         return CollectionUtils.nullSafeOf(devices).stream()
-                .filter(BacnetDevice.class::isInstance)
                 .map(BacnetDevice.class::cast)
-                .map(BacnetDevice::toReference)
-                .collect(Collectors.toSet());
+                .map(BacnetDevice::toReference);
     }
 }

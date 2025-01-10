@@ -10,9 +10,7 @@ import lombok.Getter;
 import lombok.ToString;
 import org.springframework.util.Assert;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 @Getter
 @ToString
@@ -38,25 +36,13 @@ public abstract class DeviceDataAcquisition implements IDeviceDataAcquisition {
     @Override
     public abstract List<? extends Device> getDevices();
 
-    public abstract DeviceDataAcquisition addDeviceReferences(Collection<Device> devices);
+    public abstract DeviceDataAcquisition addDeviceReferences(List<Device> devices);
 
-    public abstract DeviceDataAcquisition removeDeviceReferences(Collection<Device> devices);
+    public abstract DeviceDataAcquisition removeDeviceReferences(List<Device> devices);
 
     public abstract DeviceDataAcquisition withSchemas(DeviceSchemas schemas);
 
-    public abstract DeviceDataAcquisition withDevices(Collection<Device> devices);
+    public abstract DeviceDataAcquisition withDevices(List<? extends Device> devices);
 
     public abstract DeviceDataAcquisition toReference();
-
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof DeviceDataAcquisition)) return false;
-        DeviceDataAcquisition that = (DeviceDataAcquisition) o;
-        return Objects.equals(this.dataAcquisitionId, that.dataAcquisitionId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(dataAcquisitionId);
-    }
 }

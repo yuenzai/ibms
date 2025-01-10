@@ -4,6 +4,11 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 @Getter
 @ToString
 public enum BacnetPropertyId {
@@ -565,5 +570,12 @@ public enum BacnetPropertyId {
     BacnetPropertyId(Integer code) {
         this.code = code;
         this.name = String.valueOf(code);//todo
+    }
+
+    private static final Map<Integer, BacnetPropertyId> MAP = Arrays.stream(values())
+            .collect(Collectors.toMap(BacnetPropertyId::getCode, Function.identity()));
+
+    public static BacnetPropertyId of(Integer code) {
+        return MAP.get(code);
     }
 }

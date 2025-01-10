@@ -68,12 +68,12 @@ public class DeviceEntity extends ConcurrencySafeEntity implements IDevice {
     public boolean equals(Object o) {
         if (!(o instanceof DeviceEntity)) return false;
         DeviceEntity that = (DeviceEntity) o;
-        return Objects.equals(this.device, that.device);
+        return Objects.equals(this.deviceId, that.deviceId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(device);
+        return Objects.hashCode(deviceId);
     }
 
     public static DeviceEntity newProbe(DeviceProbe probe) {
