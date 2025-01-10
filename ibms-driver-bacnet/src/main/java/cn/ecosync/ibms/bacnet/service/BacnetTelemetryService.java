@@ -36,6 +36,7 @@ public class BacnetTelemetryService implements Runnable {
     @Override
     public void run() {
         try {
+            log.info("run...");
             doRun();
         } catch (Exception e) {
             log.error("", e);
@@ -106,11 +107,8 @@ public class BacnetTelemetryService implements Runnable {
         String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8);
         String stderr = StreamUtils.copyToString(process.getErrorStream(), StandardCharsets.UTF_8);
         process.waitFor();
-        int exitValue = process.exitValue();
-        if (exitValue != 0) {
-            log.error("{}", stderr);
-        }
-        log.debug("command: {}, exitValue: {}\nstdout:\n{}\nstderr:\n{}", commands, exitValue, stdout, stderr);
+        if (StringUtils.hasText(stderr)) log.error("{}", stderr);
+        log.debug("command: {}, exitValue: {}\nstdout:\n{}\nstderr:\n{}", commands, process.exitValue(), stdout, stderr);
 
         return Arrays.stream(stdout.split("\n"))
                 .filter(StringUtils::hasText)
