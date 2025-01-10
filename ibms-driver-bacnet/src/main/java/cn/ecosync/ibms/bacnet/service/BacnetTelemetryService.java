@@ -107,8 +107,9 @@ public class BacnetTelemetryService implements Runnable {
         String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8);
         String stderr = StreamUtils.copyToString(process.getErrorStream(), StandardCharsets.UTF_8);
         process.waitFor();
-        if (StringUtils.hasText(stderr)) log.error("{}", stderr);
-        log.debug("command: {}, exitValue: {}\nstdout:\n{}\nstderr:\n{}", commands, process.exitValue(), stdout, stderr);
+        int exitValue = process.exitValue();
+        if (exitValue != 0) log.error("{}", stderr);
+        log.debug("command: {}, exitValue: {}\nstdout:\n{}\nstderr:\n{}", commands, exitValue, stdout, stderr);
 
         return Arrays.stream(stdout.split("\n"))
                 .filter(StringUtils::hasText)
