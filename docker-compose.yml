@@ -23,8 +23,17 @@ services:
   ibms-gateway:
     build: ./ibms-gateway
     image: ecosync/ibms-gateway:0.0.1
-    container_name: gateway
+    container_name: ibms-gateway
     network_mode: host
+    environment:
+      GATEWAY_ID: qie-hotel
+      IBMS_HOST: 110.41.57.238
+      OTEL_SERVICE_NAME: gateway
+      OTEL_RESOURCE_ATTRIBUTES: device.gateway.id=qie-hotel
+      OTEL_METRIC_EXPORT_INTERVAL: 60000
+      OTEL_METRICS_EXPORTER: otlp
+      OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://110.41.57.238:4318
     volumes:
       - ./ibms-gateway/target/ibms-gateway-0.0.1-SNAPSHOT.jar:/opt/app/ibms-gateway-0.0.1-SNAPSHOT.jar
     command: ["java", "-Xms32m", "-Xmx32m", "-Xss256k", "-jar", 'ibms-gateway-0.0.1-SNAPSHOT.jar']
