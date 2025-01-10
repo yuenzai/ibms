@@ -4,10 +4,13 @@ import cn.ecosync.ibms.device.model.Device;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
 import cn.ecosync.ibms.device.model.DeviceSchemas;
 import cn.ecosync.ibms.device.model.IDeviceDataAcquisition;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedModel;
 
 @Getter
 @ToString
@@ -32,7 +35,13 @@ public class DeviceDataAcquisitionView implements IDeviceDataAcquisition {
     }
 
     @Override
+    @JsonIgnore
     public Page<? extends Device> getDevices() {
         return devices;
+    }
+
+    @JsonProperty("devices")
+    public PagedModel<? extends Device> devices() {
+        return new PagedModel<>(devices);
     }
 }

@@ -10,7 +10,7 @@ import cn.ecosync.iframework.query.QueryBus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedModel;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,7 +45,7 @@ public class DeviceSchemasWebController {
 
     @Operation(summary = "查询设备模型")
     @PostMapping("/search")
-    public Page<DeviceSchemas> search(@RequestBody @Validated SearchSchemasQuery query) {
-        return queryBus.execute(query);
+    public PagedModel<DeviceSchemas> search(@RequestBody @Validated SearchSchemasQuery query) {
+        return new PagedModel<>(queryBus.execute(query));
     }
 }

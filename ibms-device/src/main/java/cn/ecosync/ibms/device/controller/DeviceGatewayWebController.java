@@ -14,7 +14,7 @@ import cn.ecosync.iframework.query.QueryBus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -68,8 +68,8 @@ public class DeviceGatewayWebController {
 
     @Operation(summary = "查询网关")
     @PostMapping("/search")
-    public Page<DeviceGateway> execute(@RequestBody @Validated SearchGatewayQuery query) {
-        return queryBus.execute(query);
+    public PagedModel<DeviceGateway> execute(@RequestBody @Validated SearchGatewayQuery query) {
+        return new PagedModel<>(queryBus.execute(query));
     }
 
     @Operation(hidden = true)

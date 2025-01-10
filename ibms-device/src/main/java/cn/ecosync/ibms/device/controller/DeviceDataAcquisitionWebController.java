@@ -12,7 +12,7 @@ import cn.ecosync.iframework.query.QueryBus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedModel;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,7 +53,7 @@ public class DeviceDataAcquisitionWebController {
 
     @Operation(summary = "查询数据采集")
     @PostMapping("/search")
-    public Page<DeviceDataAcquisition> search(@RequestBody @Validated SearchDataAcquisitionQuery query) {
-        return queryBus.execute(query);
+    public PagedModel<DeviceDataAcquisition> search(@RequestBody @Validated SearchDataAcquisitionQuery query) {
+        return new PagedModel<>(queryBus.execute(query));
     }
 }
