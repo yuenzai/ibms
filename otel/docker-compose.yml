@@ -6,7 +6,7 @@ services:
       - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.1.0
     container_name: prometheus
     volumes:
       - ./prometheus.yaml:/etc/prometheus/prometheus.yml
