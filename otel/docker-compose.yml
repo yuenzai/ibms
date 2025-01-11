@@ -1,0 +1,14 @@
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.117.0
+    container_name: otel-collector
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"

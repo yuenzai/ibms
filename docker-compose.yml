@@ -1,6 +1,7 @@
 include:
   - mysql/docker-compose.yml
   - nginx/docker-compose.yml
+  - otel/docker-compose.yml
 
 services:
   ibms:
@@ -33,7 +34,7 @@ services:
       OTEL_METRIC_EXPORT_INTERVAL: 60000
       OTEL_METRICS_EXPORTER: otlp
       OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://110.41.57.238:4318
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://110.41.57.238/ibms/otel
     volumes:
       - ./ibms-gateway/target/ibms-gateway-0.0.1-SNAPSHOT.jar:/opt/app/ibms-gateway-0.0.1-SNAPSHOT.jar
     command: ["java", "-Xms32m", "-Xmx32m", "-Xss256k", "-jar", 'ibms-gateway-0.0.1-SNAPSHOT.jar']
