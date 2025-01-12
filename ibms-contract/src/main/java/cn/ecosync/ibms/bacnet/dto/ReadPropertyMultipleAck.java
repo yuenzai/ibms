@@ -37,6 +37,7 @@ public class ReadPropertyMultipleAck {
     public static class BacnetObjectPropertiesResult {
         @JsonUnwrapped
         private BacnetObject bacnetObject;
+        @Getter
         private List<BacnetPropertyResult> properties;
 
         private BacnetObject getBacnetObject() {
