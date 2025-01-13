@@ -6,6 +6,7 @@ import cn.ecosync.ibms.bacnet.model.BacnetDevice;
 import cn.ecosync.ibms.bacnet.model.BacnetSchema;
 import cn.ecosync.ibms.bacnet.model.BacnetSchemas;
 import cn.ecosync.ibms.device.model.DeviceId;
+import cn.ecosync.ibms.metrics.Measurement;
 import cn.ecosync.iframework.serde.JsonSerde;
 import cn.ecosync.iframework.serde.TypeReference;
 import cn.ecosync.iframework.util.CollectionUtils;
@@ -13,25 +14,23 @@ import cn.ecosync.iframework.util.StringUtils;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
-import io.opentelemetry.api.metrics.ObservableMeasurement;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StreamUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 public class BacnetTelemetryService implements Runnable {
-    private static final Logger log = LoggerFactory.getLogger(BacnetTelemetryService.class);
     private static final AttributeKey<String> DEVICE_ID = AttributeKey.stringKey("device.id");
     private static final AttributeKey<String> DEVICE_SCHEMAS_ID = AttributeKey.stringKey("device.schemas.id");
 
     private final BacnetDataAcquisition bacnetDataAcquisition;
     private final JsonSerde jsonSerde;
-    private final Map<String, ObservableMeasurement> observableMeasurements;
+    private final Map<String, Measurement> observableMeasurements;
 
     @Override
     public void run() {
@@ -79,7 +78,7 @@ public class BacnetTelemetryService implements Runnable {
 
             DeviceId deviceId = device.getDeviceId();
             String instrumentName = deviceId.toString() + "." + schema.getName();
-            ObservableMeasurement measurement = observableMeasurements.get(instrumentName);
+            Measurement measurement = observableMeasurements.get(instrumentName);
             if (measurement == null) continue;
 
             AttributesBuilder builder = Attributes.builder();
@@ -88,7 +87,7 @@ public class BacnetTelemetryService implements Runnable {
             propertyMap.values().forEach(in -> in.accept(builder));
             Attributes attributes = builder.build();
 
-            presentValue.record(measurement, attributes);
+            measurement.record(presentValue.getValueAsNumber(), attributes);
         }
     }
 

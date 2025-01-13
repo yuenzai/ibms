@@ -3,6 +3,7 @@ package cn.ecosync.ibms.gateway;
 import cn.ecosync.ibms.bacnet.model.BacnetDataAcquisition;
 import cn.ecosync.ibms.bacnet.service.BacnetTelemetryService;
 import cn.ecosync.ibms.device.model.*;
+import cn.ecosync.ibms.metrics.Measurement;
 import cn.ecosync.iframework.serde.JsonSerde;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.metrics.BatchCallback;
@@ -53,8 +54,10 @@ public class GatewayTelemetryService implements GatewayRepository {
         Collection<DeviceId> deviceIds = dataAcquisition.getDevices().stream()
                 .map(Device::getDeviceId)
                 .collect(Collectors.toList());
-        Map<String, ObservableMeasurement> observableMeasurements = schemas.toObservableMeasurements(meter, deviceIds);
-        List<ObservableMeasurement> measurementList = new ArrayList<>(observableMeasurements.values());
+        Map<String, Measurement> observableMeasurements = schemas.toObservableMeasurements(meter, deviceIds);
+        List<ObservableMeasurement> measurementList = observableMeasurements.values().stream()
+                .map(Measurement::getObservableMeasurement)
+                .collect(Collectors.toList());
         if (measurementList.isEmpty()) return DeviceSchemasCallback.NULL;
         observableMeasurement = measurementList.get(0);
         additionalMeasurements = measurementList.subList(1, measurementList.size())
@@ -68,6 +71,8 @@ public class GatewayTelemetryService implements GatewayRepository {
         }
 
         BatchCallback batchCallback = meter.batchCallback(callback, observableMeasurement, additionalMeasurements);
+        log.info("observableMeasurement:{}", observableMeasurement);
+        log.info("additionalMeasurements:{}", Arrays.toString(additionalMeasurements));
         return new DeviceSchemasCallback(schemas.getSchemasId(), batchCallback);
     }
 
