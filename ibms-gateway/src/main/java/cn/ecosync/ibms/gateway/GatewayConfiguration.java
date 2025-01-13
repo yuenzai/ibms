@@ -16,7 +16,6 @@ public class GatewayConfiguration {
     @Bean
     public OpenTelemetry openTelemetry() {
         return AutoConfiguredOpenTelemetrySdk.builder()
-//                .addMeterProviderCustomizer((builder, configProperties) -> configure(builder))
                 .build()
                 .getOpenTelemetrySdk();
     }
