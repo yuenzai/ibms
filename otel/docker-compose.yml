@@ -10,5 +10,12 @@ services:
     container_name: prometheus
     volumes:
       - ./prometheus.yaml:/etc/prometheus/prometheus.yml
-    ports:
-      - "19090:9090"
+      - prometheus-data:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.route-prefix=/
+      - --web.external-url=http://${HOST:?}/prometheus
+
+volumes:
+  prometheus-data:
