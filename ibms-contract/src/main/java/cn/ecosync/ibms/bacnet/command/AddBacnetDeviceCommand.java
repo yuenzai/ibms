@@ -2,11 +2,13 @@ package cn.ecosync.ibms.bacnet.command;
 
 import cn.ecosync.ibms.bacnet.model.BacnetDevice;
 import cn.ecosync.ibms.device.command.AddDeviceCommand;
+import cn.ecosync.ibms.device.model.DeviceId;
 import cn.ecosync.iframework.util.CollectionUtils;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -44,6 +46,7 @@ public class AddBacnetDeviceCommand extends AddDeviceCommand {
     @ToString
     public static class BacnetDeviceProperties {
         @NotBlank
+        @Pattern(regexp = DeviceId.REGEXP)
         private String deviceCode;
         private String deviceName;
         @NotNull

@@ -3,6 +3,7 @@ package cn.ecosync.ibms.device.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import org.springframework.util.Assert;
 
@@ -11,7 +12,10 @@ import java.util.Objects;
 @Getter
 @Embeddable
 public class DeviceId {
+    public static final String REGEXP = "^[a-zA-Z][\\w\\-/]{4,100}";
+
     @NotBlank
+    @Pattern(regexp = REGEXP)
     @Column(name = "device_code", nullable = false, updatable = false)
     private String deviceCode;
 
