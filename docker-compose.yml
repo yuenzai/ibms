@@ -8,7 +8,6 @@ services:
     build: .
     image: ecosync/ibms:0.0.2
     container_name: ibms
-    restart: always
     depends_on:
       database:
         condition: service_healthy
@@ -24,13 +23,12 @@ services:
 #    network_mode: host
 #    environment:
 #      GATEWAY_ID: qie-hotel
-#      IBMS_HOST: 110.41.57.238
 #      OTEL_SERVICE_NAME: gateway
 #      OTEL_RESOURCE_ATTRIBUTES: device.gateway.id=qie-hotel
 #      OTEL_METRIC_EXPORT_INTERVAL: 60000
 #      OTEL_METRICS_EXPORTER: otlp
 #      OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
-#      OTEL_EXPORTER_OTLP_ENDPOINT: http://110.41.57.238/ibms/otlp
+#      OTEL_EXPORTER_OTLP_ENDPOINT: http://${IBMS_HOST:?}/ibms/otlp
 #    volumes:
 #      - ./ibms-gateway/target/ibms-gateway-0.0.1-SNAPSHOT.jar:/opt/app/ibms-gateway-0.0.1-SNAPSHOT.jar
 #    command: ["java", "-Xms32m", "-Xmx32m", "-Xss256k", "-jar", 'ibms-gateway-0.0.1-SNAPSHOT.jar']
@@ -39,7 +37,6 @@ services:
 #    build: ./bacnet
 #    image: ecosync/bacnet:0.0.1
 #    container_name: bacnet
-#    restart: always
 #    network_mode: host
 #    volumes:
 #      - ./bacnet/application/target/ibms-driver-bacnet-0.0.1-SNAPSHOT.jar:/opt/app/ibms-driver-bacnet-0.0.1-SNAPSHOT.jar

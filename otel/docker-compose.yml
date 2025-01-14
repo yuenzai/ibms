@@ -10,12 +10,25 @@ services:
     container_name: prometheus
     volumes:
       - ./prometheus.yaml:/etc/prometheus/prometheus.yml
-      - prometheus-data:/prometheus
+      - prometheus-storage:/prometheus
     command:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.path=/prometheus
       - --web.route-prefix=/
-      - --web.external-url=http://${HOST:?}/prometheus
+      - --web.external-url=http://${IBMS_HOST:?}/prometheus
+
+  grafana:
+    image: grafana/grafana:11.4.0
+    container_name: grafana
+    environment:
+      GF_DEFAULT_INSTANCE_NAME: ${COMPOSE_PROJECT_NAME}
+      GF_SERVER_ROOT_URL: http://${IBMS_HOST:?}/grafana
+      GF_SERVER_SERVE_FROM_SUB_PATH: true
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:?}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?}
+    volumes:
+      - grafana-storage:/var/lib/grafana
 
 volumes:
-  prometheus-data:
+  prometheus-storage:
+  grafana-storage:
