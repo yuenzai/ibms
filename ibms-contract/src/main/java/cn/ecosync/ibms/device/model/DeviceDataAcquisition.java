@@ -2,6 +2,7 @@ package cn.ecosync.ibms.device.model;
 
 import cn.ecosync.ibms.bacnet.model.BacnetDataAcquisition;
 import cn.ecosync.ibms.device.dto.DeviceSchema;
+import cn.ecosync.ibms.metrics.IInstrumentValueType;
 import cn.ecosync.ibms.metrics.IObservableDoubleMeasurement;
 import cn.ecosync.ibms.metrics.IObservableLongMeasurement;
 import cn.ecosync.ibms.metrics.IObservableMeasurement;
@@ -11,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.api.metrics.ObservableDoubleMeasurement;
 import io.opentelemetry.api.metrics.ObservableLongMeasurement;
-import io.opentelemetry.sdk.metrics.InstrumentValueType;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -68,7 +68,7 @@ public abstract class DeviceDataAcquisition implements IDeviceDataAcquisition {
                 String instrumentName = deviceId.toString() + "." + schema.getName();
 
                 if (schema.getMonotonically()) {
-                    if (schema.getValueType() == InstrumentValueType.DOUBLE) {
+                    if (schema.getValueType() == IInstrumentValueType.DOUBLE) {
                         ObservableDoubleMeasurement measurement = meter.counterBuilder(instrumentName).ofDoubles().buildObserver();
                         observableMeasurements.put(instrumentName, new IObservableDoubleMeasurement(instrumentName, measurement));
                     } else {
@@ -76,7 +76,7 @@ public abstract class DeviceDataAcquisition implements IDeviceDataAcquisition {
                         observableMeasurements.put(instrumentName, new IObservableLongMeasurement(instrumentName, measurement));
                     }
                 } else {
-                    if (schema.getValueType() == InstrumentValueType.LONG) {
+                    if (schema.getValueType() == IInstrumentValueType.LONG) {
                         ObservableLongMeasurement measurement = meter.gaugeBuilder(instrumentName).ofLongs().buildObserver();
                         observableMeasurements.put(instrumentName, new IObservableLongMeasurement(instrumentName, measurement));
                     } else {

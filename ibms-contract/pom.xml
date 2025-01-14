@@ -28,7 +28,7 @@
         </dependency>
         <dependency>
             <groupId>io.opentelemetry</groupId>
-            <artifactId>opentelemetry-sdk-metrics</artifactId>
+            <artifactId>opentelemetry-api</artifactId>
             <optional>true</optional>
         </dependency>
     </dependencies>

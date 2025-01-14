@@ -1,6 +1,6 @@
 package cn.ecosync.ibms.device.dto;
 
-import io.opentelemetry.sdk.metrics.InstrumentValueType;
+import cn.ecosync.ibms.metrics.IInstrumentValueType;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.ToString;
@@ -11,13 +11,13 @@ public abstract class DeviceSchema {
     @NotBlank
     private String name;
     private Boolean monotonically;
-    private InstrumentValueType valueType;
+    private IInstrumentValueType valueType;
 
     public Boolean getMonotonically() {
         return monotonically != null ? monotonically : Boolean.FALSE;
     }
 
-    public InstrumentValueType getValueType() {
-        return valueType != null ? valueType : InstrumentValueType.DOUBLE;
+    public IInstrumentValueType getValueType() {
+        return valueType != null ? valueType : IInstrumentValueType.DOUBLE;
     }
 }
