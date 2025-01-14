@@ -6,7 +6,7 @@ import cn.ecosync.ibms.bacnet.model.BacnetDevice;
 import cn.ecosync.ibms.bacnet.model.BacnetSchema;
 import cn.ecosync.ibms.bacnet.model.BacnetSchemas;
 import cn.ecosync.ibms.device.model.DeviceId;
-import cn.ecosync.ibms.metrics.Measurement;
+import cn.ecosync.ibms.metrics.IObservableMeasurement;
 import cn.ecosync.iframework.serde.JsonSerde;
 import cn.ecosync.iframework.serde.TypeReference;
 import cn.ecosync.iframework.util.CollectionUtils;
@@ -30,7 +30,7 @@ public class BacnetTelemetryService implements Runnable {
 
     private final BacnetDataAcquisition bacnetDataAcquisition;
     private final JsonSerde jsonSerde;
-    private final Map<String, Measurement> observableMeasurements;
+    private final Map<String, IObservableMeasurement> observableMeasurements;
 
     @Override
     public void run() {
@@ -78,7 +78,7 @@ public class BacnetTelemetryService implements Runnable {
 
             DeviceId deviceId = device.getDeviceId();
             String instrumentName = deviceId.toString() + "." + schema.getName();
-            Measurement measurement = observableMeasurements.get(instrumentName);
+            IObservableMeasurement measurement = observableMeasurements.get(instrumentName);
             if (measurement == null) continue;
 
             AttributesBuilder builder = Attributes.builder();
