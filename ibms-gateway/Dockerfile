@@ -1,11 +1,8 @@
 FROM eclipse-temurin:17-jre-jammy
 
-COPY target/ibms-gateway-0.0.1-SNAPSHOT.jar .
-
 RUN mkdir -p /opt/app /opt/lib && \
     apt-get update && \
-    apt-get install -y cmake git && \
-    mv ibms-gateway-0.0.1-SNAPSHOT.jar /opt/app/
+    apt-get install -y cmake git
 
 WORKDIR /opt/lib
 
@@ -24,5 +21,3 @@ RUN git clone --branch 1.3.8 --single-branch https://github.com/yuenzai/bacnet-s
     mv ./* /usr/local/bin
 
 WORKDIR /opt/app
-
-CMD ["java", "-jar", "ibms-gateway-0.0.1-SNAPSHOT.jar"]
