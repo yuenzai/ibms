@@ -7,6 +7,7 @@ import cn.ecosync.ibms.bacnet.model.BacnetSchema;
 import cn.ecosync.ibms.bacnet.model.BacnetSchemas;
 import cn.ecosync.ibms.device.model.DeviceId;
 import cn.ecosync.ibms.metrics.IObservableMeasurement;
+import cn.ecosync.ibms.metrics.TelemetryService;
 import cn.ecosync.iframework.serde.JsonSerde;
 import cn.ecosync.iframework.serde.TypeReference;
 import cn.ecosync.iframework.util.CollectionUtils;
@@ -14,6 +15,7 @@ import cn.ecosync.iframework.util.StringUtils;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributesBuilder;
+import io.opentelemetry.api.metrics.ObservableMeasurement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StreamUtils;
@@ -21,10 +23,11 @@ import org.springframework.util.StreamUtils;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @RequiredArgsConstructor
-public class BacnetTelemetryService implements Runnable {
+public class BacnetTelemetryService implements TelemetryService {
     private static final AttributeKey<String> DEVICE_ID = AttributeKey.stringKey("device.id");
     private static final AttributeKey<String> DEVICE_SCHEMAS_ID = AttributeKey.stringKey("device.schemas.id");
 
@@ -33,16 +36,16 @@ public class BacnetTelemetryService implements Runnable {
     private final Map<String, IObservableMeasurement> observableMeasurements;
 
     @Override
-    public void run() {
+    public void telemetry() {
         try {
-            log.info("run...");
-            doRun();
+            log.info("telemetry...");
+            doTelemetry();
         } catch (Exception e) {
             log.error("", e);
         }
     }
 
-    private void doRun() throws Exception {
+    private void doTelemetry() throws Exception {
         List<BacnetDevice> devices = bacnetDataAcquisition.getDevices();
         Map<Integer, BacnetDevice> deviceMap = CollectionUtils.newHashMap(devices.size());
         List<BacnetReadPropertyMultipleService> services = new ArrayList<>(devices.size());
@@ -77,8 +80,7 @@ public class BacnetTelemetryService implements Runnable {
             if (presentValue == null) continue;
 
             DeviceId deviceId = device.getDeviceId();
-            String instrumentName = deviceId.toString() + "." + schema.getName();
-            IObservableMeasurement measurement = observableMeasurements.get(instrumentName);
+            IObservableMeasurement measurement = observableMeasurements.get(schema.getName());
             if (measurement == null) continue;
 
             AttributesBuilder builder = Attributes.builder();
@@ -116,5 +118,12 @@ public class BacnetTelemetryService implements Runnable {
                 }))
                 .filter(ReadPropertyMultipleAck::valuesNotEmpty)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Stream<ObservableMeasurement> getMeasurements() {
+        return observableMeasurements.values().stream()
+                .peek(in -> log.info("instrumentName: {}", in.getInstrumentName()))
+                .map(IObservableMeasurement::getObservableMeasurement);
     }
 }

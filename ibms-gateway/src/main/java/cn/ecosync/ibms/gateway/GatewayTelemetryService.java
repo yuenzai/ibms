@@ -4,7 +4,9 @@ import cn.ecosync.ibms.bacnet.model.BacnetDataAcquisition;
 import cn.ecosync.ibms.bacnet.service.BacnetTelemetryService;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.device.model.DeviceGateway;
+import cn.ecosync.ibms.device.model.DeviceSchemas;
 import cn.ecosync.ibms.metrics.IObservableMeasurement;
+import cn.ecosync.ibms.metrics.TelemetryService;
 import cn.ecosync.iframework.serde.JsonSerde;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.metrics.BatchCallback;
@@ -46,22 +48,21 @@ public class GatewayTelemetryService implements GatewayRepository {
     }
 
     private BatchCallback observeMeasurements(DeviceDataAcquisition dataAcquisition) {
-        Runnable callback;
+        TelemetryService telemetryService;
+        DeviceSchemas deviceSchemas = dataAcquisition.getSchemas();
 
-        Meter meter = openTelemetry.getMeter(dataAcquisition.getSchemas().getSchemasId().toString());
-        Map<String, IObservableMeasurement> iobservableMeasurements = dataAcquisition.toObservableMeasurements(meter);
+        Meter meter = openTelemetry.getMeter(deviceSchemas.getSchemasId().toString());
+        Map<String, IObservableMeasurement> iobservableMeasurements = deviceSchemas.toObservableMeasurements(meter);
         if (iobservableMeasurements.isEmpty()) {
             return null;
         } else if (dataAcquisition instanceof BacnetDataAcquisition) {
             BacnetDataAcquisition bacnetDataAcquisition = (BacnetDataAcquisition) dataAcquisition;
-            callback = new BacnetTelemetryService(bacnetDataAcquisition, jsonSerde, iobservableMeasurements);
+            telemetryService = new BacnetTelemetryService(bacnetDataAcquisition, jsonSerde, iobservableMeasurements);
         } else {
             return null;
         }
-        ObservableMeasurement[] observableMeasurements = iobservableMeasurements.values().stream()
-                .peek(in -> log.info("instrumentName: {}", in.getInstrumentName()))
-                .map(IObservableMeasurement::getObservableMeasurement)
+        ObservableMeasurement[] observableMeasurements = telemetryService.getMeasurements()
                 .toArray(ObservableMeasurement[]::new);
-        return meter.batchCallback(callback, null, observableMeasurements);
+        return meter.batchCallback(telemetryService, null, observableMeasurements);
     }
 }
