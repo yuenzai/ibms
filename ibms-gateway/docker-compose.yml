@@ -1,0 +1,35 @@
+volumes:
+  prometheus-storage:
+
+services:
+  prometheus:
+    image: prom/prometheus:v3.1.0
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+      - prometheus-storage:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+
+  ibms-gateway:
+    build: .
+    image: ecosync/ibms-gateway:0.0.1
+    container_name: ibms-gateway
+    network_mode: host
+    volumes:
+      - ./target/ibms-gateway-0.0.1-SNAPSHOT.jar:/opt/app/ibms-gateway-0.0.1-SNAPSHOT.jar
+    command: [ "java", "-Xms64m", "-Xmx64m", "-Xss256k", "-jar", 'ibms-gateway-0.0.1-SNAPSHOT.jar' ]
+    environment:
+      BACNET_IFACE: ens18
+      GATEWAY_ID: qie-hotel
+      IBMS_HOST: ${IBMS_HOST:?}
+      OTEL_RESOURCE_ATTRIBUTES: service.namespace=ibms,service.name=gateway,service.instance.id=qie-hotel
+      OTEL_TRACES_EXPORTER: none
+      OTEL_LOGS_EXPORTER: none
+      OTEL_METRICS_EXPORTER: prometheus
+      OTEL_EXPORTER_PROMETHEUS_PORT: 9494
+#      OTEL_METRICS_EXPORTER: otlp
+#      OTEL_METRIC_EXPORT_INTERVAL: 60000
+#      OTEL_EXPORTER_OTLP_METRICS_PROTOCOL: http/protobuf
+#      OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: http://${IBMS_HOST:?}/prometheus/api/v1/otlp/v1/metrics

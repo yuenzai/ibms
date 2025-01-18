@@ -1,22 +1,8 @@
+volumes:
+  grafana-storage:
+#  prometheus-storage:
+
 services:
-  otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.117.0
-    container_name: otel-collector
-    volumes:
-      - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
-
-  prometheus:
-    image: prom/prometheus:v3.1.0
-    container_name: prometheus
-    volumes:
-      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
-      - prometheus-storage:/prometheus
-    command:
-      - --config.file=/etc/prometheus/prometheus.yml
-      - --storage.tsdb.path=/prometheus
-      - --web.route-prefix=/
-      - --web.external-url=http://${IBMS_HOST:?}/prometheus
-
   grafana:
     image: grafana/grafana:11.4.0
     container_name: grafana
@@ -29,6 +15,21 @@ services:
     volumes:
       - grafana-storage:/var/lib/grafana
 
-volumes:
-  prometheus-storage:
-  grafana-storage:
+#  prometheus:
+#    image: prom/prometheus:v3.1.0
+#    container_name: prometheus
+#    volumes:
+#      - ./prometheus.yaml:/etc/prometheus/prometheus.yml
+#      - prometheus-storage:/prometheus
+#    command:
+#      - --config.file=/etc/prometheus/prometheus.yml
+#      - --storage.tsdb.path=/prometheus
+#      - --web.route-prefix=/
+#      - --web.external-url=http://${IBMS_HOST:?}/prometheus
+#      - --web.enable-otlp-receiver
+#
+#  otel-collector:
+#    image: otel/opentelemetry-collector-contrib:0.117.0
+#    container_name: otel-collector
+#    volumes:
+#      - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
