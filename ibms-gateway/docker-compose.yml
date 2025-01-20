@@ -5,12 +5,16 @@ services:
   prometheus:
     image: prom/prometheus:v3.1.0
     container_name: prometheus
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./prometheus/:/etc/prometheus/
       - prometheus-storage:/prometheus
     command:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.path=/prometheus
+#      - --web.route-prefix=/
+#      - --web.external-url=http://${IBMS_HOST:?}/prometheus
 
   ibms-gateway:
     build: .

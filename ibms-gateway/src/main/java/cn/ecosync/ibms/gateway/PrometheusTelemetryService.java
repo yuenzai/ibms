@@ -78,6 +78,7 @@ public class PrometheusTelemetryService implements MultiCollector {
     @Override
     public MetricSnapshots collect(PrometheusScrapeRequest scrapeRequest) {
         String targetName = CollectionUtils.firstElement(Arrays.asList(scrapeRequest.getParameterValues("target")));
+        log.info("collect(requestPath={}, target={})", scrapeRequest.getRequestPath(), targetName);
         Device device = Optional.ofNullable(targetName)
                 .filter(StringUtils::hasText)
                 .map(deviceMap::get)

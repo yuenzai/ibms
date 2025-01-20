@@ -3,7 +3,7 @@ scrape_configs:
     metrics_path: /metrics
     scrape_interval: 30s
     static_configs:
-      - targets: [ ibms-gateway:9494 ]
+      - targets: [ host.docker.internal:8080 ]
 
   - job_name: ibms-gateway-devices
     metrics_path: /metrics/devices
@@ -14,4 +14,4 @@ scrape_configs:
       - source_labels: [ __param_target ]
         target_label: instance
       - target_label: __address__
-        replacement: ibms-gateway:9494
+        replacement: host.docker.internal:8080
