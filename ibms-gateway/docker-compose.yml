@@ -5,14 +5,15 @@ services:
   prometheus:
     image: prom/prometheus:v3.1.0
     container_name: prometheus
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    network_mode: host
     volumes:
       - ./prometheus/:/etc/prometheus/
       - prometheus-storage:/prometheus
     command:
+#      - --web.listen-address=0.0.0.0:19090
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
 #      - --web.route-prefix=/
 #      - --web.external-url=http://${IBMS_HOST:?}/prometheus
 
@@ -23,7 +24,7 @@ services:
     network_mode: host
     volumes:
       - ./target/ibms-gateway-0.0.1-SNAPSHOT.jar:/opt/app/ibms-gateway-0.0.1-SNAPSHOT.jar
-      - ./prometheus/scrape_configs/:/opt/config/prometheus/scrape_configs/
+      - ./prometheus/scrape_configs/scrape_config_device.yml:/opt/app/scrape_config_device.yml
     command: [ "java", "-Xms64m", "-Xmx64m", "-Xss256k", "-jar", 'ibms-gateway-0.0.1-SNAPSHOT.jar' ]
     environment:
       BACNET_IFACE: ens18

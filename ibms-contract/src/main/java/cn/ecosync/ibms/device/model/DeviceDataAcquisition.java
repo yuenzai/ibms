@@ -1,8 +1,8 @@
 package cn.ecosync.ibms.device.model;
 
 import cn.ecosync.ibms.bacnet.model.BacnetDataAcquisition;
+import cn.ecosync.ibms.metrics.PrometheusConfigurationProperties.RelabelConfig;
 import cn.ecosync.ibms.metrics.PrometheusConfigurationProperties.ScrapeConfig;
-import cn.ecosync.ibms.metrics.PrometheusConfigurationProperties.ScrapeConfigs;
 import cn.ecosync.ibms.metrics.PrometheusConfigurationProperties.StaticConfig;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -56,13 +56,14 @@ public abstract class DeviceDataAcquisition implements IDeviceDataAcquisition {
 
     public abstract DeviceDataAcquisition toReference();
 
-    public ScrapeConfigs toScrapeConfig(String metricsPath) {
+    public ScrapeConfig toScrapeConfig(String metricsPath, String replacement) {
         List<String> targets = getDevices().stream()
                 .map(Device::getDeviceId)
                 .map(DeviceId::toString)
                 .collect(Collectors.toList());
+        String jobName = getDataAcquisitionId().toString();
         StaticConfig staticConfig = new StaticConfig(targets);
-        ScrapeConfig scrapeConfig = new ScrapeConfig(getDataAcquisitionId().toString(), metricsPath, getScrapeInterval(), staticConfig);
-        return new ScrapeConfigs(scrapeConfig);
+        List<RelabelConfig> relabelConfigs = RelabelConfig.toRelabelConfigs(replacement);
+        return new ScrapeConfig(jobName, metricsPath, getScrapeInterval(), relabelConfigs, staticConfig);
     }
 }

@@ -7,6 +7,8 @@ import cn.ecosync.ibms.bacnet.model.BacnetSchemas;
 import cn.ecosync.ibms.bacnet.service.BacnetService;
 import cn.ecosync.ibms.device.dto.DeviceSchema;
 import cn.ecosync.ibms.device.model.*;
+import cn.ecosync.ibms.metrics.PrometheusConfigurationProperties.ScrapeConfig;
+import cn.ecosync.ibms.metrics.PrometheusConfigurationProperties.ScrapeConfigs;
 import cn.ecosync.iframework.util.CollectionUtils;
 import cn.ecosync.iframework.util.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +25,13 @@ import io.prometheus.metrics.model.snapshots.MetricSnapshot;
 import io.prometheus.metrics.model.snapshots.MetricSnapshots;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.support.RestClientAdapter;
+import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -31,19 +39,27 @@ import java.util.stream.Collectors;
 
 public class PrometheusTelemetryService implements MultiCollector {
     private static final Logger log = LoggerFactory.getLogger(PrometheusTelemetryService.class);
-    public static final String PATH_METRICS = "/metrics/*";
-    public static final String PATH_METRICS_DEVICES = "/metrics/devices/*";
+    public static final String PATH_METRICS = "/metrics";
+    public static final String PATH_METRICS_DEVICES = "/metrics/devices";
 
+    private final PrometheusService prometheusService;
     private final PrometheusRegistry deviceMetricsRegistry;
     private final BacnetService bacnetService;
     private final AtomicReference<DeviceGateway> gatewayRef = new AtomicReference<>();
     private final ObjectMapper yamlSerde;
+    private final File deviceScrapeConfigFile;
 
-    public PrometheusTelemetryService(PrometheusRegistry deviceMetricsRegistry, BacnetService bacnetService) {
+    public PrometheusTelemetryService(RestClient.Builder restClientBuilder, PrometheusRegistry deviceMetricsRegistry, BacnetService bacnetService) {
+        RestClient restClient = restClientBuilder.baseUrl("http://localhost:19090").build();
+        RestClientAdapter adapter = RestClientAdapter.create(restClient);
+        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
+        this.prometheusService = factory.createClient(PrometheusService.class);
         this.deviceMetricsRegistry = deviceMetricsRegistry;
         this.bacnetService = bacnetService;
         this.yamlSerde = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER))
                 .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+        this.deviceScrapeConfigFile = new File("scrape_config_device.yml");
+        Assert.isTrue(deviceScrapeConfigFile.exists(), "scrape_config_device.yml does not exist");
     }
 
     private final Map<String, Device> deviceMap = new ConcurrentHashMap<>();
@@ -63,11 +79,21 @@ public class PrometheusTelemetryService implements MultiCollector {
         gatewayAtomic.getDataAcquisitions().stream()
                 .map(DeviceDataAcquisition::getSchemas)
                 .forEach(in -> deviceSchemasMap.put(in.getSchemasId().toString(), in));
-        //todo reload prometheus config
-//        gatewayAtomic.getDataAcquisitions().stream()
-//                .filter(in -> !CollectionUtils.isEmpty(in.getDevices()))
-//                .map(in -> in.toScrapeConfig(PATH_METRICS_DEVICES))
-//                .map()
+        try {
+            updateScrapeConfigFile(gatewayAtomic);
+            prometheusService.reload();
+        } catch (Exception e) {
+            log.error("", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void updateScrapeConfigFile(DeviceGateway gateway) throws IOException {
+        List<ScrapeConfig> scrapeConfigs = gateway.getDataAcquisitions().stream()
+                .filter(in -> !CollectionUtils.isEmpty(in.getDevices()))
+                .map(in -> in.toScrapeConfig(PATH_METRICS_DEVICES, "localhost:8080"))
+                .collect(Collectors.toList());
+        yamlSerde.writeValue(deviceScrapeConfigFile, new ScrapeConfigs(scrapeConfigs));
     }
 
     @Override

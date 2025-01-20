@@ -20,7 +20,7 @@ import static cn.ecosync.ibms.gateway.PrometheusTelemetryService.PATH_METRICS_DE
 public class GatewayConfiguration {
     @Bean
     public ServletRegistrationBean<PrometheusMetricsServlet> gatewayMetricsPrometheusEndpoint() {
-        return new ServletRegistrationBean<>(new PrometheusMetricsServlet(), PATH_METRICS);
+        return new ServletRegistrationBean<>(new PrometheusMetricsServlet(), PATH_METRICS + "/*");
     }
 
     @Bean
@@ -30,7 +30,7 @@ public class GatewayConfiguration {
 
     @Bean
     public ServletRegistrationBean<PrometheusMetricsServlet> deviceMetricsPrometheusEndpoint(PrometheusRegistry deviceMetricsRegistry) {
-        return new ServletRegistrationBean<>(new PrometheusMetricsServlet(deviceMetricsRegistry), PATH_METRICS_DEVICES);
+        return new ServletRegistrationBean<>(new PrometheusMetricsServlet(deviceMetricsRegistry), PATH_METRICS_DEVICES + "/*");
     }
 
     @Bean
@@ -39,8 +39,8 @@ public class GatewayConfiguration {
     }
 
     @Bean
-    public PrometheusTelemetryService prometheusTelemetryService(PrometheusRegistry deviceMetricsRegistry, BacnetService bacnetService) {
-        return new PrometheusTelemetryService(deviceMetricsRegistry, bacnetService);
+    public PrometheusTelemetryService prometheusTelemetryService(RestClient.Builder restClientBuilder, PrometheusRegistry deviceMetricsRegistry, BacnetService bacnetService) {
+        return new PrometheusTelemetryService(restClientBuilder, deviceMetricsRegistry, bacnetService);
     }
 
     @Bean

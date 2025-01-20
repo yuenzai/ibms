@@ -1,6 +1,7 @@
 package cn.ecosync.ibms.metrics;
 
 import cn.ecosync.iframework.util.CollectionUtils;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -12,15 +13,6 @@ import java.util.Map;
 @Getter
 @ToString
 public class PrometheusConfigurationProperties {
-    public static final String relabel_configs =
-            "    relabel_configs:\n" +
-                    "      - source_labels: [ __address__ ]\n" +
-                    "        target_label: __param_target\n" +
-                    "      - source_labels: [ __param_target ]\n" +
-                    "        target_label: instance\n" +
-                    "      - target_label: __address__\n" +
-                    "        replacement: localhost:9401\n";
-
     @Getter
     @ToString
     public static class ScrapeConfigs {
@@ -29,8 +21,8 @@ public class PrometheusConfigurationProperties {
         protected ScrapeConfigs() {
         }
 
-        public ScrapeConfigs(ScrapeConfig... scrapeConfigs) {
-            this.scrapeConfigs = Arrays.asList(scrapeConfigs);
+        public ScrapeConfigs(List<ScrapeConfig> scrapeConfigs) {
+            this.scrapeConfigs = scrapeConfigs;
         }
 
         public List<ScrapeConfig> getScrapeConfigs() {
@@ -43,16 +35,19 @@ public class PrometheusConfigurationProperties {
     public static class ScrapeConfig {
         private String jobName;
         private String metricsPath;
+        @JsonInclude(JsonInclude.Include.NON_NULL)
         private Long scrapeInterval;
+        private List<RelabelConfig> relabelConfigs;
         private List<StaticConfig> staticConfigs;
 
         protected ScrapeConfig() {
         }
 
-        public ScrapeConfig(String jobName, String metricsPath, Long scrapeInterval, StaticConfig... staticConfigs) {
+        public ScrapeConfig(String jobName, String metricsPath, Long scrapeInterval, List<RelabelConfig> relabelConfigs, StaticConfig... staticConfigs) {
             this.jobName = jobName;
             this.metricsPath = metricsPath;
             this.scrapeInterval = scrapeInterval;
+            this.relabelConfigs = relabelConfigs;
             this.staticConfigs = Arrays.asList(staticConfigs);
         }
     }
@@ -61,6 +56,7 @@ public class PrometheusConfigurationProperties {
     @ToString
     public static class StaticConfig {
         private List<String> targets;
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
         private Map<String, String> labels;
 
         protected StaticConfig() {
@@ -84,20 +80,30 @@ public class PrometheusConfigurationProperties {
         }
     }
 
-//    @Getter
-//    @ToString
-//    public static class RelabelConfig {
-//        private List<String> sourceLabels;
-//        private String targetLabel;
-//        private String replacement;
-//
-//        protected RelabelConfig() {
-//        }
-//
-//        public RelabelConfig(List<String> sourceLabels, String targetLabel, String replacement) {
-//            this.sourceLabels = sourceLabels;
-//            this.targetLabel = targetLabel;
-//            this.replacement = replacement;
-//        }
-//    }
+    @Getter
+    @ToString
+    public static class RelabelConfig {
+        private static final RelabelConfig RELABEL1 = new RelabelConfig(Collections.singletonList("__address__"), "__param_target", null);
+        private static final RelabelConfig RELABEL2 = new RelabelConfig(Collections.singletonList("__param_target"), "instance", null);
+
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        private List<String> sourceLabels;
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        private String targetLabel;
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        private String replacement;
+
+        protected RelabelConfig() {
+        }
+
+        private RelabelConfig(List<String> sourceLabels, String targetLabel, String replacement) {
+            this.sourceLabels = sourceLabels;
+            this.targetLabel = targetLabel;
+            this.replacement = replacement;
+        }
+
+        public static List<RelabelConfig> toRelabelConfigs(String replacement) {
+            return Arrays.asList(RELABEL1, RELABEL2, new RelabelConfig(null, "__address__", replacement));
+        }
+    }
 }
