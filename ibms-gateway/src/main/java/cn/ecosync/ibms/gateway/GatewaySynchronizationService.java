@@ -42,31 +42,28 @@ public class GatewaySynchronizationService implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        try {
-            synchronize(true).get();
-            log.info("开启定时任务");
-            scheduleSynchronize();
-        } catch (Exception e) {
-            log.error("", e);
-        }
+        log.info("获取网关配置");
+        handle(gatewayService.get(GATEWAY_ID, true));
+        taskScheduler.schedule(this::synchronize, Instant.now().plusSeconds(30));
     }
 
-    private void scheduleSynchronize() {
-        Runnable task = () -> synchronize(false)
-                .whenComplete((v, e) -> {
-                    if (e != null) log.error("", e);
-                    scheduleSynchronize();
+    private void synchronize() {
+        CompletableFuture
+                .supplyAsync(() -> {
+                    log.info("获取网关配置");
+                    return gatewayService.get(GATEWAY_ID, false);
+                })
+                .thenAcceptAsync(this::handle)
+                .whenComplete((in, e) -> {
+                    Instant nextTime;
+                    if (e != null) {
+                        log.error("", e);
+                        nextTime = Instant.now().plusSeconds(30);
+                    } else {
+                        nextTime = Instant.now();
+                    }
+                    taskScheduler.schedule(this::synchronize, nextTime);
                 });
-        taskScheduler.schedule(task, Instant.now());
-    }
-
-    private CompletableFuture<Void> synchronize(boolean initial) {
-        return CompletableFuture.supplyAsync(() -> doRequest(initial))
-                .thenAccept(this::handle);
-    }
-
-    private ResponseEntity<DeviceGateway> doRequest(boolean initial) {
-        return gatewayService.get(GATEWAY_ID, initial);
     }
 
     private void handle(ResponseEntity<DeviceGateway> responseEntity) {
@@ -74,10 +71,14 @@ public class GatewaySynchronizationService implements CommandLineRunner {
         if (statusCode.isSameCodeAs(HttpStatus.NO_CONTENT)) return;
         if (statusCode.isSameCodeAs(HttpStatus.OK)) {
             telemetryService.reload(responseEntity.getBody());
-            log.info("通知 IBMS 已同步...");
-            gatewayService.notifySynchronized(GATEWAY_ID);
+            taskScheduler.schedule(this::notifySynchronized, Instant.now());
             return;
         }
         log.error("", new ResponseStatusException(statusCode, responseEntity.toString()));
+    }
+
+    private void notifySynchronized() {
+        log.info("通知 IBMS 已同步...");
+        gatewayService.notifySynchronized(GATEWAY_ID);
     }
 }

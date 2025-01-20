@@ -26,7 +26,6 @@ import io.prometheus.metrics.model.snapshots.MetricSnapshots;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
-import org.springframework.util.Assert;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
@@ -43,6 +42,7 @@ public class PrometheusTelemetryService implements MultiCollector {
     public static final String PATH_METRICS = "/metrics";
     public static final String PATH_METRICS_DEVICES = "/metrics/devices";
 
+    private final String serverPort;
     private final PrometheusService prometheusService;
     private final PrometheusRegistry deviceMetricsRegistry;
     private final BacnetService bacnetService;
@@ -53,7 +53,8 @@ public class PrometheusTelemetryService implements MultiCollector {
     public PrometheusTelemetryService(
             Environment environment, RestClient.Builder restClientBuilder,
             PrometheusRegistry deviceMetricsRegistry, BacnetService bacnetService) {
-        String PROMETHEUS_ENDPOINT = environment.getProperty("PROMETHEUS_ENDPOINT", "0.0.0.0:9090");
+        this.serverPort = environment.getProperty("server.port", "8080");
+        String PROMETHEUS_ENDPOINT = environment.getProperty("PROMETHEUS_ENDPOINT", "localhost:9090");
         RestClient restClient = restClientBuilder.baseUrl("http://" + PROMETHEUS_ENDPOINT).build();
         RestClientAdapter adapter = RestClientAdapter.create(restClient);
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
@@ -63,7 +64,6 @@ public class PrometheusTelemetryService implements MultiCollector {
         this.yamlSerde = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER))
                 .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
         this.deviceScrapeConfigFile = new File("scrape_config_device.yml");
-        Assert.isTrue(deviceScrapeConfigFile.exists(), "scrape_config_device.yml does not exist");
     }
 
     private final Map<String, Device> deviceMap = new ConcurrentHashMap<>();
@@ -74,7 +74,7 @@ public class PrometheusTelemetryService implements MultiCollector {
         clear();
         gatewayRef.set(gateway);
         DeviceGateway gatewayAtomic = gatewayRef.get();
-        if (gatewayAtomic == null) return;
+        if (gatewayAtomic == null || CollectionUtils.isEmpty(gatewayAtomic.getDataAcquisitions())) return;
         deviceMetricsRegistry.register(this);
 
         gatewayAtomic.getDataAcquisitions().stream()
@@ -95,7 +95,7 @@ public class PrometheusTelemetryService implements MultiCollector {
     private void updateScrapeConfigFile(DeviceGateway gateway) throws IOException {
         List<ScrapeConfig> scrapeConfigs = gateway.getDataAcquisitions().stream()
                 .filter(in -> !CollectionUtils.isEmpty(in.getDevices()))
-                .map(in -> in.toScrapeConfig(PATH_METRICS_DEVICES, "localhost:8080"))
+                .map(in -> in.toScrapeConfig(PATH_METRICS_DEVICES, "localhost:" + serverPort))
                 .collect(Collectors.toList());
         yamlSerde.writeValue(deviceScrapeConfigFile, new ScrapeConfigs(scrapeConfigs));
     }
