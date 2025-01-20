@@ -17,16 +17,23 @@ import org.springframework.data.web.PagedModel;
 public class DeviceDataAcquisitionView implements IDeviceDataAcquisition {
     @JsonUnwrapped
     private DeviceDataAcquisitionId dataAcquisitionId;
+    private Long scrapeInterval;
     private DeviceSchemas schemas;
     private Page<? extends Device> devices;
 
     protected DeviceDataAcquisitionView() {
     }
 
-    public DeviceDataAcquisitionView(DeviceDataAcquisitionId dataAcquisitionId, DeviceSchemas schemas, Page<? extends Device> devices) {
+    public DeviceDataAcquisitionView(DeviceDataAcquisitionId dataAcquisitionId, Long scrapeInterval, DeviceSchemas schemas, Page<? extends Device> devices) {
         this.dataAcquisitionId = dataAcquisitionId;
+        this.scrapeInterval = scrapeInterval;
         this.schemas = schemas;
         this.devices = devices;
+    }
+
+    @Override
+    public Long getScrapeInterval() {
+        return scrapeInterval;
     }
 
     @Override

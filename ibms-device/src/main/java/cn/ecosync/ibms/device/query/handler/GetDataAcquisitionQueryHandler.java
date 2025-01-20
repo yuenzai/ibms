@@ -46,7 +46,7 @@ public class GetDataAcquisitionQueryHandler implements QueryHandler<GetDataAcqui
                 .map(DeviceEntity::getDevice);
 
         if (pageable.isPaged()) {
-            return new DeviceDataAcquisitionView(dataAcquisition.getDataAcquisitionId(), schemas, devices);
+            return new DeviceDataAcquisitionView(dataAcquisition.getDataAcquisitionId(), dataAcquisition.getScrapeInterval(), schemas, devices);
         } else {
             return dataAcquisition
                     .withSchemas(schemas)

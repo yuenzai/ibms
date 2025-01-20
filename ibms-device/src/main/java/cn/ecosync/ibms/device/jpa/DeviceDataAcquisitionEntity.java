@@ -36,6 +36,11 @@ public class DeviceDataAcquisitionEntity extends ConcurrencySafeEntity implement
     }
 
     @Override
+    public Long getScrapeInterval() {
+        return dataAcquisition.getScrapeInterval();
+    }
+
+    @Override
     public DeviceSchemas getSchemas() {
         return dataAcquisition.getSchemas();
     }

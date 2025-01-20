@@ -1,8 +1,10 @@
 package cn.ecosync.ibms.gateway;
 
+import cn.ecosync.ibms.bacnet.service.BacnetService;
 import cn.ecosync.iframework.serde.JsonSerde;
-import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;
+import io.prometheus.metrics.exporter.servlet.jakarta.PrometheusMetricsServlet;
+import io.prometheus.metrics.model.registry.PrometheusRegistry;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -10,27 +12,43 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestClient;
 
+import static cn.ecosync.ibms.gateway.PrometheusTelemetryService.PATH_METRICS;
+import static cn.ecosync.ibms.gateway.PrometheusTelemetryService.PATH_METRICS_DEVICES;
+
 @Configuration
 @EnableScheduling
 public class GatewayConfiguration {
     @Bean
-    public OpenTelemetry openTelemetry() {
-        return AutoConfiguredOpenTelemetrySdk.builder()
-                .build()
-                .getOpenTelemetrySdk();
+    public ServletRegistrationBean<PrometheusMetricsServlet> gatewayMetricsPrometheusEndpoint() {
+        return new ServletRegistrationBean<>(new PrometheusMetricsServlet(), PATH_METRICS);
     }
 
     @Bean
-    public GatewayTelemetryService gatewayTelemetryService(OpenTelemetry openTelemetry, JsonSerde jsonSerde) {
-        return new GatewayTelemetryService(openTelemetry, jsonSerde);
+    public PrometheusRegistry deviceMetricsRegistry() {
+        return new PrometheusRegistry();
+    }
+
+    @Bean
+    public ServletRegistrationBean<PrometheusMetricsServlet> deviceMetricsPrometheusEndpoint(PrometheusRegistry deviceMetricsRegistry) {
+        return new ServletRegistrationBean<>(new PrometheusMetricsServlet(deviceMetricsRegistry), PATH_METRICS_DEVICES);
+    }
+
+    @Bean
+    public BacnetService bacnetService(JsonSerde jsonSerde) {
+        return new BacnetService(jsonSerde);
+    }
+
+    @Bean
+    public PrometheusTelemetryService prometheusTelemetryService(PrometheusRegistry deviceMetricsRegistry, BacnetService bacnetService) {
+        return new PrometheusTelemetryService(deviceMetricsRegistry, bacnetService);
     }
 
     @Bean
     public GatewaySynchronizationService gatewaySynchronizationService(
             Environment environment,
             RestClient.Builder restClientBuilder,
-            GatewayTelemetryService gatewayTelemetryService,
-            TaskScheduler taskScheduler) {
-        return new GatewaySynchronizationService(environment, restClientBuilder, gatewayTelemetryService, taskScheduler);
+            TaskScheduler taskScheduler,
+            PrometheusTelemetryService telemetryService) {
+        return new GatewaySynchronizationService(environment, restClientBuilder, taskScheduler, telemetryService);
     }
 }

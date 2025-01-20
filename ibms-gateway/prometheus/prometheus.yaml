@@ -1,0 +1,17 @@
+scrape_configs:
+  - job_name: ibms-gateway
+    metrics_path: /metrics
+    scrape_interval: 30s
+    static_configs:
+      - targets: [ ibms-gateway:9494 ]
+
+  - job_name: ibms-gateway-devices
+    metrics_path: /metrics/devices
+    scrape_interval: 30s
+    relabel_configs:
+      - source_labels: [ __address__ ]
+        target_label: __param_target
+      - source_labels: [ __param_target ]
+        target_label: instance
+      - target_label: __address__
+        replacement: ibms-gateway:9494

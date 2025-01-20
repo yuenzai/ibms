@@ -1,6 +1,9 @@
 package cn.ecosync.ibms.device.model;
 
 import cn.ecosync.ibms.bacnet.model.BacnetDataAcquisition;
+import cn.ecosync.ibms.metrics.PrometheusConfigurationProperties.ScrapeConfig;
+import cn.ecosync.ibms.metrics.PrometheusConfigurationProperties.ScrapeConfigs;
+import cn.ecosync.ibms.metrics.PrometheusConfigurationProperties.StaticConfig;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
@@ -11,6 +14,7 @@ import lombok.ToString;
 import org.springframework.util.Assert;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @ToString
@@ -21,6 +25,7 @@ public abstract class DeviceDataAcquisition implements IDeviceDataAcquisition {
     @NotNull
     @JsonUnwrapped
     private DeviceDataAcquisitionId dataAcquisitionId;
+    private Long scrapeInterval;
 
     protected DeviceDataAcquisition() {
     }
@@ -28,6 +33,11 @@ public abstract class DeviceDataAcquisition implements IDeviceDataAcquisition {
     protected DeviceDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId) {
         Assert.notNull(dataAcquisitionId, "dataAcquisitionId must not be null");
         this.dataAcquisitionId = dataAcquisitionId;
+    }
+
+    @Override
+    public Long getScrapeInterval() {
+        return scrapeInterval;
     }
 
     @Override
@@ -45,4 +55,14 @@ public abstract class DeviceDataAcquisition implements IDeviceDataAcquisition {
     public abstract DeviceDataAcquisition withDevices(List<? extends Device> devices);
 
     public abstract DeviceDataAcquisition toReference();
+
+    public ScrapeConfigs toScrapeConfig(String metricsPath) {
+        List<String> targets = getDevices().stream()
+                .map(Device::getDeviceId)
+                .map(DeviceId::toString)
+                .collect(Collectors.toList());
+        StaticConfig staticConfig = new StaticConfig(targets);
+        ScrapeConfig scrapeConfig = new ScrapeConfig(getDataAcquisitionId().toString(), metricsPath, getScrapeInterval(), staticConfig);
+        return new ScrapeConfigs(scrapeConfig);
+    }
 }
