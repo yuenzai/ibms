@@ -25,6 +25,7 @@ import io.prometheus.metrics.model.snapshots.MetricSnapshot;
 import io.prometheus.metrics.model.snapshots.MetricSnapshots;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.support.RestClientAdapter;
@@ -49,8 +50,11 @@ public class PrometheusTelemetryService implements MultiCollector {
     private final ObjectMapper yamlSerde;
     private final File deviceScrapeConfigFile;
 
-    public PrometheusTelemetryService(RestClient.Builder restClientBuilder, PrometheusRegistry deviceMetricsRegistry, BacnetService bacnetService) {
-        RestClient restClient = restClientBuilder.baseUrl("http://localhost:19090").build();
+    public PrometheusTelemetryService(
+            Environment environment, RestClient.Builder restClientBuilder,
+            PrometheusRegistry deviceMetricsRegistry, BacnetService bacnetService) {
+        String PROMETHEUS_ENDPOINT = environment.getProperty("PROMETHEUS_ENDPOINT", "0.0.0.0:9090");
+        RestClient restClient = restClientBuilder.baseUrl("http://" + PROMETHEUS_ENDPOINT).build();
         RestClientAdapter adapter = RestClientAdapter.create(restClient);
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
         this.prometheusService = factory.createClient(PrometheusService.class);

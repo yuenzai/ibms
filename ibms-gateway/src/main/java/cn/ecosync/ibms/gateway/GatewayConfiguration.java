@@ -39,16 +39,16 @@ public class GatewayConfiguration {
     }
 
     @Bean
-    public PrometheusTelemetryService prometheusTelemetryService(RestClient.Builder restClientBuilder, PrometheusRegistry deviceMetricsRegistry, BacnetService bacnetService) {
-        return new PrometheusTelemetryService(restClientBuilder, deviceMetricsRegistry, bacnetService);
+    public PrometheusTelemetryService prometheusTelemetryService(
+            Environment environment, RestClient.Builder restClientBuilder,
+            PrometheusRegistry deviceMetricsRegistry, BacnetService bacnetService) {
+        return new PrometheusTelemetryService(environment, restClientBuilder, deviceMetricsRegistry, bacnetService);
     }
 
     @Bean
     public GatewaySynchronizationService gatewaySynchronizationService(
-            Environment environment,
-            RestClient.Builder restClientBuilder,
-            TaskScheduler taskScheduler,
-            PrometheusTelemetryService telemetryService) {
+            Environment environment, RestClient.Builder restClientBuilder,
+            TaskScheduler taskScheduler, PrometheusTelemetryService telemetryService) {
         return new GatewaySynchronizationService(environment, restClientBuilder, taskScheduler, telemetryService);
     }
 }

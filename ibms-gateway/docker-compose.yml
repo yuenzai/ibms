@@ -10,7 +10,7 @@ services:
       - ./prometheus/:/etc/prometheus/
       - prometheus-storage:/prometheus
     command:
-#      - --web.listen-address=0.0.0.0:19090
+      - --web.listen-address=${PROMETHEUS_ENDPOINT:-0.0.0.0:9090}
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.path=/prometheus
       - --web.enable-lifecycle
