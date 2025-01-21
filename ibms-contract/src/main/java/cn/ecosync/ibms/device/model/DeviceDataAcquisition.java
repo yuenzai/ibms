@@ -30,9 +30,10 @@ public abstract class DeviceDataAcquisition implements IDeviceDataAcquisition {
     protected DeviceDataAcquisition() {
     }
 
-    protected DeviceDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId) {
+    protected DeviceDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId, Long scrapeInterval) {
         Assert.notNull(dataAcquisitionId, "dataAcquisitionId must not be null");
         this.dataAcquisitionId = dataAcquisitionId;
+        this.scrapeInterval = scrapeInterval;
     }
 
     @Override
@@ -49,6 +50,8 @@ public abstract class DeviceDataAcquisition implements IDeviceDataAcquisition {
     public abstract DeviceDataAcquisition addDeviceReferences(List<Device> devices);
 
     public abstract DeviceDataAcquisition removeDeviceReferences(List<Device> devices);
+
+    public abstract DeviceDataAcquisition withScrapeInterval(Long scrapeInterval);
 
     public abstract DeviceDataAcquisition withSchemas(DeviceSchemas schemas);
 

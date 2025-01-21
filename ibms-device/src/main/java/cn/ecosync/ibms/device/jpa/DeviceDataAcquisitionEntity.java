@@ -50,6 +50,10 @@ public class DeviceDataAcquisitionEntity extends ConcurrencySafeEntity implement
         return dataAcquisition.getDevices();
     }
 
+    public void save(DeviceDataAcquisition dataAcquisition) {
+        this.dataAcquisition = dataAcquisition;
+    }
+
     public void add(Collection<DeviceEntity> deviceEntities) {
         if (CollectionUtils.isEmpty(deviceEntities)) return;
         for (DeviceEntity deviceEntity : deviceEntities) {

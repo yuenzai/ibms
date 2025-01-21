@@ -28,7 +28,7 @@ public abstract class DeviceSchemas implements IDeviceSchemas {
         this.schemasId = schemasId;
     }
 
-    public abstract DeviceDataAcquisition newDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId);
+    public abstract DeviceDataAcquisition newDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId, Long scrapeInterval);
 
     public abstract DeviceSchemas toReference();
 }

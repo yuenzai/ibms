@@ -12,4 +12,5 @@ public class AddDataAcquisitionCommand implements Command {
     private String dataAcquisitionCode;
     @NotBlank
     private String schemasCode;
+    private Long scrapeInterval;
 }

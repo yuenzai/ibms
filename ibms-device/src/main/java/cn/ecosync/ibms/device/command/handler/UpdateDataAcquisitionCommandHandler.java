@@ -31,6 +31,8 @@ public class UpdateDataAcquisitionCommandHandler implements CommandHandler<Updat
         DeviceDataAcquisitionEntity dataAcquisitionEntity = dataAcquisitionRepository.findByDataAcquisitionId(dataAcquisitionId).orElse(null);
         Assert.notNull(dataAcquisitionEntity, "DataAcquisitionEntity not exists");
 
+        dataAcquisitionEntity.save(dataAcquisitionEntity.getDataAcquisition().withScrapeInterval(command.getScrapeInterval()));
+
         UpdateDataAcquisitionCommand.Devices updateDeviceParams = command.getDevices().orElse(null);
         if (updateDeviceParams == null) return;
         Set<DeviceId> deviceIds = updateDeviceParams.getDeviceCodes().stream()

@@ -24,8 +24,8 @@ public class BacnetSchemas extends DeviceSchemas {
     }
 
     @Override
-    public BacnetDataAcquisition newDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId) {
-        return new BacnetDataAcquisition(dataAcquisitionId, toReference(), Collections.emptyList());
+    public BacnetDataAcquisition newDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId, Long scrapeInterval) {
+        return new BacnetDataAcquisition(dataAcquisitionId, scrapeInterval, toReference(), Collections.emptyList());
     }
 
     public BacnetSchemas(DeviceSchemasId schemasId, List<BacnetSchema> schemas) {

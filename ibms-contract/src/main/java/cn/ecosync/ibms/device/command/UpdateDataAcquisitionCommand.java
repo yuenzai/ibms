@@ -17,6 +17,7 @@ import java.util.Optional;
 public class UpdateDataAcquisitionCommand implements Command {
     @NotBlank
     private String dataAcquisitionCode;
+    private Long scrapeInterval;
     @Valid
     private Devices devices;
 

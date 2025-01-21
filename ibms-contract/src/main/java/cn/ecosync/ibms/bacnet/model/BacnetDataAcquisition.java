@@ -18,11 +18,11 @@ public class BacnetDataAcquisition extends DeviceDataAcquisition {
     }
 
     private BacnetDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId) {
-        super(dataAcquisitionId);
+        super(dataAcquisitionId, null);
     }
 
-    public BacnetDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId, BacnetSchemas bacnetSchemas, List<BacnetDevice> bacnetDevices) {
-        super(dataAcquisitionId);
+    public BacnetDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId, Long scrapeInterval, BacnetSchemas bacnetSchemas, List<BacnetDevice> bacnetDevices) {
+        super(dataAcquisitionId, scrapeInterval);
         this.schemas = bacnetSchemas;
         this.devices = bacnetDevices;
     }
@@ -62,12 +62,17 @@ public class BacnetDataAcquisition extends DeviceDataAcquisition {
     }
 
     @Override
+    public DeviceDataAcquisition withScrapeInterval(Long scrapeInterval) {
+        return new BacnetDataAcquisition(getDataAcquisitionId(), scrapeInterval, getSchemas(), getDevices());
+    }
+
+    @Override
     public BacnetDataAcquisition withSchemas(DeviceSchemas schemas) {
         BacnetSchemas bacnetSchemas = Optional.ofNullable(schemas)
                 .filter(BacnetSchemas.class::isInstance)
                 .map(BacnetSchemas.class::cast)
                 .orElse(null);
-        return new BacnetDataAcquisition(getDataAcquisitionId(), bacnetSchemas, getDevices());
+        return new BacnetDataAcquisition(getDataAcquisitionId(), getScrapeInterval(), bacnetSchemas, getDevices());
     }
 
     @Override
@@ -75,7 +80,7 @@ public class BacnetDataAcquisition extends DeviceDataAcquisition {
         List<BacnetDevice> bacnetDevices = devices.stream()
                 .map(BacnetDevice.class::cast)
                 .collect(Collectors.toList());
-        return new BacnetDataAcquisition(getDataAcquisitionId(), getSchemas(), bacnetDevices);
+        return new BacnetDataAcquisition(getDataAcquisitionId(), getScrapeInterval(), getSchemas(), bacnetDevices);
     }
 
     private Stream<BacnetDevice> convertToReference(List<? extends Device> devices) {
