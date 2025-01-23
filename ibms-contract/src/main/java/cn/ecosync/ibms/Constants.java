@@ -3,6 +3,8 @@ package cn.ecosync.ibms;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PropertyPlaceholderHelper;
 
+import java.util.regex.Pattern;
+
 public class Constants {
     public static final String AGGREGATE_TYPE_DEVICE = "outbox-device";
     public static final String AGGREGATE_TYPE_DEVICE_DAQ = "outbox-device-daq";
@@ -12,4 +14,7 @@ public class Constants {
 
     public static final PropertyPlaceholderHelper PROPERTY_PLACEHOLDER = new PropertyPlaceholderHelper("{", "}");
     public static final AntPathMatcher PATH_MATCHER = new AntPathMatcher();
+
+    public static final String REGEX_CODE = "[a-zA-Z_]\\w*";
+    public static final Pattern PATTERN_CODE = Pattern.compile(REGEX_CODE);
 }

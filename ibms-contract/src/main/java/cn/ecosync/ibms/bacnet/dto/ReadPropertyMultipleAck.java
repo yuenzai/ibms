@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.bacnet.dto;
 
 import cn.ecosync.iframework.util.CollectionUtils;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -35,13 +35,15 @@ public class ReadPropertyMultipleAck {
 
     @ToString
     public static class BacnetObjectPropertiesResult {
-        @JsonUnwrapped
-        private BacnetObject bacnetObject;
+        @NotNull
+        private Integer objectType;
+        @NotNull
+        private Integer objectInstance;
         @Getter
         private List<BacnetPropertyResult> properties;
 
         private BacnetObject getBacnetObject() {
-            return bacnetObject;
+            return new BacnetObject(BacnetObjectType.of(objectType), objectInstance);
         }
 
         private Map<BacnetProperty, BacnetPropertyResult> toPropertyMap() {

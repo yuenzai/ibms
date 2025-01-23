@@ -11,9 +11,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.util.Assert;
 
-import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "device")
@@ -29,8 +27,8 @@ public class DeviceEntity extends ConcurrencySafeEntity implements IDevice {
     @Column(name = "device", nullable = false)
     private Device device;
 
-    @ManyToMany(mappedBy = "deviceEntities")
-    private Set<DeviceDataAcquisitionEntity> dataAcquisitionEntities = new LinkedHashSet<>();
+//    @ManyToMany(mappedBy = "deviceEntities")
+//    private Set<DeviceDataAcquisitionEntity> dataAcquisitionEntities = new LinkedHashSet<>();
 
     protected DeviceEntity() {
     }
@@ -50,19 +48,19 @@ public class DeviceEntity extends ConcurrencySafeEntity implements IDevice {
         this.device = device;
     }
 
-    public void clear() {
-        dataAcquisitionEntities.clear();
-    }
-
-    void add(DeviceDataAcquisitionEntity dataAcquisitionEntity) {
-        Assert.notNull(dataAcquisitionEntity, "dataAcquisitionEntity must not be null");
-        dataAcquisitionEntities.add(dataAcquisitionEntity);
-    }
-
-    void remove(DeviceDataAcquisitionEntity dataAcquisitionEntity) {
-        Assert.notNull(dataAcquisitionEntity, "dataAcquisitionEntity must not be null");
-        dataAcquisitionEntities.remove(dataAcquisitionEntity);
-    }
+//    public void clear() {
+//        dataAcquisitionEntities.clear();
+//    }
+//
+//    void add(DeviceDataAcquisitionEntity dataAcquisitionEntity) {
+//        Assert.notNull(dataAcquisitionEntity, "dataAcquisitionEntity must not be null");
+//        dataAcquisitionEntities.add(dataAcquisitionEntity);
+//    }
+//
+//    void remove(DeviceDataAcquisitionEntity dataAcquisitionEntity) {
+//        Assert.notNull(dataAcquisitionEntity, "dataAcquisitionEntity must not be null");
+//        dataAcquisitionEntities.remove(dataAcquisitionEntity);
+//    }
 
     @Override
     public boolean equals(Object o) {

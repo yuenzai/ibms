@@ -23,16 +23,12 @@ public class BacnetObject {
         this.objectInstance = objectInstance;
     }
 
-    public String getObjectTypeName() {
-        return objectType.getName();
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof BacnetObject)) return false;
         BacnetObject that = (BacnetObject) o;
-        return objectType == that.objectType && Objects.equals(objectInstance, that.objectInstance);
+        return this.objectType == that.objectType && Objects.equals(this.objectInstance, that.objectInstance);
     }
 
     @Override
@@ -42,6 +38,6 @@ public class BacnetObject {
 
     @Override
     public String toString() {
-        return objectType.getName() + "-" + objectInstance;
+        return objectType.toString() + "_" + objectInstance;
     }
 }

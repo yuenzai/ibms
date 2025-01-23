@@ -1,5 +1,6 @@
 package cn.ecosync.ibms.bacnet.dto;
 
+import cn.ecosync.ibms.bacnet.model.BacnetDataPoint;
 import cn.ecosync.iframework.util.CollectionUtils;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import jakarta.validation.Valid;
@@ -8,10 +9,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @ToString
@@ -23,6 +21,14 @@ public class BacnetObjectProperties {
     private List<@Pattern(regexp = BacnetProperty.REGEXP, message = "REGEXP not match") String> properties;
 
     protected BacnetObjectProperties() {
+    }
+
+    public BacnetObjectProperties(BacnetDataPoint bacnetDataPoint) {
+        this(bacnetDataPoint.getBacnetObject());
+    }
+
+    public BacnetObjectProperties(BacnetObject bacnetObject) {
+        this(bacnetObject, Collections.singletonList(BacnetProperty.PROPERTY_PRESENT_VALUE.toString()));
     }
 
     public BacnetObjectProperties(BacnetObject bacnetObject, List<String> properties) {

@@ -1,9 +1,8 @@
 package cn.ecosync.ibms.device.model;
 
 import cn.ecosync.ibms.bacnet.model.BacnetDataAcquisition;
-import cn.ecosync.ibms.metrics.PrometheusConfigurationProperties.RelabelConfig;
-import cn.ecosync.ibms.metrics.PrometheusConfigurationProperties.ScrapeConfig;
-import cn.ecosync.ibms.metrics.PrometheusConfigurationProperties.StaticConfig;
+import cn.ecosync.ibms.metrics.Instrument;
+import cn.ecosync.iframework.serde.JsonSerde;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
@@ -13,25 +12,27 @@ import lombok.Getter;
 import lombok.ToString;
 import org.springframework.util.Assert;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.function.BiConsumer;
 
 @Getter
 @ToString
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
 @JsonSubTypes(@JsonSubTypes.Type(value = BacnetDataAcquisition.class, name = "BACNET"))
-public abstract class DeviceDataAcquisition implements IDeviceDataAcquisition {
+public class DeviceDataAcquisition implements IDeviceDataAcquisition {
     @Valid
-    @NotNull
     @JsonUnwrapped
     private DeviceDataAcquisitionId dataAcquisitionId;
+    @NotNull
     private Long scrapeInterval;
 
     protected DeviceDataAcquisition() {
     }
 
-    protected DeviceDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId, Long scrapeInterval) {
+    public DeviceDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId, Long scrapeInterval) {
         Assert.notNull(dataAcquisitionId, "dataAcquisitionId must not be null");
+        Assert.notNull(scrapeInterval, "scrapeInterval must not be null");
         this.dataAcquisitionId = dataAcquisitionId;
         this.scrapeInterval = scrapeInterval;
     }
@@ -42,31 +43,24 @@ public abstract class DeviceDataAcquisition implements IDeviceDataAcquisition {
     }
 
     @Override
-    public abstract DeviceSchemas getSchemas();
+    public Collection<? extends DeviceDataPoint> getDataPoints() {
+        return Collections.emptyList();
+    }
 
-    @Override
-    public abstract List<? extends Device> getDevices();
+    public DeviceDataAcquisition withScrapeInterval(Long scrapeInterval) {
+        return new DeviceDataAcquisition(getDataAcquisitionId(), scrapeInterval);
+    }
 
-    public abstract DeviceDataAcquisition addDeviceReferences(List<Device> devices);
+    public final DeviceDataAcquisition toReference() {
+        return newReference(getDataAcquisitionId());
+    }
 
-    public abstract DeviceDataAcquisition removeDeviceReferences(List<Device> devices);
+    public static DeviceDataAcquisition newReference(DeviceDataAcquisitionId dataAcquisitionId) {
+        DeviceDataAcquisition reference = new DeviceDataAcquisition();
+        reference.dataAcquisitionId = dataAcquisitionId;
+        return reference;
+    }
 
-    public abstract DeviceDataAcquisition withScrapeInterval(Long scrapeInterval);
-
-    public abstract DeviceDataAcquisition withSchemas(DeviceSchemas schemas);
-
-    public abstract DeviceDataAcquisition withDevices(List<? extends Device> devices);
-
-    public abstract DeviceDataAcquisition toReference();
-
-    public ScrapeConfig toScrapeConfig(String metricsPath, String replacement) {
-        List<String> targets = getDevices().stream()
-                .map(Device::getDeviceId)
-                .map(DeviceId::toString)
-                .collect(Collectors.toList());
-        String jobName = getDataAcquisitionId().toString();
-        StaticConfig staticConfig = new StaticConfig(targets);
-        List<RelabelConfig> relabelConfigs = RelabelConfig.toRelabelConfigs(replacement);
-        return new ScrapeConfig(jobName, metricsPath, getScrapeInterval(), relabelConfigs, staticConfig);
+    public void newInstruments(JsonSerde jsonSerde, BiConsumer<String, Instrument> consumer) {
     }
 }

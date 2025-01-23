@@ -32,7 +32,7 @@ public class BacnetObjectProperty {
     public boolean equals(Object o) {
         if (!(o instanceof BacnetObjectProperty)) return false;
         BacnetObjectProperty that = (BacnetObjectProperty) o;
-        return Objects.equals(bacnetObject, that.bacnetObject);
+        return Objects.equals(this.bacnetObject, that.bacnetObject);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package cn.ecosync.ibms.bacnet.model;
 
-import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
 import cn.ecosync.ibms.device.model.DeviceSchemas;
 import cn.ecosync.ibms.device.model.DeviceSchemasId;
 import cn.ecosync.iframework.util.CollectionUtils;
@@ -8,7 +7,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
 import lombok.ToString;
 
-import java.util.Collections;
 import java.util.List;
 
 @ToString(callSuper = true)
@@ -21,11 +19,6 @@ public class BacnetSchemas extends DeviceSchemas {
 
     protected BacnetSchemas(DeviceSchemasId schemasId) {
         super(schemasId);
-    }
-
-    @Override
-    public BacnetDataAcquisition newDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId, Long scrapeInterval) {
-        return new BacnetDataAcquisition(dataAcquisitionId, scrapeInterval, toReference(), Collections.emptyList());
     }
 
     public BacnetSchemas(DeviceSchemasId schemasId, List<BacnetSchema> schemas) {

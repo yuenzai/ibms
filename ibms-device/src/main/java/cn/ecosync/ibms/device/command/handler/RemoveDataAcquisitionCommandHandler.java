@@ -1,7 +1,6 @@
 package cn.ecosync.ibms.device.command.handler;
 
 import cn.ecosync.ibms.device.command.RemoveDataAcquisitionCommand;
-import cn.ecosync.ibms.device.jpa.DeviceDataAcquisitionEntity;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
 import cn.ecosync.ibms.device.repository.jpa.DeviceDataAcquisitionJpaRepository;
 import cn.ecosync.iframework.command.CommandHandler;
@@ -18,10 +17,7 @@ public class RemoveDataAcquisitionCommandHandler implements CommandHandler<Remov
     @Transactional
     public void handle(RemoveDataAcquisitionCommand command) {
         DeviceDataAcquisitionId dataAcquisitionId = new DeviceDataAcquisitionId(command.getDataAcquisitionCode());
-        DeviceDataAcquisitionEntity dataAcquisitionEntity = dataAcquisitionRepository.findByDataAcquisitionId(dataAcquisitionId).orElse(null);
-        if (dataAcquisitionEntity != null) {
-            dataAcquisitionEntity.clear();
-            dataAcquisitionRepository.delete(dataAcquisitionEntity);
-        }
+        dataAcquisitionRepository.findByDataAcquisitionId(dataAcquisitionId)
+                .ifPresent(dataAcquisitionRepository::delete);
     }
 }

@@ -54,7 +54,7 @@ public class BacnetRestController {
     @PostMapping("/device-object-ids/list-search")
     public List<BacnetObject> getDeviceObjectIds(@RequestBody @Validated ListSearchBacnetDeviceObjectIdsQuery query) {
         Integer deviceInstance = query.getDeviceInstance();
-        BacnetObject deviceObject = new BacnetObject(BacnetObjectType.OBJECT_DEVICE, deviceInstance);
+        BacnetObject deviceObject = new BacnetObject(BacnetObjectType.DEVICE, deviceInstance);
         BacnetProperty objectIdsProperty = new BacnetProperty(PROP_OBJECT_LIST, null);
         BacnetObjectProperties objectProperties = new BacnetObjectProperties(deviceObject, Collections.singletonList(objectIdsProperty.toString()));
         BacnetReadPropertyMultipleService service = new BacnetReadPropertyMultipleService(deviceInstance, Collections.singleton(objectProperties));

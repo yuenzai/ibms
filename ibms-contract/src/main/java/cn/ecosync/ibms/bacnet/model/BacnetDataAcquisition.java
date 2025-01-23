@@ -1,91 +1,46 @@
 package cn.ecosync.ibms.bacnet.model;
 
-import cn.ecosync.ibms.device.model.*;
+import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
+import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
+import cn.ecosync.ibms.metrics.Instrument;
+import cn.ecosync.iframework.serde.JsonSerde;
 import cn.ecosync.iframework.util.CollectionUtils;
 import lombok.ToString;
 
-import java.util.*;
-import java.util.function.Function;
+import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @ToString(callSuper = true)
 public class BacnetDataAcquisition extends DeviceDataAcquisition {
-    private BacnetSchemas schemas;
-    private List<BacnetDevice> devices;
+    private List<BacnetDataPoint> dataPoints;
 
     protected BacnetDataAcquisition() {
     }
 
-    private BacnetDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId) {
-        super(dataAcquisitionId, null);
+    public BacnetDataAcquisition(DeviceDataAcquisition dataAcquisition, List<BacnetDataPoint> dataPoints) {
+        this(dataAcquisition.getDataAcquisitionId(), dataAcquisition.getScrapeInterval(), dataPoints);
     }
 
-    public BacnetDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId, Long scrapeInterval, BacnetSchemas bacnetSchemas, List<BacnetDevice> bacnetDevices) {
+    public BacnetDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId, Long scrapeInterval, List<BacnetDataPoint> dataPoints) {
         super(dataAcquisitionId, scrapeInterval);
-        this.schemas = bacnetSchemas;
-        this.devices = bacnetDevices;
+        this.dataPoints = dataPoints;
     }
 
     @Override
-    public BacnetSchemas getSchemas() {
-        return schemas;
+    public List<BacnetDataPoint> getDataPoints() {
+        return CollectionUtils.nullSafeOf(dataPoints);
     }
 
     @Override
-    public List<BacnetDevice> getDevices() {
-        return CollectionUtils.nullSafeOf(devices);
+    public BacnetDataAcquisition withScrapeInterval(Long scrapeInterval) {
+        return new BacnetDataAcquisition(getDataAcquisitionId(), scrapeInterval, getDataPoints());
     }
 
     @Override
-    public BacnetDataAcquisition addDeviceReferences(List<Device> devices) {
-        Stream<BacnetDevice> oldReferences = convertToReference(getDevices());
-        Stream<BacnetDevice> newReferences = convertToReference(devices);
-        List<BacnetDevice> references = Stream.concat(oldReferences, newReferences)
-                .collect(Collectors.toList());
-        return withDevices(references);
-    }
-
-    @Override
-    public BacnetDataAcquisition removeDeviceReferences(List<Device> devices) {
-        Map<DeviceId, BacnetDevice> oldReferences = convertToReference(getDevices())
-                .collect(Collectors.toMap(Device::getDeviceId, Function.identity(), (foo, bar) -> bar, LinkedHashMap::new));
-        convertToReference(devices)
-                .map(Device::getDeviceId)
-                .forEach(oldReferences::remove);
-        return withDevices(new ArrayList<>(oldReferences.values()));
-    }
-
-    @Override
-    public DeviceDataAcquisition toReference() {
-        return new BacnetDataAcquisition(getDataAcquisitionId());
-    }
-
-    @Override
-    public DeviceDataAcquisition withScrapeInterval(Long scrapeInterval) {
-        return new BacnetDataAcquisition(getDataAcquisitionId(), scrapeInterval, getSchemas(), getDevices());
-    }
-
-    @Override
-    public BacnetDataAcquisition withSchemas(DeviceSchemas schemas) {
-        BacnetSchemas bacnetSchemas = Optional.ofNullable(schemas)
-                .filter(BacnetSchemas.class::isInstance)
-                .map(BacnetSchemas.class::cast)
-                .orElse(null);
-        return new BacnetDataAcquisition(getDataAcquisitionId(), getScrapeInterval(), bacnetSchemas, getDevices());
-    }
-
-    @Override
-    public BacnetDataAcquisition withDevices(List<? extends Device> devices) {
-        List<BacnetDevice> bacnetDevices = devices.stream()
-                .map(BacnetDevice.class::cast)
-                .collect(Collectors.toList());
-        return new BacnetDataAcquisition(getDataAcquisitionId(), getScrapeInterval(), getSchemas(), bacnetDevices);
-    }
-
-    private Stream<BacnetDevice> convertToReference(List<? extends Device> devices) {
-        return CollectionUtils.nullSafeOf(devices).stream()
-                .map(BacnetDevice.class::cast)
-                .map(BacnetDevice::toReference);
+    public void newInstruments(JsonSerde jsonSerde, BiConsumer<String, Instrument> consumer) {
+        getDataPoints().stream()
+                .collect(Collectors.groupingBy(in -> in.getDataPointId().getDeviceCode()))
+                .forEach((deviceCode, dataPoints) -> consumer.accept(deviceCode, new BacnetInstrumentation(dataPoints, jsonSerde)));
     }
 }

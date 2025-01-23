@@ -5,10 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 @ToString
@@ -55,23 +52,23 @@ public class PrometheusConfigurationProperties {
     @Getter
     @ToString
     public static class StaticConfig {
-        private List<String> targets;
+        private Collection<String> targets;
         @JsonInclude(JsonInclude.Include.NON_EMPTY)
         private Map<String, String> labels;
 
         protected StaticConfig() {
         }
 
-        public StaticConfig(List<String> targets) {
+        public StaticConfig(Collection<String> targets) {
             this(targets, Collections.emptyMap());
         }
 
-        public StaticConfig(List<String> targets, Map<String, String> labels) {
+        public StaticConfig(Collection<String> targets, Map<String, String> labels) {
             this.targets = targets;
             this.labels = labels;
         }
 
-        public List<String> getTargets() {
+        public Collection<String> getTargets() {
             return CollectionUtils.nullSafeOf(targets);
         }
 

@@ -10,7 +10,7 @@ import java.util.Optional;
 @Getter
 @ToString
 public class ReadPropertyAck {
-    private BacnetObjectType objectType;
+    private Integer objectType;
     private Integer objectInstance;
     private BacnetPropertyId propertyIdentifier;
     private Integer propertyArrayIndex;

@@ -1,7 +1,5 @@
 package cn.ecosync.ibms.bacnet.dto;
 
-import cn.ecosync.ibms.bacnet.model.BacnetSchema;
-import cn.ecosync.ibms.bacnet.model.BacnetSchemas;
 import cn.ecosync.iframework.util.CollectionUtils;
 import lombok.Getter;
 import lombok.ToString;
@@ -61,12 +59,5 @@ public class BacnetReadPropertyMultipleService {
             prop += "[" + index + "]";
         }
         return prop;
-    }
-
-    public static BacnetReadPropertyMultipleService newInstance(Integer deviceInstance, BacnetSchemas bacnetSchemas) {
-        Collection<BacnetObjectProperties> objectPropertiesCollection = CollectionUtils.nullSafeOf(bacnetSchemas.getSchemas()).stream()
-                .map(BacnetSchema::getSchemaProperties)
-                .collect(Collectors.toSet());
-        return new BacnetReadPropertyMultipleService(deviceInstance, objectPropertiesCollection);
     }
 }

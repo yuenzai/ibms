@@ -28,7 +28,7 @@ public class RemoveDeviceCommandHandler implements CommandHandler<RemoveDeviceCo
                 .collect(Collectors.toSet());
         List<DeviceEntity> deviceEntities = deviceRepository.findByDeviceIdIn(deviceIds);
         for (DeviceEntity deviceEntity : deviceEntities) {
-            deviceEntity.clear();
+//            deviceEntity.clear();
             deviceRepository.delete(deviceEntity);
         }
     }

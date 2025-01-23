@@ -1,6 +1,5 @@
 package cn.ecosync.ibms.gateway;
 
-import cn.ecosync.ibms.bacnet.service.BacnetService;
 import cn.ecosync.iframework.serde.JsonSerde;
 import io.prometheus.metrics.exporter.servlet.jakarta.PrometheusMetricsServlet;
 import io.prometheus.metrics.model.registry.PrometheusRegistry;
@@ -34,15 +33,10 @@ public class GatewayConfiguration {
     }
 
     @Bean
-    public BacnetService bacnetService(JsonSerde jsonSerde) {
-        return new BacnetService(jsonSerde);
-    }
-
-    @Bean
     public PrometheusTelemetryService prometheusTelemetryService(
             Environment environment, RestClient.Builder restClientBuilder,
-            PrometheusRegistry deviceMetricsRegistry, BacnetService bacnetService) {
-        return new PrometheusTelemetryService(environment, restClientBuilder, deviceMetricsRegistry, bacnetService);
+            PrometheusRegistry deviceMetricsRegistry, JsonSerde jsonSerde) {
+        return new PrometheusTelemetryService(environment, restClientBuilder, deviceMetricsRegistry, jsonSerde);
     }
 
     @Bean
