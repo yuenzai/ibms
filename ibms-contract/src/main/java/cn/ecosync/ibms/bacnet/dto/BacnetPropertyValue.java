@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = BacnetPropertyValue.SIGNED_INT.class, name = "3"),
         @JsonSubTypes.Type(value = BacnetPropertyValue.REAL.class, name = "4"),
         @JsonSubTypes.Type(value = BacnetPropertyValue.DOUBLE.class, name = "5"),
+        @JsonSubTypes.Type(value = BacnetPropertyValue.ENUMERATED.class, name = "9"),
         @JsonSubTypes.Type(value = BacnetPropertyValue.OBJECT_ID.class, name = "12"),
 })
 public interface BacnetPropertyValue {
@@ -156,6 +157,30 @@ public interface BacnetPropertyValue {
         @Override
         public String getValueType() {
             return "5";
+        }
+
+        @Override
+        public String toString() {
+            return value.toString();
+        }
+    }
+
+    class ENUMERATED implements BacnetPropertyValue {
+        private Long value;
+
+        @Override
+        public Long getValue() {
+            return value;
+        }
+
+        @Override
+        public Number getValueAsNumber() {
+            return value;
+        }
+
+        @Override
+        public String getValueType() {
+            return "9";
         }
 
         @Override

@@ -38,7 +38,7 @@ public class PrometheusTelemetryService implements MultiCollector {
     private static final Logger log = LoggerFactory.getLogger(PrometheusTelemetryService.class);
     public static final String PATH_METRICS = "/metrics";
     public static final String PATH_METRICS_DEVICES = "/metrics/devices";
-    public static final String POINT_INFO_METRIC_NAME = "point_info";
+    public static final String POINT_INFO_METRIC_NAME = "point";
 
     private final String serverPort;
     private final PrometheusService prometheusService;

@@ -23,7 +23,7 @@ public class ReadPropertyMultipleAck {
 
     public Map<BacnetObject, Map<BacnetProperty, BacnetPropertyResult>> toMap() {
         return CollectionUtils.nullSafeOf(results).stream()
-                .collect(Collectors.toMap(BacnetObjectPropertiesResult::getBacnetObject, BacnetObjectPropertiesResult::toPropertyMap));
+                .collect(Collectors.toMap(BacnetObjectPropertiesResult::toBacnetObject, BacnetObjectPropertiesResult::toPropertyMap));
     }
 
     public static ReadPropertyMultipleAck nullInstance(Integer deviceInstance) {
@@ -33,16 +33,16 @@ public class ReadPropertyMultipleAck {
         return nullInstance;
     }
 
+    @Getter
     @ToString
     public static class BacnetObjectPropertiesResult {
         @NotNull
         private Integer objectType;
         @NotNull
         private Integer objectInstance;
-        @Getter
         private List<BacnetPropertyResult> properties;
 
-        private BacnetObject getBacnetObject() {
+        private BacnetObject toBacnetObject() {
             return new BacnetObject(BacnetObjectType.of(objectType), objectInstance);
         }
 

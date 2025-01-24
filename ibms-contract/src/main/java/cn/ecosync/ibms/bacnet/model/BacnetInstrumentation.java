@@ -89,7 +89,7 @@ public class BacnetInstrumentation implements Instrument {
         process.waitFor();
         int exitValue = process.exitValue();
         if (exitValue != 0) log.error("{}", stderr);
-        log.debug("command: {}, exitValue: {}\nstdout:\n{}\nstderr:\n{}", command, exitValue, stdout, stderr);
+        log.info("command: {}, exitValue: {}\nstdout:\n{}\nstderr:\n{}", command, exitValue, stdout, stderr);
         if (StringUtils.hasText(stderr)) {
             throw new RuntimeException("ReadPropertyMultiple occurred error: " + stderr);
         }
