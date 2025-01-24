@@ -1,7 +1,5 @@
 package cn.ecosync.ibms.device.model;
 
-import com.fasterxml.jackson.annotation.JsonKey;
-import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.validation.constraints.AssertTrue;
 import lombok.Getter;
 import lombok.ToString;
@@ -14,9 +12,7 @@ import static cn.ecosync.ibms.Constants.PATTERN_CODE;
 @Getter
 @ToString
 public class DeviceDataPointLabel {
-    @JsonKey
     private String name;
-    @JsonValue
     private String value;
 
     protected DeviceDataPointLabel() {
