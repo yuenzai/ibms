@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -24,13 +23,6 @@ public class ReadPropertyMultipleAck {
     public Map<BacnetObject, Map<BacnetProperty, BacnetPropertyResult>> toMap() {
         return CollectionUtils.nullSafeOf(results).stream()
                 .collect(Collectors.toMap(BacnetObjectPropertiesResult::toBacnetObject, BacnetObjectPropertiesResult::toPropertyMap));
-    }
-
-    public static ReadPropertyMultipleAck nullInstance(Integer deviceInstance) {
-        ReadPropertyMultipleAck nullInstance = new ReadPropertyMultipleAck();
-        nullInstance.deviceInstance = deviceInstance;
-        nullInstance.results = Collections.emptyList();
-        return nullInstance;
     }
 
     @Getter

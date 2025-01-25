@@ -9,7 +9,6 @@ import lombok.ToString;
 import java.util.List;
 import java.util.function.Consumer;
 
-//todo 改成只接收单值属性，也就是说如果属性是数组型的，必须在 readpropm 命令里指定 index (cn.ecosync.ibms.bacnet.dto.BacnetProperty.propertyArrayIndex)
 @Getter
 @ToString
 public class BacnetPropertyResult implements Consumer<AttributesBuilder> {

@@ -1,13 +1,14 @@
 package cn.ecosync.ibms.bacnet.controller;
 
+import cn.ecosync.ibms.JsonSerdeContextHolder;
 import cn.ecosync.ibms.bacnet.command.BacnetWritePropertyCommand;
 import cn.ecosync.ibms.bacnet.dto.*;
-import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleBatchQuery;
-import cn.ecosync.ibms.bacnet.query.BacnetReadPropertyMultipleQuery;
+import cn.ecosync.ibms.bacnet.model.BacnetInstrumentation;
 import cn.ecosync.ibms.bacnet.query.BacnetWhoIsQuery;
 import cn.ecosync.ibms.bacnet.query.ListSearchBacnetDeviceObjectIdsQuery;
 import cn.ecosync.iframework.command.CommandBus;
 import cn.ecosync.iframework.query.QueryBus;
+import cn.ecosync.iframework.serde.JsonSerde;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -28,21 +29,12 @@ import static cn.ecosync.ibms.bacnet.dto.BacnetPropertyId.PROP_OBJECT_LIST;
 @RequiredArgsConstructor
 @RequestMapping("/bacnet")
 public class BacnetRestController {
+    private final JsonSerde jsonSerde;
     private final CommandBus commandBus;
     private final QueryBus queryBus;
 
     @PostMapping("/service/who-is")
     public List<BacnetDeviceAddress> execute(@RequestBody @Validated BacnetWhoIsQuery query) {
-        return queryBus.execute(query);
-    }
-
-    @PostMapping("/service/read-property-multiple")
-    public ReadPropertyMultipleAck execute(@RequestBody @Validated BacnetReadPropertyMultipleQuery query) {
-        return queryBus.execute(query);
-    }
-
-    @PostMapping("/service/read-property-multiple/batch")
-    public List<ReadPropertyMultipleAck> execute(@RequestBody @Validated BacnetReadPropertyMultipleBatchQuery query) {
         return queryBus.execute(query);
     }
 
@@ -55,13 +47,14 @@ public class BacnetRestController {
     public List<BacnetObject> getDeviceObjectIds(@RequestBody @Validated ListSearchBacnetDeviceObjectIdsQuery query) {
         Integer deviceInstance = query.getDeviceInstance();
         BacnetObject deviceObject = new BacnetObject(BacnetObjectType.DEVICE, deviceInstance);
-        BacnetProperty objectIdsProperty = new BacnetProperty(PROP_OBJECT_LIST, null);
-        BacnetObjectProperties objectProperties = new BacnetObjectProperties(deviceObject, Collections.singletonList(objectIdsProperty.toString()));
-        BacnetReadPropertyMultipleService service = new BacnetReadPropertyMultipleService(deviceInstance, Collections.singleton(objectProperties));
-        BacnetReadPropertyMultipleQuery readpropmQuery = new BacnetReadPropertyMultipleQuery(service);
+        BacnetProperty objectIdsProperty = PROP_OBJECT_LIST.toBacnetProperty();
+        BacnetObjectProperties objectProperties = new BacnetObjectProperties(deviceObject, objectIdsProperty);
+        BacnetReadPropertyMultipleService service = new BacnetReadPropertyMultipleService(deviceInstance, objectProperties);
         ReadPropertyMultipleAck ack;
         try {
-            ack = queryBus.execute(readpropmQuery);
+            JsonSerdeContextHolder.set(jsonSerde);
+            ack = BacnetInstrumentation.doScrape(service);
+            JsonSerdeContextHolder.clear();
             BacnetPropertyResult objectIdsPropertyResult = Optional.ofNullable(ack.toMap())
                     .map(in -> in.get(deviceObject))
                     .map(in -> in.get(objectIdsProperty))

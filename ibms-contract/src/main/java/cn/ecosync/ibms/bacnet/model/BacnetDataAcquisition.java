@@ -3,7 +3,6 @@ package cn.ecosync.ibms.bacnet.model;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
 import cn.ecosync.ibms.metrics.Instrument;
-import cn.ecosync.iframework.serde.JsonSerde;
 import cn.ecosync.iframework.util.CollectionUtils;
 import lombok.ToString;
 
@@ -38,9 +37,9 @@ public class BacnetDataAcquisition extends DeviceDataAcquisition {
     }
 
     @Override
-    public void newInstruments(JsonSerde jsonSerde, BiConsumer<String, Instrument> consumer) {
+    public void newInstruments(BiConsumer<String, Instrument> consumer) {
         getDataPoints().stream()
                 .collect(Collectors.groupingBy(in -> in.getDataPointId().getDeviceCode()))
-                .forEach((deviceCode, dataPoints) -> consumer.accept(deviceCode, new BacnetInstrumentation(dataPoints, jsonSerde)));
+                .forEach((deviceCode, dataPoints) -> consumer.accept(deviceCode, new BacnetInstrumentation(dataPoints)));
     }
 }

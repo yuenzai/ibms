@@ -13,13 +13,17 @@ import java.util.regex.Pattern;
 public class BacnetProperty {
     public static final String REGEXP = "(\\d+)(?:\\[(\\d+)\\])?";
     private static final Pattern PATTERN = Pattern.compile(REGEXP);
-    public static final BacnetProperty PROPERTY_PRESENT_VALUE = new BacnetProperty(BacnetPropertyId.PROP_PRESENT_VALUE, null);
+    public static final BacnetProperty PROPERTY_PRESENT_VALUE = new BacnetProperty(BacnetPropertyId.PROP_PRESENT_VALUE);
 
     @NotNull
     private BacnetPropertyId propertyIdentifier;
     private Integer propertyArrayIndex;
 
     protected BacnetProperty() {
+    }
+
+    public BacnetProperty(BacnetPropertyId propertyIdentifier) {
+        this(propertyIdentifier, null);
     }
 
     public BacnetProperty(BacnetPropertyId propertyIdentifier, Integer propertyArrayIndex) {

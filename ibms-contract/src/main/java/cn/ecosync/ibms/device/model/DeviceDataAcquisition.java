@@ -2,7 +2,6 @@ package cn.ecosync.ibms.device.model;
 
 import cn.ecosync.ibms.bacnet.model.BacnetDataAcquisition;
 import cn.ecosync.ibms.metrics.Instrument;
-import cn.ecosync.iframework.serde.JsonSerde;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
@@ -61,6 +60,6 @@ public class DeviceDataAcquisition implements IDeviceDataAcquisition {
         return reference;
     }
 
-    public void newInstruments(JsonSerde jsonSerde, BiConsumer<String, Instrument> consumer) {
+    public void newInstruments(BiConsumer<String, Instrument> consumer) {
     }
 }

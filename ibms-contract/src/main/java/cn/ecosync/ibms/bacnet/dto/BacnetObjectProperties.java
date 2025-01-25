@@ -1,15 +1,17 @@
 package cn.ecosync.ibms.bacnet.dto;
 
 import cn.ecosync.ibms.bacnet.model.BacnetDataPoint;
-import cn.ecosync.iframework.util.CollectionUtils;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.ToString;
+import org.springframework.util.Assert;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 @Getter
 @ToString
@@ -18,7 +20,7 @@ public class BacnetObjectProperties {
     @JsonUnwrapped
     private BacnetObject bacnetObject;
     @NotEmpty
-    private List<@Pattern(regexp = BacnetProperty.REGEXP, message = "REGEXP not match") String> properties;
+    private List<@Valid BacnetProperty> properties;
 
     protected BacnetObjectProperties() {
     }
@@ -28,18 +30,18 @@ public class BacnetObjectProperties {
     }
 
     public BacnetObjectProperties(BacnetObject bacnetObject) {
-        this(bacnetObject, Collections.singletonList(BacnetProperty.PROPERTY_PRESENT_VALUE.toString()));
+        this(bacnetObject, BacnetProperty.PROPERTY_PRESENT_VALUE);
     }
 
-    public BacnetObjectProperties(BacnetObject bacnetObject, List<String> properties) {
+    public BacnetObjectProperties(BacnetObject bacnetObject, BacnetProperty... properties) {
+        Assert.notNull(bacnetObject, "bacnetObject must not be null");
+        Assert.notEmpty(properties, "properties must not be null");
         this.bacnetObject = bacnetObject;
-        this.properties = properties;
+        this.properties = Arrays.asList(properties);
     }
 
-    public Set<BacnetProperty> toProperties() {
-        return CollectionUtils.nullSafeOf(properties).stream()
-                .map(BacnetProperty::fromString)
-                .collect(LinkedHashSet::new, Set::add, Set::addAll);
+    public List<BacnetProperty> getProperties() {
+        return Collections.unmodifiableList(properties);
     }
 
     @Override

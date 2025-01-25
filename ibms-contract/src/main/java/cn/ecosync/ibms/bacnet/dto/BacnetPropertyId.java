@@ -572,6 +572,10 @@ public enum BacnetPropertyId {
         this.name = String.valueOf(code);//todo
     }
 
+    public BacnetProperty toBacnetProperty() {
+        return new BacnetProperty(this);
+    }
+
     private static final Map<Integer, BacnetPropertyId> MAP = Arrays.stream(values())
             .collect(Collectors.toMap(BacnetPropertyId::getCode, Function.identity()));
 

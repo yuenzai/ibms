@@ -9,7 +9,6 @@ import cn.ecosync.ibms.metrics.PrometheusConfigurationProperties.RelabelConfig;
 import cn.ecosync.ibms.metrics.PrometheusConfigurationProperties.ScrapeConfig;
 import cn.ecosync.ibms.metrics.PrometheusConfigurationProperties.ScrapeConfigs;
 import cn.ecosync.ibms.metrics.PrometheusConfigurationProperties.StaticConfig;
-import cn.ecosync.iframework.serde.JsonSerde;
 import cn.ecosync.iframework.util.CollectionUtils;
 import cn.ecosync.iframework.util.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,7 +42,6 @@ public class PrometheusTelemetryService implements MultiCollector {
     private final String serverPort;
     private final PrometheusService prometheusService;
     private final PrometheusRegistry deviceMetricsRegistry;
-    private final JsonSerde jsonSerde;
     private final AtomicReference<DeviceGateway> gatewayRef = new AtomicReference<>();
     private final ObjectMapper yamlSerde;
     private final File deviceScrapeConfigFile;
@@ -52,7 +50,7 @@ public class PrometheusTelemetryService implements MultiCollector {
 
     public PrometheusTelemetryService(
             Environment environment, RestClient.Builder restClientBuilder,
-            PrometheusRegistry deviceMetricsRegistry, JsonSerde jsonSerde) {
+            PrometheusRegistry deviceMetricsRegistry) {
         this.serverPort = environment.getProperty("server.port", "8080");
         String PROMETHEUS_ENDPOINT = environment.getProperty("PROMETHEUS_ENDPOINT", "localhost:9090");
         RestClient restClient = restClientBuilder.baseUrl("http://" + PROMETHEUS_ENDPOINT).build();
@@ -60,7 +58,6 @@ public class PrometheusTelemetryService implements MultiCollector {
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
         this.prometheusService = factory.createClient(PrometheusService.class);
         this.deviceMetricsRegistry = deviceMetricsRegistry;
-        this.jsonSerde = jsonSerde;
         this.yamlSerde = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER))
                 .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
         this.deviceScrapeConfigFile = new File("scrape_config_device.yml");
@@ -77,9 +74,9 @@ public class PrometheusTelemetryService implements MultiCollector {
         List<ScrapeConfig> scrapeConfigs = new ArrayList<>();
         for (DeviceDataAcquisition dataAcquisition : gatewayAtomic.getDataAcquisitions()) {
             Set<String> deviceCodes = new HashSet<>();
-            dataAcquisition.newInstruments(jsonSerde, (deviceCode, dataPoints) -> {
+            dataAcquisition.newInstruments((deviceCode, instrument) -> {
                 deviceCodes.add(deviceCode);
-                instruments.put(deviceCode, dataPoints);
+                instruments.put(deviceCode, instrument);
             });
             dataAcquisition.getDataPoints().stream()
                     .map(in -> in.getDataPointId().getMetricName())
