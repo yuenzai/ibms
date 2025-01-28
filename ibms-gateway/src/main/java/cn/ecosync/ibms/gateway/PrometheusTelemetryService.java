@@ -84,7 +84,7 @@ public class PrometheusTelemetryService implements MultiCollector {
             prometheusNames.add(POINT_INFO_METRIC_NAME);
             if (CollectionUtils.notEmpty(deviceCodes)) {
                 String jobName = dataAcquisition.getDataAcquisitionId().toString();
-                StaticConfig staticConfig = new StaticConfig(deviceCodes);
+                StaticConfig staticConfig = new StaticConfig(deviceCodes, Collections.singletonMap("target_type", "device"));
                 List<RelabelConfig> relabelConfigs = RelabelConfig.toRelabelConfigs("localhost:" + serverPort);
                 scrapeConfigs.add(new ScrapeConfig(jobName, PATH_METRICS_DEVICES, dataAcquisition.getScrapeInterval(), relabelConfigs, staticConfig));
             }
