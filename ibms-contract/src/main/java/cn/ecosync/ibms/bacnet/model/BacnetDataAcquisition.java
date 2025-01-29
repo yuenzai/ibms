@@ -2,8 +2,8 @@ package cn.ecosync.ibms.bacnet.model;
 
 import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
-import cn.ecosync.ibms.metrics.Instrument;
 import cn.ecosync.iframework.util.CollectionUtils;
+import io.prometheus.metrics.model.registry.MultiCollector;
 import lombok.ToString;
 
 import java.util.List;
@@ -37,7 +37,7 @@ public class BacnetDataAcquisition extends DeviceDataAcquisition {
     }
 
     @Override
-    public void newInstruments(BiConsumer<String, Instrument> consumer) {
+    public void newInstruments(BiConsumer<String, MultiCollector> consumer) {
         getDataPoints().stream()
                 .collect(Collectors.groupingBy(in -> in.getDataPointId().getDeviceCode()))
                 .forEach((deviceCode, dataPoints) -> consumer.accept(deviceCode, new BacnetInstrumentation(dataPoints)));

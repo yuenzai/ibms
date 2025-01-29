@@ -81,12 +81,12 @@ public class BacnetReadPropertyMultipleService {
 
     public static ReadPropertyMultipleAck execute(BacnetReadPropertyMultipleService service) throws SegmentationNotSupportedException, IOException, InterruptedException {
         List<String> command = service.toCommand();
+        log.info("Execute command[{}]", String.join(" ", command));
         ProcessBuilder processBuilder = new ProcessBuilder(command);
         Process process = processBuilder.start();
         String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8);
         String stderr = StreamUtils.copyToString(process.getErrorStream(), StandardCharsets.UTF_8);
         process.waitFor();
-        log.info("Execute command[{}]", String.join(" ", command));
         if (StringUtils.hasText(stdout)) log.info("{}", stdout);
         if (SEGMENTATION_NOT_SUPPORTED.equals(stderr)) throw new SegmentationNotSupportedException();
         if (StringUtils.hasText(stderr)) throw new RuntimeException(stderr);

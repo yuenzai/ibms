@@ -1,10 +1,10 @@
 package cn.ecosync.ibms.device.model;
 
 import cn.ecosync.ibms.bacnet.model.BacnetDataAcquisition;
-import cn.ecosync.ibms.metrics.Instrument;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import io.prometheus.metrics.model.registry.MultiCollector;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -60,6 +60,6 @@ public class DeviceDataAcquisition implements IDeviceDataAcquisition {
         return reference;
     }
 
-    public void newInstruments(BiConsumer<String, Instrument> consumer) {
+    public void newInstruments(BiConsumer<String, MultiCollector> consumer) {
     }
 }
