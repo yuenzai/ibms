@@ -1,8 +1,11 @@
 package cn.ecosync.ibms.bacnet.dto;
 
-import lombok.Getter;
+import cn.ecosync.iframework.util.StringUtils;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StreamUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,15 +14,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-@Getter
+@Slf4j
 @ToString
 public class BacnetWhoIsService {
     /**
      * bacnet-stack 默认的设备地址缓存文件名
      */
     public static final String ADDRESS_CACHE_FILENAME = "address_cache";
+    private static final String HEX = "[0-9A-Fa-f]{2}";
+    private static final String MAC = "(?:" + HEX + "[:-]" + ")" + "{0,5}" + HEX;
+    private static final Pattern PATTERN = Pattern.compile("\\s+(\\d+)\\s+(" + MAC + ")\\s+(\\d+)\\s+(" + MAC + ")\\s+(\\d+)");
 
-    public List<String> toCommand() {
+    private List<String> toCommand() {
         List<String> commands = new ArrayList<>();
         commands.add("whois");
         commands.add("|");
@@ -28,15 +34,28 @@ public class BacnetWhoIsService {
         return commands;
     }
 
-    public String toCommandString() {
+    private String toCommandString() {
         return String.join(" ", toCommand());
     }
 
-    private static final String HEX = "[0-9A-Fa-f]{2}";
-    private static final String MAC = "(?:" + HEX + "[:-]" + ")" + "{0,5}" + HEX;
-    private static final Pattern PATTERN = Pattern.compile("\\s+(\\d+)\\s+(" + MAC + ")\\s+(\\d+)\\s+(" + MAC + ")\\s+(\\d+)");
+    public static List<BacnetDeviceAddress> execute(BacnetWhoIsService service) throws Exception {
+        String command = service.toCommandString();
+        List<String> commands = Arrays.asList("/bin/bash", "-c", command);
+        ProcessBuilder processBuilder = new ProcessBuilder(commands);
+        Process process = processBuilder.start();
+        String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8);
+        String stderr = StreamUtils.copyToString(process.getErrorStream(), StandardCharsets.UTF_8);
+        process.waitFor();
+//        String workingDirectory = Optional.ofNullable(processBuilder.directory())
+//                .map(File::getAbsolutePath)
+//                .orElseGet(() -> System.getProperty("user.dir"));
+        log.info("Execute command[{}]", String.join(" ", command));
+        if (StringUtils.hasText(stdout)) log.info("{}", stdout);
+        if (StringUtils.hasText(stderr)) throw new RuntimeException(stderr);
+        return BacnetWhoIsService.parseDeviceAddresses(stdout);
+    }
 
-    public static List<BacnetDeviceAddress> parseDeviceAddresses(String whoIsOutPut) {
+    private static List<BacnetDeviceAddress> parseDeviceAddresses(String whoIsOutPut) {
         String[] lines = whoIsOutPut.split("\n");
         return Arrays.stream(lines)
                 .map(BacnetWhoIsService::parseDeviceAddress)
@@ -44,7 +63,7 @@ public class BacnetWhoIsService {
                 .collect(Collectors.toList());
     }
 
-    public static BacnetDeviceAddress parseDeviceAddress(String line) {
+    private static BacnetDeviceAddress parseDeviceAddress(String line) {
         if (line.startsWith(";")) {
             return null;
         }

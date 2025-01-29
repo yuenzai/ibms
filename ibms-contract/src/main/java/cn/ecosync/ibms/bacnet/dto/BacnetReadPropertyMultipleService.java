@@ -1,20 +1,30 @@
 package cn.ecosync.ibms.bacnet.dto;
 
+import cn.ecosync.ibms.JsonSerdeContextHolder;
+import cn.ecosync.iframework.serde.JsonSerde;
+import cn.ecosync.iframework.serde.TypeReference;
 import cn.ecosync.iframework.util.CollectionUtils;
+import cn.ecosync.iframework.util.StringUtils;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
+import org.springframework.util.StreamUtils;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Getter
 @ToString
 public class BacnetReadPropertyMultipleService {
+    private static final String SEGMENTATION_NOT_SUPPORTED = "BACnet Abort: Segmentation Not Supported\n";
+
     @NotNull
     private Integer deviceInstance;
     @NotEmpty
@@ -67,5 +77,24 @@ public class BacnetReadPropertyMultipleService {
             prop += "[" + index + "]";
         }
         return prop;
+    }
+
+    public static ReadPropertyMultipleAck execute(BacnetReadPropertyMultipleService service) throws SegmentationNotSupportedException, IOException, InterruptedException {
+        List<String> command = service.toCommand();
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
+        Process process = processBuilder.start();
+        String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8);
+        String stderr = StreamUtils.copyToString(process.getErrorStream(), StandardCharsets.UTF_8);
+        process.waitFor();
+        log.info("Execute command[{}]", String.join(" ", command));
+        if (StringUtils.hasText(stdout)) log.info("{}", stdout);
+        if (SEGMENTATION_NOT_SUPPORTED.equals(stderr)) throw new SegmentationNotSupportedException();
+        if (StringUtils.hasText(stderr)) throw new RuntimeException(stderr);
+        JsonSerde jsonSerde = JsonSerdeContextHolder.get();
+        return jsonSerde.deserialize(stdout, new TypeReference<ReadPropertyMultipleAck>() {
+        });
+    }
+
+    public static class SegmentationNotSupportedException extends RuntimeException {
     }
 }

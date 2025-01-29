@@ -1,20 +1,15 @@
 package cn.ecosync.ibms.bacnet.model;
 
-import cn.ecosync.ibms.JsonSerdeContextHolder;
 import cn.ecosync.ibms.bacnet.dto.*;
+import cn.ecosync.ibms.bacnet.dto.BacnetReadPropertyMultipleService.SegmentationNotSupportedException;
 import cn.ecosync.ibms.device.model.DeviceDataPointLabel;
 import cn.ecosync.ibms.metrics.Instrument;
-import cn.ecosync.iframework.serde.JsonSerde;
-import cn.ecosync.iframework.serde.TypeReference;
-import cn.ecosync.iframework.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.support.PagedListHolder;
 import org.springframework.util.Assert;
-import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,7 +21,6 @@ import static cn.ecosync.ibms.bacnet.dto.BacnetProperty.PROPERTY_PRESENT_VALUE;
 
 public class BacnetInstrumentation implements Instrument {
     private static final Logger log = LoggerFactory.getLogger(BacnetInstrumentation.class);
-    private static final String SEGMENTATION_NOT_SUPPORTED = "BACnet Abort: Segmentation Not Supported\n";
 
     private final List<BacnetDataPoint> dataPoints;
     private final AtomicInteger segmentationCount = new AtomicInteger(1);
@@ -81,34 +75,15 @@ public class BacnetInstrumentation implements Instrument {
                 .map(BacnetObjectProperties::new)
                 .collect(Collectors.toList());
         BacnetReadPropertyMultipleService service = new BacnetReadPropertyMultipleService(deviceInstance, bacnetDataPoints);
-        return scrape(service);
+        return doScrape(service);
     }
 
-    private ReadPropertyMultipleAck scrape(BacnetReadPropertyMultipleService service) {
+    private ReadPropertyMultipleAck doScrape(BacnetReadPropertyMultipleService service) {
         try {
-            return doScrape(service);
+            return BacnetReadPropertyMultipleService.execute(service);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static ReadPropertyMultipleAck doScrape(BacnetReadPropertyMultipleService service) throws IOException, InterruptedException {
-        List<String> command = service.toCommand();
-        ProcessBuilder processBuilder = new ProcessBuilder(command);
-        Process process = processBuilder.start();
-        String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8);
-        String stderr = StreamUtils.copyToString(process.getErrorStream(), StandardCharsets.UTF_8);
-        process.waitFor();
-        log.info("Execute command[{}]", String.join(" ", command));
-        if (StringUtils.hasText(stdout)) log.info("{}", stdout);
-        if (SEGMENTATION_NOT_SUPPORTED.equals(stderr)) throw new SegmentationNotSupportedException();
-        if (StringUtils.hasText(stderr)) throw new RuntimeException(stderr);
-        JsonSerde jsonSerde = JsonSerdeContextHolder.get();
-        return jsonSerde.deserialize(stdout, new TypeReference<ReadPropertyMultipleAck>() {
-        });
-    }
-
-    private static class SegmentationNotSupportedException extends RuntimeException {
     }
 
     private static class ScrapeCallback {

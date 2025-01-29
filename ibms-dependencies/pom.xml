@@ -48,11 +48,6 @@
             </dependency>
             <dependency>
                 <groupId>cn.ecosync.ibms</groupId>
-                <artifactId>ibms-orchestration</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms</groupId>
                 <artifactId>ibms-device</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
@@ -61,16 +56,6 @@
                 <artifactId>ibms-scheduling</artifactId>
                 <version>0.0.1-SNAPSHOT</version>
             </dependency>
-            <dependency>
-                <groupId>cn.ecosync.ibms.driver</groupId>
-                <artifactId>ibms-driver-bacnet</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <!--<dependency>
-                <groupId>org.apache.iceberg</groupId>
-                <artifactId>iceberg-core</artifactId>
-                <version>${iceberg.version}</version>
-            </dependency>-->
         </dependencies>
     </dependencyManagement>
 </project>

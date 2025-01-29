@@ -10,16 +10,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <!-- common -->
         <module>ibms-dependencies</module>
         <module>ibms-parent</module>
         <module>ibms-contract</module>
-        <!-- functional -->
         <module>ibms-device</module>
-        <!--<module>ibms-scheduling</module>-->
-        <module>ibms-driver-bacnet</module>
-        <!-- other -->
-        <module>ibms-orchestration</module>
         <module>ibms-autoconfigure</module>
         <module>ibms-bootstrap</module>
         <module>ibms-gateway</module>

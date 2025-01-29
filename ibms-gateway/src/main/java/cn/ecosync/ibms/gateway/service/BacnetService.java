@@ -1,51 +1,52 @@
-package cn.ecosync.ibms.bacnet.controller;
+package cn.ecosync.ibms.gateway.service;
 
 import cn.ecosync.ibms.JsonSerdeContextHolder;
-import cn.ecosync.ibms.bacnet.command.BacnetWritePropertyCommand;
 import cn.ecosync.ibms.bacnet.dto.*;
-import cn.ecosync.ibms.bacnet.model.BacnetInstrumentation;
-import cn.ecosync.ibms.bacnet.query.BacnetWhoIsQuery;
-import cn.ecosync.ibms.bacnet.query.ListSearchBacnetDeviceObjectIdsQuery;
-import cn.ecosync.iframework.command.CommandBus;
-import cn.ecosync.iframework.query.QueryBus;
 import cn.ecosync.iframework.serde.JsonSerde;
-import lombok.RequiredArgsConstructor;
+import cn.ecosync.iframework.serde.TypeReference;
+import cn.ecosync.iframework.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.StreamUtils;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static cn.ecosync.ibms.bacnet.dto.BacnetPropertyId.PROP_OBJECT_LIST;
 
 @Slf4j
-@RestController
-@RequiredArgsConstructor
-@RequestMapping("/bacnet")
-public class BacnetRestController {
+public class BacnetService {
     private final JsonSerde jsonSerde;
-    private final CommandBus commandBus;
-    private final QueryBus queryBus;
 
-    @PostMapping("/service/who-is")
-    public List<BacnetDeviceAddress> execute(@RequestBody @Validated BacnetWhoIsQuery query) {
-        return queryBus.execute(query);
+    public BacnetService(JsonSerde jsonSerde) {
+        this.jsonSerde = jsonSerde;
     }
 
-    @PostMapping("/service/write-property")
-    public void execute(@RequestBody @Validated BacnetWritePropertyCommand command) {
-        commandBus.execute(command);
+    public List<ReadPropertyMultipleAck> readBatch(List<BacnetReadPropertyMultipleService> services) throws Exception {
+        String command = services.stream()
+                .filter(Objects::nonNull)
+                .map(BacnetReadPropertyMultipleService::toCommandString)
+                .filter(StringUtils::hasText)
+                .collect(Collectors.joining("; echo; "));
+
+        if (!StringUtils.hasText(command)) return Collections.emptyList();
+
+        List<String> commands = Arrays.asList("/bin/bash", "-c", command);
+        ProcessBuilder processBuilder = new ProcessBuilder(commands);
+        Process process = processBuilder.start();
+        String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8);
+        String stderr = StreamUtils.copyToString(process.getErrorStream(), StandardCharsets.UTF_8);
+        process.waitFor();
+        log.debug("command: {}\nstdout:\n{}\nstderr:\n{}", commands, stdout, stderr);
+
+        return Arrays.stream(stdout.split("\n"))
+                .map(in -> jsonSerde.deserialize(in, new TypeReference<ReadPropertyMultipleAck>() {
+                }))
+                .filter(ReadPropertyMultipleAck::valuesNotEmpty)
+                .collect(Collectors.toList());
     }
 
-    @PostMapping("/device-object-ids/list-search")
-    public List<BacnetObject> getDeviceObjectIds(@RequestBody @Validated ListSearchBacnetDeviceObjectIdsQuery query) {
-        Integer deviceInstance = query.getDeviceInstance();
+    public List<BacnetObject> getDeviceObjectIds(Integer deviceInstance) {
         BacnetObject deviceObject = new BacnetObject(BacnetObjectType.DEVICE, deviceInstance);
         BacnetProperty objectIdsProperty = PROP_OBJECT_LIST.toBacnetProperty();
         BacnetObjectProperties objectProperties = new BacnetObjectProperties(deviceObject, objectIdsProperty);
@@ -53,7 +54,7 @@ public class BacnetRestController {
         ReadPropertyMultipleAck ack;
         try {
             JsonSerdeContextHolder.set(jsonSerde);
-            ack = BacnetInstrumentation.doScrape(service);
+            ack = BacnetReadPropertyMultipleService.execute(service);
             JsonSerdeContextHolder.clear();
             BacnetPropertyResult objectIdsPropertyResult = Optional.ofNullable(ack.toMap())
                     .map(in -> in.get(deviceObject))

@@ -26,16 +26,16 @@
             <artifactId>prometheus-metrics-exporter-servlet-jakarta</artifactId>
         </dependency>
         <dependency>
-            <groupId>cn.ecosync.ibms.driver</groupId>
-            <artifactId>ibms-driver-bacnet</artifactId>
-        </dependency>
-        <dependency>
             <groupId>cn.ecosync.iframework</groupId>
             <artifactId>iframework-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.ecosync.ibms</groupId>
+            <artifactId>ibms-contract</artifactId>
         </dependency>
     </dependencies>
 

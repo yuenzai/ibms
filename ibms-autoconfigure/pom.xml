@@ -35,16 +35,6 @@
             <optional>true</optional>
         </dependency>-->
         <dependency>
-            <groupId>cn.ecosync.ibms.driver</groupId>
-            <artifactId>ibms-driver-bacnet</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>cn.ecosync.ibms</groupId>
-            <artifactId>ibms-orchestration</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <optional>true</optional>
