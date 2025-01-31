@@ -6,12 +6,14 @@ import cn.ecosync.ibms.bacnet.model.BacnetDataPoint;
 import cn.ecosync.ibms.device.command.AddDataAcquisitionCommand;
 import cn.ecosync.ibms.device.command.RemoveDataAcquisitionCommand;
 import cn.ecosync.ibms.device.command.SaveDataAcquisitionCommand;
+import cn.ecosync.ibms.device.jpa.DeviceDataAcquisitionEntity;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.device.model.DeviceDataPointId;
 import cn.ecosync.ibms.device.model.DeviceDataPointLabel;
 import cn.ecosync.ibms.device.model.IDeviceDataAcquisition;
 import cn.ecosync.ibms.device.query.GetDataAcquisitionQuery;
 import cn.ecosync.ibms.device.query.SearchDataAcquisitionQuery;
+import cn.ecosync.ibms.device.repository.jpa.DeviceDataAcquisitionJpaRepository;
 import cn.ecosync.iframework.command.CommandBus;
 import cn.ecosync.iframework.query.QueryBus;
 import cn.ecosync.iframework.util.CollectionUtils;
@@ -43,6 +45,7 @@ import java.util.*;
 public class DeviceDataAcquisitionWebController {
     private final CommandBus commandBus;
     private final QueryBus queryBus;
+    private final DeviceDataAcquisitionJpaRepository dataAcquisitionRepository;
 
     @Operation(summary = "新增数据采集")
     @PostMapping("/add")
@@ -65,7 +68,9 @@ public class DeviceDataAcquisitionWebController {
     @Operation(summary = "获取数据采集")
     @PostMapping("/get")
     public IDeviceDataAcquisition get(@RequestBody @Validated GetDataAcquisitionQuery query) {
-        return queryBus.execute(query);
+        return dataAcquisitionRepository.findByDataAcquisitionId(query.getDataAcquisitionId())
+                .map(DeviceDataAcquisitionEntity::getDataAcquisition)
+                .orElse(null);
     }
 
     @Operation(summary = "查询数据采集")

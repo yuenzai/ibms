@@ -1,30 +1,24 @@
 package cn.ecosync.ibms.device.controller;
 
-import cn.ecosync.ibms.device.command.AddGatewayCommand;
-import cn.ecosync.ibms.device.command.RemoveGatewayCommand;
-import cn.ecosync.ibms.device.command.SaveGatewayCommand;
-import cn.ecosync.ibms.device.command.SetGatewaySynchronizationStateCommand;
-import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
+import cn.ecosync.ibms.device.GatewaySynchronizationService;
+import cn.ecosync.ibms.device.command.*;
 import cn.ecosync.ibms.device.model.DeviceGateway;
-import cn.ecosync.ibms.device.query.GetDataAcquisitionQuery;
+import cn.ecosync.ibms.device.model.DeviceGatewayId;
 import cn.ecosync.ibms.device.query.GetGatewayQuery;
 import cn.ecosync.ibms.device.query.SearchGatewayQuery;
 import cn.ecosync.iframework.command.CommandBus;
 import cn.ecosync.iframework.query.QueryBus;
+import cn.ecosync.iframework.serde.JsonSerde;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static cn.ecosync.ibms.device.model.IDeviceGateway.SynchronizationStateEnum.SYNCHRONIZED;
 import static cn.ecosync.ibms.device.model.IDeviceGateway.SynchronizationStateEnum.SYNCHRONIZING;
 
 @Tag(name = "设备网关")
@@ -32,78 +26,69 @@ import static cn.ecosync.ibms.device.model.IDeviceGateway.SynchronizationStateEn
 @RequiredArgsConstructor
 @RequestMapping("/device-gateway")
 public class DeviceGatewayWebController {
+    private final GatewaySynchronizationService gatewaySynchronizationService;
     private final CommandBus commandBus;
     private final QueryBus queryBus;
+    private final JsonSerde jsonSerde;
 
-    @Operation(hidden = true)
-    @PostMapping("/add")
-    public void execute(@RequestBody @Validated AddGatewayCommand command) {
-        commandBus.execute(command);
-    }
-
-    @Operation(summary = "更新网关")
-    @PostMapping("/save")
-    public void execute(@RequestBody @Validated SaveGatewayCommand command) {
-        commandBus.execute(command);
-    }
-
-    @Operation(hidden = true)
-    @PostMapping("/remove")
-    public void execute(@RequestBody @Validated RemoveGatewayCommand command) {
-        commandBus.execute(command);
-    }
-
-    @Operation(summary = "同步网关")
-    @PostMapping("/sync")
-    public void execute(@RequestBody @Validated SetGatewaySynchronizationStateCommand command) {
-        command.setSynchronizationState(SYNCHRONIZING);
-        commandBus.execute(command);
-    }
-
-    @Operation(summary = "获取网关")
-    @PostMapping("/get")
-    public DeviceGateway execute(@RequestBody @Validated GetGatewayQuery query) {
-        return doExecute(query, false);
+    @Operation(summary = "执行网关命令")
+    @PostMapping(path = "/{gateway-code}", headers = "Command-Type")
+    public ResponseEntity<Void> execute(@PathVariable("gateway-code") String gatewayCode, RequestEntity<String> request) {
+        DeviceGatewayId gatewayId = new DeviceGatewayId(gatewayCode);
+        String commandType = request.getHeaders().getFirst("Command-Type");
+        if (commandType == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        GatewayCommand command;
+        switch (commandType) {
+            case "ADD":
+                commandBus.execute(new AddGatewayCommand(gatewayId));
+                return new ResponseEntity<>(HttpStatus.OK);
+            case "SAVE":
+                command = jsonSerde.deserialize(request.getBody(), SaveGatewayCommand.class)
+                        .withGatewayId(gatewayId);
+                commandBus.execute(command);
+                return new ResponseEntity<>(HttpStatus.OK);
+            case "REMOVE":
+                commandBus.execute(new RemoveGatewayCommand(gatewayId));
+                return new ResponseEntity<>(HttpStatus.OK);
+            case "SET_SYNCHRONIZATION_STATE":
+                command = jsonSerde.deserialize(request.getBody(), SetGatewaySynchronizationStateCommand.class)
+                        .withGatewayId(gatewayId);
+                commandBus.execute(command);
+                return new ResponseEntity<>(HttpStatus.OK);
+            default:
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @Operation(summary = "查询网关")
-    @PostMapping("/search")
-    public PagedModel<DeviceGateway> execute(@RequestBody @Validated SearchGatewayQuery query) {
+    @GetMapping(headers = "Query-Type=search")
+    public PagedModel<DeviceGateway> execute(@RequestParam(name = "page", required = false) Integer page,
+                                             @RequestParam(name = "pagesize", required = false) Integer pagesize) {
+        SearchGatewayQuery query = new SearchGatewayQuery(page, pagesize);
         return new PagedModel<>(queryBus.execute(query));
     }
 
     @Operation(hidden = true)
-    @GetMapping("/{gateway-code}")
-    public DeferredResult<ResponseEntity<DeviceGateway>> get(@PathVariable("gateway-code") String gatewayCode, @RequestParam(name = "initial", defaultValue = "false") Boolean initial) {
-        DeferredResult<ResponseEntity<DeviceGateway>> result = new DeferredResult<>(null, () -> new ResponseEntity<>(HttpStatus.NO_CONTENT));
-        GetGatewayQuery query = new GetGatewayQuery(gatewayCode);
-        DeviceGateway gateway;
-        if (initial) {
-            gateway = doExecute(query, false);
-        } else {
-            gateway = doExecute(query, true);
-        }
-        if (gateway != null) result.setResult(new ResponseEntity<>(gateway, HttpStatus.OK));
-        return result;
+    @GetMapping(path = "/{gateway-code}", headers = "Query-Type=get")
+    public DeviceGateway get(@PathVariable("gateway-code") String gatewayCode) {
+        DeviceGatewayId gatewayId = new DeviceGatewayId(gatewayCode);
+        GetGatewayQuery query = new GetGatewayQuery(gatewayId);
+        return gatewaySynchronizationService.handle(query);
     }
 
     @Operation(hidden = true)
-    @GetMapping("/{gateway-code}/synchronized")
-    public void onEvent(@PathVariable("gateway-code") String gatewayCode) {
-        SetGatewaySynchronizationStateCommand command = new SetGatewaySynchronizationStateCommand(gatewayCode, SYNCHRONIZED);
-        commandBus.execute(command);
-    }
-
-    private DeviceGateway doExecute(GetGatewayQuery query, boolean isWebhook) {
-        DeviceGateway gateway = queryBus.execute(query);
-        if (gateway == null) return null;
-        if (isWebhook && gateway.getSynchronizationState() != SYNCHRONIZING) return null;
-        List<DeviceDataAcquisition> dataAcquisitions = gateway.getDataAcquisitions().stream()
-                .map(DeviceDataAcquisition::getDataAcquisitionId)
-                .map(GetDataAcquisitionQuery::new)
-                .map(queryBus::execute)
-                .map(DeviceDataAcquisition.class::cast)
-                .collect(Collectors.toList());
-        return gateway.withDataAcquisitions(dataAcquisitions);
+    @GetMapping(path = "/{gateway-code}", headers = "Query-Type=poll")
+    public DeferredResult<ResponseEntity<DeviceGateway>> poll(@PathVariable("gateway-code") String gatewayCode) {
+        DeferredResult<ResponseEntity<DeviceGateway>> result = new DeferredResult<>(null, () -> new ResponseEntity<>(HttpStatus.NO_CONTENT));
+        DeviceGatewayId gatewayId = new DeviceGatewayId(gatewayCode);
+        GetGatewayQuery query = new GetGatewayQuery(gatewayId, SYNCHRONIZING);
+        gatewaySynchronizationService.poll(gatewayId, query, in -> {
+            if (in != null) {
+                result.setResult(new ResponseEntity<>(in, HttpStatus.OK));
+            } else {
+                result.setResult(new ResponseEntity<>(HttpStatus.NO_CONTENT));
+            }
+        });
+        return result;
     }
 }

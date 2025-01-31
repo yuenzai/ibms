@@ -32,7 +32,7 @@ public class SaveGatewayCommandHandler implements CommandHandler<SaveGatewayComm
     public void handle(SaveGatewayCommand command) {
         List<DeviceDataAcquisition> dataAcquisitionReferences = null;
 
-        DeviceGatewayId gatewayId = new DeviceGatewayId(command.getGatewayCode());
+        DeviceGatewayId gatewayId = command.gatewayId();
         DeviceGatewayEntity gatewayEntity = gatewayRepository.findByGatewayId(gatewayId).orElse(null);
         Assert.notNull(gatewayEntity, "Gateway not exists");
 

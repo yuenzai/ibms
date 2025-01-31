@@ -1,5 +1,6 @@
 package cn.ecosync.ibms.gateway;
 
+import cn.ecosync.ibms.device.command.SetGatewaySynchronizationStateCommand;
 import cn.ecosync.ibms.device.model.DeviceGateway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,8 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
+
+import static cn.ecosync.ibms.device.model.IDeviceGateway.SynchronizationStateEnum.SYNCHRONIZED;
 
 public class GatewaySynchronizationService implements CommandLineRunner {
     private static final Logger log = LoggerFactory.getLogger(GatewaySynchronizationService.class);
@@ -43,7 +46,7 @@ public class GatewaySynchronizationService implements CommandLineRunner {
     @Override
     public void run(String... args) {
         log.info("获取网关配置");
-        handle(gatewayService.get(GATEWAY_ID, true));
+        handle(gatewayService.get(GATEWAY_ID));
         taskScheduler.schedule(this::synchronize, Instant.now().plusSeconds(30));
     }
 
@@ -51,7 +54,7 @@ public class GatewaySynchronizationService implements CommandLineRunner {
         CompletableFuture
                 .supplyAsync(() -> {
                     log.info("获取网关配置");
-                    return gatewayService.get(GATEWAY_ID, false);
+                    return gatewayService.poll(GATEWAY_ID);
                 })
                 .thenAcceptAsync(this::handle)
                 .whenComplete((in, e) -> {
@@ -70,7 +73,9 @@ public class GatewaySynchronizationService implements CommandLineRunner {
         HttpStatusCode statusCode = responseEntity.getStatusCode();
         if (statusCode.isSameCodeAs(HttpStatus.NO_CONTENT)) return;
         if (statusCode.isSameCodeAs(HttpStatus.OK)) {
-            telemetryService.reload(responseEntity.getBody());
+            DeviceGateway gateway = responseEntity.getBody();
+            log.info("网关配置同步成功: {}", gateway);
+            telemetryService.reload(gateway);
             taskScheduler.schedule(this::notifySynchronized, Instant.now());
             return;
         }
@@ -79,6 +84,6 @@ public class GatewaySynchronizationService implements CommandLineRunner {
 
     private void notifySynchronized() {
         log.info("通知 IBMS 已同步...");
-        gatewayService.notifySynchronized(GATEWAY_ID);
+        gatewayService.execute(GATEWAY_ID, new SetGatewaySynchronizationStateCommand(SYNCHRONIZED));
     }
 }

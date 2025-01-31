@@ -3,22 +3,15 @@ package cn.ecosync.ibms.device.query;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
 import cn.ecosync.ibms.device.model.IDeviceDataAcquisition;
 import cn.ecosync.iframework.query.Query;
-import jakarta.validation.constraints.NotBlank;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.ToString;
-import org.springframework.util.Assert;
 
 @Getter
 @ToString
 public class GetDataAcquisitionQuery implements Query<IDeviceDataAcquisition> {
-    @NotBlank
-    private String dataAcquisitionCode;
-
-    protected GetDataAcquisitionQuery() {
-    }
-
-    public GetDataAcquisitionQuery(DeviceDataAcquisitionId dataAcquisitionId) {
-        Assert.notNull(dataAcquisitionId, "dataAcquisitionId must not be null");
-        this.dataAcquisitionCode = dataAcquisitionId.toString();
-    }
+    @Valid
+    @JsonUnwrapped
+    private DeviceDataAcquisitionId dataAcquisitionId;
 }

@@ -1,21 +1,39 @@
 package cn.ecosync.ibms.device.command;
 
-import cn.ecosync.iframework.command.Command;
+import cn.ecosync.ibms.device.model.DeviceGatewayId;
 import cn.ecosync.iframework.util.CollectionUtils;
-import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
 import lombok.ToString;
 
 import java.util.List;
 
-@Getter
 @ToString
-public class SaveGatewayCommand implements Command {
-    @NotBlank
-    private String gatewayCode;
+public class SaveGatewayCommand implements GatewayCommand {
+    private DeviceGatewayId gatewayId;
     private List<String> dataAcquisitionCodes;
+
+    protected SaveGatewayCommand() {
+    }
+
+    public SaveGatewayCommand(List<String> dataAcquisitionCodes) {
+        this(null, dataAcquisitionCodes);
+    }
+
+    private SaveGatewayCommand(DeviceGatewayId gatewayId, List<String> dataAcquisitionCodes) {
+        this.gatewayId = gatewayId;
+        this.dataAcquisitionCodes = dataAcquisitionCodes;
+    }
+
+    @Override
+    public DeviceGatewayId gatewayId() {
+        return gatewayId;
+    }
 
     public List<String> getDataAcquisitionCodes() {
         return CollectionUtils.nullSafeOf(dataAcquisitionCodes);
+    }
+
+    @Override
+    public SaveGatewayCommand withGatewayId(DeviceGatewayId gatewayId) {
+        return new SaveGatewayCommand(gatewayId, dataAcquisitionCodes);
     }
 }

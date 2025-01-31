@@ -59,7 +59,6 @@ public class PrometheusTelemetryService implements MultiCollector {
     }
 
     public void reload(DeviceGateway gateway) {
-        log.info("同步网关配置成功: {}", gateway);
         clear();
         gatewayRef.set(gateway);
         DeviceGateway gatewayAtomic = gatewayRef.get();

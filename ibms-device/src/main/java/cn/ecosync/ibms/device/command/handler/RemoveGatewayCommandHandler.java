@@ -16,7 +16,7 @@ public class RemoveGatewayCommandHandler implements CommandHandler<RemoveGateway
     @Override
     @Transactional
     public void handle(RemoveGatewayCommand command) {
-        DeviceGatewayId gatewayId = new DeviceGatewayId(command.getGatewayCode());
+        DeviceGatewayId gatewayId = command.gatewayId();
         gatewayRepository.removeByGatewayId(gatewayId);
     }
 }

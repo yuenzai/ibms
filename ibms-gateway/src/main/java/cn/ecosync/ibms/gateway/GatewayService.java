@@ -1,17 +1,20 @@
 package cn.ecosync.ibms.gateway;
 
+import cn.ecosync.ibms.device.command.SetGatewaySynchronizationStateCommand;
 import cn.ecosync.ibms.device.model.DeviceGateway;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.service.annotation.HttpExchange;
 
 @HttpExchange("/ibms/device-gateway")
 public interface GatewayService {
-    @GetExchange("/{gateway-code}")
-    ResponseEntity<DeviceGateway> get(@PathVariable("gateway-code") String gatewayCode, @RequestParam(name = "initial", defaultValue = "false") Boolean initial);
+    @HttpExchange(method = "GET", url = "/{gateway-code}", headers = "Query-Type=get")
+    ResponseEntity<DeviceGateway> get(@PathVariable("gateway-code") String gatewayCode);
 
-    @GetExchange("/{gateway-code}/synchronized")
-    void notifySynchronized(@PathVariable("gateway-code") String gatewayCode);
+    @HttpExchange(method = "GET", url = "/{gateway-code}", headers = "Query-Type=poll")
+    ResponseEntity<DeviceGateway> poll(@PathVariable("gateway-code") String gatewayCode);
+
+    @HttpExchange(method = "POST", url = "/{gateway-code}", headers = "Command-Type=SET_SYNCHRONIZATION_STATE")
+    void execute(@PathVariable("gateway-code") String gatewayCode, @RequestBody SetGatewaySynchronizationStateCommand command);
 }

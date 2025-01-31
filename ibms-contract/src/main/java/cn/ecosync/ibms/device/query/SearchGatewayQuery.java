@@ -10,4 +10,10 @@ import org.springframework.data.domain.Page;
 @Getter
 @ToString(callSuper = true)
 public class SearchGatewayQuery extends PageQuery implements Query<Page<DeviceGateway>> {
+    public SearchGatewayQuery() {
+    }
+
+    public SearchGatewayQuery(Integer page, Integer pagesize) {
+        super(page, pagesize);
+    }
 }

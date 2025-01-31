@@ -19,7 +19,7 @@ public class AddGatewayCommandHandler implements CommandHandler<AddGatewayComman
     @Override
     @Transactional
     public void handle(AddGatewayCommand command) {
-        DeviceGatewayId gatewayId = new DeviceGatewayId(command.getGatewayCode());
+        DeviceGatewayId gatewayId = command.gatewayId();
         DeviceGatewayEntity gatewayEntity = gatewayRepository.findByGatewayId(gatewayId).orElse(null);
         Assert.isNull(gatewayEntity, "Gateway already exists");
         DeviceGateway gateway = new DeviceGateway(gatewayId, null, null, null);
