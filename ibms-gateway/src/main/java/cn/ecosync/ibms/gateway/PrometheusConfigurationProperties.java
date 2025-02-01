@@ -1,4 +1,4 @@
-package cn.ecosync.ibms.metrics;
+package cn.ecosync.ibms.gateway;
 
 import cn.ecosync.ibms.util.CollectionUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;

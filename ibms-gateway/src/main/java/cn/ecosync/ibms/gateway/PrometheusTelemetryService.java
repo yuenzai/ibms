@@ -2,10 +2,10 @@ package cn.ecosync.ibms.gateway;
 
 import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.device.model.DeviceGateway;
-import cn.ecosync.ibms.metrics.PrometheusConfigurationProperties.RelabelConfig;
-import cn.ecosync.ibms.metrics.PrometheusConfigurationProperties.ScrapeConfig;
-import cn.ecosync.ibms.metrics.PrometheusConfigurationProperties.ScrapeConfigs;
-import cn.ecosync.ibms.metrics.PrometheusConfigurationProperties.StaticConfig;
+import cn.ecosync.ibms.gateway.PrometheusConfigurationProperties.RelabelConfig;
+import cn.ecosync.ibms.gateway.PrometheusConfigurationProperties.ScrapeConfig;
+import cn.ecosync.ibms.gateway.PrometheusConfigurationProperties.ScrapeConfigs;
+import cn.ecosync.ibms.gateway.PrometheusConfigurationProperties.StaticConfig;
 import cn.ecosync.ibms.util.CollectionUtils;
 import cn.ecosync.ibms.util.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
