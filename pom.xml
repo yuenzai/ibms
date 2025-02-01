@@ -12,10 +12,10 @@
     <modules>
         <module>ibms-dependencies</module>
         <module>ibms-parent</module>
-        <module>ibms-contract</module>
+        <module>ibms-common</module>
+        <module>ibms-api</module>
         <module>ibms-device</module>
-        <module>ibms-autoconfigure</module>
-        <module>ibms-bootstrap</module>
+        <module>ibms-starter</module>
         <module>ibms-gateway</module>
     </modules>
 </project>

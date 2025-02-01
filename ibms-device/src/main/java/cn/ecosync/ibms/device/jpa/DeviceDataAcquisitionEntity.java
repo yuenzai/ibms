@@ -4,7 +4,7 @@ import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
 import cn.ecosync.ibms.device.model.DeviceDataPoint;
 import cn.ecosync.ibms.device.model.IDeviceDataAcquisition;
-import cn.ecosync.iframework.domain.ConcurrencySafeEntity;
+import cn.ecosync.ibms.model.ConcurrencySafeEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.util.Assert;

@@ -12,7 +12,7 @@ User=metadata
 Group=metadata
 
 Type=exec
-ExecStart=java -jar ${IBMS_HOME}/ibms-bootstrap/target/ibms-bootstrap-0.0.1-SNAPSHOT.jar
+ExecStart=java -jar ${IBMS_HOME}/ibms-starter/target/ibms-starter-0.0.1-SNAPSHOT.jar
 WorkingDirectory=${IBMS_HOME}
 SuccessExitStatus=143
 

@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.device.jpa;
 
 import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
-import cn.ecosync.iframework.serde.JsonSerde;
+import cn.ecosync.ibms.serde.JsonSerde;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 

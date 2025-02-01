@@ -2,9 +2,9 @@ package cn.ecosync.ibms.gateway.service;
 
 import cn.ecosync.ibms.JsonSerdeContextHolder;
 import cn.ecosync.ibms.bacnet.dto.*;
-import cn.ecosync.iframework.serde.JsonSerde;
-import cn.ecosync.iframework.serde.TypeReference;
-import cn.ecosync.iframework.util.StringUtils;
+import cn.ecosync.ibms.serde.JsonSerde;
+import cn.ecosync.ibms.serde.TypeReference;
+import cn.ecosync.ibms.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StreamUtils;
 

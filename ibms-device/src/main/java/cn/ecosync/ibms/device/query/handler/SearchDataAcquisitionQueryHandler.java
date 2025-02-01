@@ -3,7 +3,7 @@ package cn.ecosync.ibms.device.query.handler;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.device.query.SearchDataAcquisitionQuery;
 import cn.ecosync.ibms.device.repository.jpa.DeviceDataAcquisitionJpaRepository;
-import cn.ecosync.iframework.query.QueryHandler;
+import cn.ecosync.ibms.query.QueryHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;

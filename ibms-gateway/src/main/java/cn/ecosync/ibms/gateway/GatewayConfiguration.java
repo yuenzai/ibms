@@ -1,7 +1,8 @@
 package cn.ecosync.ibms.gateway;
 
 import cn.ecosync.ibms.JsonSerdeContextHolder;
-import cn.ecosync.iframework.serde.JsonSerde;
+import cn.ecosync.ibms.serde.JsonSerde;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.prometheus.metrics.exporter.servlet.jakarta.PrometheusMetricsServlet;
 import io.prometheus.metrics.model.registry.PrometheusRegistry;
 import jakarta.servlet.Filter;
@@ -20,10 +21,9 @@ import static cn.ecosync.ibms.gateway.PrometheusTelemetryService.PATH_METRICS_DE
 @Configuration
 @EnableScheduling
 public class GatewayConfiguration {
-    private final JsonSerde jsonSerde;
-
-    public GatewayConfiguration(JsonSerde jsonSerde) {
-        this.jsonSerde = jsonSerde;
+    @Bean
+    public JsonSerde jsonSerde(ObjectMapper objectMapper) {
+        return new JsonSerde(objectMapper);
     }
 
     @Bean
@@ -55,7 +55,8 @@ public class GatewayConfiguration {
     }
 
     @Bean
-    public FilterRegistrationBean<Filter> jsonSerdeFilter() {
+    public FilterRegistrationBean<Filter> jsonSerdeFilter(ObjectMapper objectMapper) {
+        JsonSerde jsonSerde = jsonSerde(objectMapper);
         Filter filter = (servletRequest, servletResponse, filterChain) -> {
             JsonSerdeContextHolder.set(jsonSerde);
             filterChain.doFilter(servletRequest, servletResponse);

@@ -4,7 +4,7 @@ import cn.ecosync.ibms.device.command.SaveDeviceCommand;
 import cn.ecosync.ibms.device.jpa.DeviceEntity;
 import cn.ecosync.ibms.device.model.Device;
 import cn.ecosync.ibms.device.repository.jpa.DeviceJpaRepository;
-import cn.ecosync.iframework.command.CommandHandler;
+import cn.ecosync.ibms.command.CommandHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

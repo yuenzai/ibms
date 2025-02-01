@@ -4,7 +4,7 @@ import cn.ecosync.ibms.device.dto.DeviceSchema;
 import cn.ecosync.ibms.device.model.DeviceSchemas;
 import cn.ecosync.ibms.device.model.DeviceSchemasId;
 import cn.ecosync.ibms.device.model.IDeviceSchemas;
-import cn.ecosync.iframework.domain.ConcurrencySafeEntity;
+import cn.ecosync.ibms.model.ConcurrencySafeEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.util.Assert;

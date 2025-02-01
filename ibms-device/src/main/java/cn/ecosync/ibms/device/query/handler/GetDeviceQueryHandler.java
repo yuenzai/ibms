@@ -5,7 +5,7 @@ import cn.ecosync.ibms.device.model.Device;
 import cn.ecosync.ibms.device.model.DeviceId;
 import cn.ecosync.ibms.device.query.GetDeviceQuery;
 import cn.ecosync.ibms.device.repository.jpa.DeviceJpaRepository;
-import cn.ecosync.iframework.query.QueryHandler;
+import cn.ecosync.ibms.query.QueryHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
