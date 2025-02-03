@@ -1,7 +1,7 @@
 package cn.ecosync.ibms.gateway;
 
 import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
-import cn.ecosync.ibms.device.model.DeviceGateway;
+import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
 import cn.ecosync.ibms.gateway.PrometheusConfigurationProperties.RelabelConfig;
 import cn.ecosync.ibms.gateway.PrometheusConfigurationProperties.ScrapeConfig;
 import cn.ecosync.ibms.gateway.PrometheusConfigurationProperties.ScrapeConfigs;
@@ -26,22 +26,19 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class PrometheusTelemetryService implements MultiCollector {
     private static final Logger log = LoggerFactory.getLogger(PrometheusTelemetryService.class);
     public static final String PATH_METRICS = "/metrics";
     public static final String PATH_METRICS_DEVICES = "/metrics/devices";
-//    public static final String POINT_INFO_METRIC_NAME = "point";
 
     private final String serverPort;
     private final PrometheusService prometheusService;
     private final PrometheusRegistry deviceMetricsRegistry;
-    private final AtomicReference<DeviceGateway> gatewayRef = new AtomicReference<>();
+    private final Map<DeviceDataAcquisitionId, DeviceDataAcquisition> dataAcquisitionMap = new ConcurrentHashMap<>();
     private final ObjectMapper yamlSerde;
     private final File deviceScrapeConfigFile;
     private final Map<String, MultiCollector> instruments = new ConcurrentHashMap<>();
-//    private final Set<String> prometheusNames = ConcurrentHashMap.newKeySet();
 
     public PrometheusTelemetryService(
             Environment environment, RestClient.Builder restClientBuilder,
@@ -58,15 +55,17 @@ public class PrometheusTelemetryService implements MultiCollector {
         this.deviceScrapeConfigFile = new File("scrape_config_device.yml");
     }
 
-    public void reload(DeviceGateway gateway) {
-        clear();
-        gatewayRef.set(gateway);
-        DeviceGateway gatewayAtomic = gatewayRef.get();
-        if (gatewayAtomic == null || CollectionUtils.isEmpty(gatewayAtomic.getDataAcquisitions())) return;
-        deviceMetricsRegistry.register(this);
+    public void add(DeviceDataAcquisition deviceDataAcquisition) {
+        dataAcquisitionMap.put(deviceDataAcquisition.getDataAcquisitionId(), deviceDataAcquisition);
+    }
 
+    public boolean remove(DeviceDataAcquisitionId deviceDataAcquisitionId) {
+        return dataAcquisitionMap.remove(deviceDataAcquisitionId) != null;
+    }
+
+    public void reload() {
         List<ScrapeConfig> scrapeConfigs = new ArrayList<>();
-        for (DeviceDataAcquisition dataAcquisition : gatewayAtomic.getDataAcquisitions()) {
+        for (DeviceDataAcquisition dataAcquisition : dataAcquisitionMap.values()) {
             Set<String> deviceCodes = new HashSet<>();
             dataAcquisition.newInstruments((deviceCode, instrument) -> {
                 deviceCodes.add(deviceCode);
@@ -78,17 +77,13 @@ public class PrometheusTelemetryService implements MultiCollector {
                 List<RelabelConfig> relabelConfigs = RelabelConfig.toRelabelConfigs("localhost:" + serverPort);
                 scrapeConfigs.add(new ScrapeConfig(jobName, PATH_METRICS_DEVICES, dataAcquisition.getScrapeInterval(), relabelConfigs, staticConfig));
             }
-//            dataAcquisition.getDataPoints().stream()
-//                    .map(in -> in.getDataPointId().getMetricName())
-//                    .forEach(prometheusNames::add);
-//            prometheusNames.add(POINT_INFO_METRIC_NAME);
         }
-
         try {
+            clear();
+            deviceMetricsRegistry.register(this);
             yamlSerde.writeValue(deviceScrapeConfigFile, new ScrapeConfigs(scrapeConfigs));
             prometheusService.reload();
         } catch (Exception e) {
-            log.error("", e);
             throw new RuntimeException(e);
         }
     }
@@ -109,14 +104,8 @@ public class PrometheusTelemetryService implements MultiCollector {
         return new MetricSnapshots();
     }
 
-//    @Override
-//    public List<String> getPrometheusNames() {
-//        return new ArrayList<>(prometheusNames);
-//    }
-
     private void clear() {
         instruments.clear();
-//        prometheusNames.clear();
         deviceMetricsRegistry.clear();
     }
 }

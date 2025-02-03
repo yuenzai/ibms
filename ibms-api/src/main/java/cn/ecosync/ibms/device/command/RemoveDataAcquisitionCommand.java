@@ -1,13 +1,18 @@
 package cn.ecosync.ibms.device.command;
 
 import cn.ecosync.ibms.command.Command;
-import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
+import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import jakarta.validation.Valid;
 import lombok.ToString;
 
-@Getter
 @ToString
 public class RemoveDataAcquisitionCommand implements Command {
-    @NotBlank
-    private String dataAcquisitionCode;
+    @Valid
+    @JsonUnwrapped
+    private DeviceDataAcquisitionId dataAcquisitionId;
+
+    public DeviceDataAcquisitionId getDataAcquisitionId() {
+        return dataAcquisitionId;
+    }
 }

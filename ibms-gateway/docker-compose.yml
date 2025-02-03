@@ -28,7 +28,7 @@ services:
     command: [ "java", "-Xms64m", "-Xmx64m", "-Xss256k", "-jar", 'ibms-gateway-0.0.1-SNAPSHOT.jar' ]
     environment:
       BACNET_IFACE: ens18
-      GATEWAY_ID: qie-hotel
+      DATA_ACQUISITION_CODES: qie-hotel
       IBMS_HOST: ${IBMS_HOST:?}
       OTEL_RESOURCE_ATTRIBUTES: service.namespace=ibms,service.name=gateway,service.instance.id=qie-hotel
       OTEL_TRACES_EXPORTER: none

@@ -2,19 +2,16 @@ package cn.ecosync.ibms.device.jpa;
 
 import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
-import cn.ecosync.ibms.device.model.DeviceDataPoint;
-import cn.ecosync.ibms.device.model.IDeviceDataAcquisition;
 import cn.ecosync.ibms.model.ConcurrencySafeEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.util.Assert;
 
-import java.util.Collection;
 import java.util.Objects;
 
 @Entity
 @Table(name = "device_daq")
-public class DeviceDataAcquisitionEntity extends ConcurrencySafeEntity implements IDeviceDataAcquisition {
+public class DeviceDataAcquisitionEntity extends ConcurrencySafeEntity {
     @Embedded
     private DeviceDataAcquisitionId dataAcquisitionId;
     @Getter
@@ -35,16 +32,6 @@ public class DeviceDataAcquisitionEntity extends ConcurrencySafeEntity implement
         Assert.notNull(dataAcquisition, "dataAcquisition must not be null");
         this.dataAcquisitionId = dataAcquisition.getDataAcquisitionId();
         this.dataAcquisition = dataAcquisition;
-    }
-
-    @Override
-    public Long getScrapeInterval() {
-        return dataAcquisition.getScrapeInterval();
-    }
-
-    @Override
-    public Collection<? extends DeviceDataPoint> getDataPoints() {
-        return dataAcquisition.getDataPoints();
     }
 
     public void save(DeviceDataAcquisition dataAcquisition) {

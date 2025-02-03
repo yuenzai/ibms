@@ -1,9 +1,9 @@
 package cn.ecosync.ibms.device.command.handler;
 
+import cn.ecosync.ibms.command.CommandHandler;
 import cn.ecosync.ibms.device.command.RemoveDataAcquisitionCommand;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
 import cn.ecosync.ibms.device.repository.jpa.DeviceDataAcquisitionJpaRepository;
-import cn.ecosync.ibms.command.CommandHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +16,7 @@ public class RemoveDataAcquisitionCommandHandler implements CommandHandler<Remov
     @Override
     @Transactional
     public void handle(RemoveDataAcquisitionCommand command) {
-        DeviceDataAcquisitionId dataAcquisitionId = new DeviceDataAcquisitionId(command.getDataAcquisitionCode());
+        DeviceDataAcquisitionId dataAcquisitionId = command.getDataAcquisitionId();
         dataAcquisitionRepository.findByDataAcquisitionId(dataAcquisitionId)
                 .ifPresent(dataAcquisitionRepository::delete);
     }
