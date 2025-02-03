@@ -64,6 +64,7 @@ public class PrometheusTelemetryService implements MultiCollector {
     }
 
     public void reload() {
+        Map<String, MultiCollector> instruments = new HashMap<>();
         List<ScrapeConfig> scrapeConfigs = new ArrayList<>();
         for (DeviceDataAcquisition dataAcquisition : dataAcquisitionMap.values()) {
             Set<String> deviceCodes = new HashSet<>();
@@ -79,7 +80,9 @@ public class PrometheusTelemetryService implements MultiCollector {
             }
         }
         try {
-            clear();
+            deviceMetricsRegistry.clear();
+            this.instruments.clear();
+            this.instruments.putAll(instruments);
             deviceMetricsRegistry.register(this);
             yamlSerde.writeValue(deviceScrapeConfigFile, new ScrapeConfigs(scrapeConfigs));
             prometheusService.reload();
@@ -102,10 +105,5 @@ public class PrometheusTelemetryService implements MultiCollector {
     @Override
     public MetricSnapshots collect() {
         return new MetricSnapshots();
-    }
-
-    private void clear() {
-        instruments.clear();
-        deviceMetricsRegistry.clear();
     }
 }
