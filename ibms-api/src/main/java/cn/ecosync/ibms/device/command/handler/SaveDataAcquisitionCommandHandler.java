@@ -3,27 +3,22 @@ package cn.ecosync.ibms.device.command.handler;
 import cn.ecosync.ibms.command.CommandHandler;
 import cn.ecosync.ibms.device.command.SaveDataAcquisitionCommand;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionRepository;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
+import cn.ecosync.ibms.event.EventBus;
 import org.springframework.transaction.annotation.Transactional;
 
-public class SaveDataAcquisitionCommandHandler implements CommandHandler<SaveDataAcquisitionCommand>, ApplicationEventPublisherAware {
+public class SaveDataAcquisitionCommandHandler implements CommandHandler<SaveDataAcquisitionCommand> {
     private final DeviceDataAcquisitionRepository dataAcquisitionRepository;
-    private ApplicationEventPublisher eventPublisher;
+    private final EventBus eventBus;
 
-    public SaveDataAcquisitionCommandHandler(DeviceDataAcquisitionRepository dataAcquisitionRepository) {
+    public SaveDataAcquisitionCommandHandler(DeviceDataAcquisitionRepository dataAcquisitionRepository, EventBus eventBus) {
         this.dataAcquisitionRepository = dataAcquisitionRepository;
+        this.eventBus = eventBus;
     }
 
     @Override
     @Transactional
     public void handle(SaveDataAcquisitionCommand command) {
         dataAcquisitionRepository.save(command)
-                .forEach(eventPublisher::publishEvent);
-    }
-
-    @Override
-    public void setApplicationEventPublisher(ApplicationEventPublisher eventPublisher) {
-        this.eventPublisher = eventPublisher;
+                .forEach(eventBus::publish);
     }
 }

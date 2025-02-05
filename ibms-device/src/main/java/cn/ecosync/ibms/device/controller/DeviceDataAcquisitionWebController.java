@@ -7,7 +7,7 @@ import cn.ecosync.ibms.bacnet.model.BacnetDataPoints;
 import cn.ecosync.ibms.command.CommandBus;
 import cn.ecosync.ibms.device.command.RemoveDataAcquisitionCommand;
 import cn.ecosync.ibms.device.command.SaveDataAcquisitionCommand;
-import cn.ecosync.ibms.device.event.DeviceDataAcquisitionChangedEvent;
+import cn.ecosync.ibms.device.event.DeviceDataAcquisitionSavedEvent;
 import cn.ecosync.ibms.device.model.*;
 import cn.ecosync.ibms.device.query.GetDataAcquisitionQuery;
 import cn.ecosync.ibms.device.query.SearchDataAcquisitionQuery;
@@ -108,8 +108,8 @@ public class DeviceDataAcquisitionWebController {
         }
     }
 
-    @EventListener(DeviceDataAcquisitionChangedEvent.class)
-    public void onListen(DeviceDataAcquisitionChangedEvent event) {
+    @EventListener(DeviceDataAcquisitionSavedEvent.class)
+    public void onListen(DeviceDataAcquisitionSavedEvent event) {
         DeviceDataAcquisition dataAcquisition = event.getDataAcquisition();
         if (dataAcquisition.getSynchronizationState() == SYNCHRONIZING) {
             DeviceDataAcquisitionId dataAcquisitionId = dataAcquisition.getDataAcquisitionId();

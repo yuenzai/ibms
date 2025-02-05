@@ -1,7 +1,8 @@
 package cn.ecosync.ibms.device.jpa;
 
 import cn.ecosync.ibms.device.command.SaveDataAcquisitionCommand;
-import cn.ecosync.ibms.device.event.DeviceDataAcquisitionChangedEvent;
+import cn.ecosync.ibms.device.event.DeviceDataAcquisitionRemovedEvent;
+import cn.ecosync.ibms.device.event.DeviceDataAcquisitionSavedEvent;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionRepository;
@@ -53,7 +54,7 @@ public class DeviceDataAcquisitionJpaRepository implements DeviceDataAcquisition
                 });
             }
         }
-        DeviceDataAcquisitionChangedEvent event = new DeviceDataAcquisitionChangedEvent(dataAcquisition);
+        DeviceDataAcquisitionSavedEvent event = new DeviceDataAcquisitionSavedEvent(dataAcquisition);
         return Collections.singletonList(event);
     }
 
@@ -61,8 +62,11 @@ public class DeviceDataAcquisitionJpaRepository implements DeviceDataAcquisition
     public Collection<Event> remove(DeviceDataAcquisitionId dataAcquisitionId) {
         DeviceDataAcquisitionEntity dataAcquisitionEntity = dataAcquisitionDao.findByDataAcquisitionId(dataAcquisitionId).orElse(null);
         if (dataAcquisitionEntity != null) {
+            DeviceDataAcquisition dataAcquisition = dataAcquisitionEntity.getPayload();
             jdbcTemplate.update(STATEMENT_DELETE, dataAcquisitionEntity.id);
             dataAcquisitionDao.delete(dataAcquisitionEntity);
+            DeviceDataAcquisitionRemovedEvent event = new DeviceDataAcquisitionRemovedEvent(dataAcquisition);
+            return Collections.singletonList(event);
         }
         return Collections.emptyList();
     }
