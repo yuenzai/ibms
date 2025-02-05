@@ -15,8 +15,6 @@ public class SaveDataAcquisitionCommand implements Command {
     @JsonUnwrapped
     private DeviceDataAcquisitionId dataAcquisitionId;
     private Integer scrapeInterval;
-    @Valid
-    @JsonUnwrapped
     private DeviceDataPoints dataPoints;
     private SynchronizationStateEnum synchronizationState;
 

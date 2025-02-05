@@ -6,17 +6,17 @@ import cn.ecosync.ibms.device.event.DeviceDataAcquisitionChangedEvent;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-@Component
-@RequiredArgsConstructor
 public class SaveDataAcquisitionCommandHandler implements CommandHandler<SaveDataAcquisitionCommand>, ApplicationEventPublisherAware {
     private final DeviceDataAcquisitionRepository dataAcquisitionRepository;
     private ApplicationEventPublisher eventPublisher;
+
+    public SaveDataAcquisitionCommandHandler(DeviceDataAcquisitionRepository dataAcquisitionRepository) {
+        this.dataAcquisitionRepository = dataAcquisitionRepository;
+    }
 
     @Override
     @Transactional

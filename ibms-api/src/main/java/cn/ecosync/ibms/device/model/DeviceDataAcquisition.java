@@ -65,12 +65,13 @@ public class DeviceDataAcquisition {
         private SynchronizationStateEnum synchronizationState;
 
         private DeviceDataAcquisitionBuilder(DeviceDataAcquisition dataAcquisition) {
-            this(dataAcquisition.getDataAcquisitionId(), dataAcquisition.getScrapeInterval(), dataAcquisition.getSynchronizationState());
+            this(dataAcquisition.getDataAcquisitionId(), dataAcquisition.getScrapeInterval(), dataAcquisition.getDataPoints(), dataAcquisition.getSynchronizationState());
         }
 
-        private DeviceDataAcquisitionBuilder(DeviceDataAcquisitionId dataAcquisitionId, Integer scrapeInterval, SynchronizationStateEnum synchronizationState) {
+        private DeviceDataAcquisitionBuilder(DeviceDataAcquisitionId dataAcquisitionId, Integer scrapeInterval, DeviceDataPoints dataPoints, SynchronizationStateEnum synchronizationState) {
             this.dataAcquisitionId = dataAcquisitionId;
             this.scrapeInterval = scrapeInterval;
+            this.dataPoints = dataPoints;
             this.synchronizationState = synchronizationState;
         }
 

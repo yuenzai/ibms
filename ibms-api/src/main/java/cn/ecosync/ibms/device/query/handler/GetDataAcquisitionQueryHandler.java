@@ -5,14 +5,14 @@ import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionRepository;
 import cn.ecosync.ibms.device.query.GetDataAcquisitionQuery;
 import cn.ecosync.ibms.query.QueryHandler;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-@Component
-@RequiredArgsConstructor
 public class GetDataAcquisitionQueryHandler implements QueryHandler<GetDataAcquisitionQuery, DeviceDataAcquisition> {
     private final DeviceDataAcquisitionRepository dataAcquisitionRepository;
+
+    public GetDataAcquisitionQueryHandler(DeviceDataAcquisitionRepository dataAcquisitionRepository) {
+        this.dataAcquisitionRepository = dataAcquisitionRepository;
+    }
 
     @Override
     @Transactional(readOnly = true)
