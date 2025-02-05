@@ -16,7 +16,7 @@ server {
         proxy_pass http://backend;
     }
 
-    location /ibms/device-gateway {
+    location /ibms/device-data-acquisition {
         proxy_pass http://backend-hash;
     }
 

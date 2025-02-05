@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.service.annotation.HttpExchange;
 
-@HttpExchange("/ibms/device-daq")
+@HttpExchange("/ibms/device-data-acquisition")
 public interface DataAcquisitionService {
     @HttpExchange(method = "GET", url = "/{data-acquisition-code}", headers = "Query-Type=GET")
     ResponseEntity<DeviceDataAcquisition> get(@PathVariable("data-acquisition-code") String dataAcquisitionCode);

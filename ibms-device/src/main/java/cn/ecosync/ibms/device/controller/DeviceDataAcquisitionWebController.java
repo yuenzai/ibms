@@ -43,7 +43,7 @@ import static cn.ecosync.ibms.device.model.SynchronizationStateEnum.SYNCHRONIZIN
 @Tag(name = "设备数据采集")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/device-daq")
+@RequestMapping("/device-data-acquisition")
 public class DeviceDataAcquisitionWebController {
     private static final Logger log = LoggerFactory.getLogger(DeviceDataAcquisitionWebController.class);
 
