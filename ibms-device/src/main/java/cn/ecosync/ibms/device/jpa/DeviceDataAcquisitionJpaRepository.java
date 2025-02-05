@@ -1,10 +1,12 @@
 package cn.ecosync.ibms.device.jpa;
 
+import cn.ecosync.ibms.device.command.SaveDataAcquisitionCommand;
+import cn.ecosync.ibms.device.event.DeviceDataAcquisitionChangedEvent;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionRepository;
 import cn.ecosync.ibms.device.model.DeviceDataPoint;
-import cn.ecosync.ibms.util.CollectionUtils;
+import cn.ecosync.ibms.event.Event;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 
 @Repository
@@ -24,18 +27,25 @@ public class DeviceDataAcquisitionJpaRepository implements DeviceDataAcquisition
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public void save(DeviceDataAcquisition dataAcquisition) {
-        DeviceDataAcquisitionId dataAcquisitionId = dataAcquisition.getDataAcquisitionId();
+    public Collection<Event> save(SaveDataAcquisitionCommand command) {
+        DeviceDataAcquisition dataAcquisition;
+        DeviceDataAcquisitionId dataAcquisitionId = command.getDataAcquisitionId();
         DeviceDataAcquisitionEntity dataAcquisitionEntity = dataAcquisitionDao.findByDataAcquisitionId(dataAcquisitionId).orElse(null);
         if (dataAcquisitionEntity == null) {
+            dataAcquisition = new DeviceDataAcquisition(dataAcquisitionId, command.getScrapeInterval(), command.getDataPoints(), command.getSynchronizationState());
             dataAcquisitionEntity = new DeviceDataAcquisitionEntity(dataAcquisition);
             dataAcquisitionDao.save(dataAcquisitionEntity);
         } else {
+            dataAcquisition = dataAcquisitionEntity.getPayload().builder()
+                    .with(command.getScrapeInterval())
+                    .with(command.getDataPoints())
+                    .with(command.getSynchronizationState())
+                    .build();
             dataAcquisitionEntity.setPayload(dataAcquisition);
-            Integer id = dataAcquisitionEntity.id;
-            jdbcTemplate.update(STATEMENT_DELETE, id);
-            Collection<? extends DeviceDataPoint> dataPoints = dataAcquisition.getDataPoints().toCollection();
-            if (CollectionUtils.notEmpty(dataPoints)) {
+            if (command.getDataPoints() != null) {
+                Integer id = dataAcquisitionEntity.id;
+                jdbcTemplate.update(STATEMENT_DELETE, id);
+                Collection<? extends DeviceDataPoint> dataPoints = dataAcquisition.getDataPoints().toCollection();
                 jdbcTemplate.batchUpdate(STATEMENT_INSERT, dataPoints, 100, (ps, in) -> {
                     ps.setInt(1, id);
                     ps.setString(2, in.getDataPointId().getDeviceCode());
@@ -43,14 +53,18 @@ public class DeviceDataAcquisitionJpaRepository implements DeviceDataAcquisition
                 });
             }
         }
+        DeviceDataAcquisitionChangedEvent event = new DeviceDataAcquisitionChangedEvent(dataAcquisition);
+        return Collections.singletonList(event);
     }
 
     @Override
-    public void remove(DeviceDataAcquisitionId dataAcquisitionId) {
+    public Collection<Event> remove(DeviceDataAcquisitionId dataAcquisitionId) {
         DeviceDataAcquisitionEntity dataAcquisitionEntity = dataAcquisitionDao.findByDataAcquisitionId(dataAcquisitionId).orElse(null);
-        if (dataAcquisitionEntity == null) return;
-        jdbcTemplate.update(STATEMENT_DELETE, dataAcquisitionEntity.id);
-        dataAcquisitionDao.delete(dataAcquisitionEntity);
+        if (dataAcquisitionEntity != null) {
+            jdbcTemplate.update(STATEMENT_DELETE, dataAcquisitionEntity.id);
+            dataAcquisitionDao.delete(dataAcquisitionEntity);
+        }
+        return Collections.emptyList();
     }
 
     @Override

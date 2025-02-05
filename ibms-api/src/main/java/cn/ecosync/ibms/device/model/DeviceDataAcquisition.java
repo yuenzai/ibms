@@ -17,14 +17,6 @@ public class DeviceDataAcquisition {
     protected DeviceDataAcquisition() {
     }
 
-    public DeviceDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId) {
-        this(dataAcquisitionId, null);
-    }
-
-    public DeviceDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId, Integer scrapeInterval) {
-        this(dataAcquisitionId, scrapeInterval, null, null);
-    }
-
     public DeviceDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId, Integer scrapeInterval, DeviceDataPoints dataPoints, SynchronizationStateEnum synchronizationState) {
         Assert.notNull(dataAcquisitionId, "dataAcquisitionId must not be null");
         this.dataAcquisitionId = dataAcquisitionId;
@@ -47,11 +39,6 @@ public class DeviceDataAcquisition {
 
     public SynchronizationStateEnum getSynchronizationState() {
         return synchronizationState;
-    }
-
-    @Deprecated
-    public final DeviceDataAcquisition toReference() {
-        return null;
     }
 
     public DeviceDataAcquisitionBuilder builder() {
