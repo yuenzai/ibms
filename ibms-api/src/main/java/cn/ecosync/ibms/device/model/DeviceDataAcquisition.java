@@ -19,6 +19,7 @@ public class DeviceDataAcquisition {
 
     public DeviceDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId, Integer scrapeInterval, DeviceDataPoints dataPoints, SynchronizationStateEnum synchronizationState) {
         Assert.notNull(dataAcquisitionId, "dataAcquisitionId must not be null");
+        Assert.isTrue(scrapeInterval == null || (scrapeInterval >= 0 && scrapeInterval <= 120), "scrapeInterval must be between 0 and 120");
         this.dataAcquisitionId = dataAcquisitionId;
         this.scrapeInterval = scrapeInterval != null ? scrapeInterval : 0;
         this.dataPoints = dataPoints != null ? dataPoints : DeviceDataPoints.Empty.INSTANCE;

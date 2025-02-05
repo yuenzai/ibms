@@ -6,6 +6,8 @@ import cn.ecosync.ibms.device.model.DeviceDataPoints;
 import cn.ecosync.ibms.device.model.SynchronizationStateEnum;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.ToString;
 import org.springframework.util.Assert;
 
@@ -14,6 +16,8 @@ public class SaveDataAcquisitionCommand implements Command {
     @Valid
     @JsonUnwrapped
     private DeviceDataAcquisitionId dataAcquisitionId;
+    @Min(0)
+    @Max(120)
     private Integer scrapeInterval;
     private DeviceDataPoints dataPoints;
     private SynchronizationStateEnum synchronizationState;
