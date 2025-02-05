@@ -29,13 +29,4 @@ services:
     environment:
       BACNET_IFACE: ens18
       DATA_ACQUISITION_CODES: qie-hotel
-      IBMS_HOST: ${IBMS_HOST:?}
-      OTEL_RESOURCE_ATTRIBUTES: service.namespace=ibms,service.name=gateway,service.instance.id=qie-hotel
-      OTEL_TRACES_EXPORTER: none
-      OTEL_LOGS_EXPORTER: none
-      OTEL_METRICS_EXPORTER: prometheus
-      OTEL_EXPORTER_PROMETHEUS_PORT: 9494
-#      OTEL_METRICS_EXPORTER: otlp
-#      OTEL_METRIC_EXPORT_INTERVAL: 60000
-#      OTEL_EXPORTER_OTLP_METRICS_PROTOCOL: http/protobuf
-#      OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: http://${IBMS_HOST:?}/prometheus/api/v1/otlp/v1/metrics
+      IBMS_HOST:
