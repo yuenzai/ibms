@@ -3,7 +3,7 @@ package cn.ecosync.ibms.device.command.handler;
 import cn.ecosync.ibms.device.command.RemoveDeviceCommand;
 import cn.ecosync.ibms.device.jpa.DeviceEntity;
 import cn.ecosync.ibms.device.model.DeviceId;
-import cn.ecosync.ibms.device.repository.jpa.DeviceJpaRepository;
+import cn.ecosync.ibms.device.jpa.DeviceJpaRepository;
 import cn.ecosync.ibms.command.CommandHandler;
 import cn.ecosync.ibms.util.StringUtils;
 import lombok.RequiredArgsConstructor;

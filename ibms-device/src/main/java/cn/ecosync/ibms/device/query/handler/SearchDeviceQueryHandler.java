@@ -4,7 +4,7 @@ import cn.ecosync.ibms.device.dto.DeviceProbe;
 import cn.ecosync.ibms.device.jpa.DeviceEntity;
 import cn.ecosync.ibms.device.model.Device;
 import cn.ecosync.ibms.device.query.SearchDeviceQuery;
-import cn.ecosync.ibms.device.repository.jpa.DeviceJpaRepository;
+import cn.ecosync.ibms.device.jpa.DeviceJpaRepository;
 import cn.ecosync.ibms.query.QueryHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;

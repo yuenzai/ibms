@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ConditionalOnClass(JpaRepository.class)
 @ConditionalOnProperty(prefix = "spring.data.jpa.repositories", name = "enabled", havingValue = "true", matchIfMissing = true)
 @EnableJpaAuditing
-@EnableJpaRepositories("cn.ecosync.ibms.*.repository.jpa")
+@EnableJpaRepositories("cn.ecosync.ibms.*.jpa")
 @EntityScan("cn.ecosync.ibms.*.jpa")
 public class JpaConfiguration {
 }

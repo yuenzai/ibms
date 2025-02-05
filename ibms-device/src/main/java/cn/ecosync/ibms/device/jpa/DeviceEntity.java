@@ -16,6 +16,10 @@ import java.util.Objects;
 @Entity
 @Table(name = "device")
 public class DeviceEntity extends ConcurrencySafeEntity implements IDevice {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, updatable = false, unique = true)
+    private Integer id;
     @Embedded
     private DeviceId deviceId;
     @Embedded

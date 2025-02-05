@@ -15,6 +15,10 @@ import java.util.Objects;
 @Entity
 @Table(name = "device_gateway")
 public class DeviceGatewayEntity extends ConcurrencySafeEntity implements IDeviceGateway {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, updatable = false, unique = true)
+    private Integer id;
     @Embedded
     private DeviceGatewayId gatewayId;
     @Column(name = "synchronization_state", nullable = false)

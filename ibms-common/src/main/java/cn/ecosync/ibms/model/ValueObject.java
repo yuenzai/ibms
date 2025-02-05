@@ -7,5 +7,5 @@ import jakarta.persistence.MappedSuperclass;
  * @since 2024
  */
 @MappedSuperclass
-public abstract class IdentifiedValueObject extends IdentifiedDomainObject {
+public interface ValueObject {
 }

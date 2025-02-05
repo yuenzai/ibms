@@ -3,15 +3,12 @@ package cn.ecosync.ibms.device.controller;
 import cn.ecosync.ibms.bacnet.dto.BacnetObject;
 import cn.ecosync.ibms.bacnet.dto.BacnetObjectType;
 import cn.ecosync.ibms.bacnet.model.BacnetDataPoint;
+import cn.ecosync.ibms.bacnet.model.BacnetDataPoints;
 import cn.ecosync.ibms.command.CommandBus;
 import cn.ecosync.ibms.device.command.RemoveDataAcquisitionCommand;
 import cn.ecosync.ibms.device.command.SaveDataAcquisitionCommand;
-import cn.ecosync.ibms.device.command.SetDataAcquisitionSynchronizationStateCommand;
-import cn.ecosync.ibms.device.event.DeviceDataAcquisitionSynchronizationStateChangedEvent;
-import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
-import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
-import cn.ecosync.ibms.device.model.DeviceDataPointId;
-import cn.ecosync.ibms.device.model.DeviceDataPointLabel;
+import cn.ecosync.ibms.device.event.DeviceDataAcquisitionChangedEvent;
+import cn.ecosync.ibms.device.model.*;
 import cn.ecosync.ibms.device.query.GetDataAcquisitionQuery;
 import cn.ecosync.ibms.device.query.SearchDataAcquisitionQuery;
 import cn.ecosync.ibms.query.QueryBus;
@@ -24,9 +21,7 @@ import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ConverterUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
@@ -43,7 +38,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static cn.ecosync.ibms.device.model.IDeviceDataAcquisition.SynchronizationStateEnum.SYNCHRONIZING;
+import static cn.ecosync.ibms.device.model.SynchronizationStateEnum.SYNCHRONIZING;
 
 @Tag(name = "设备数据采集")
 @RestController
@@ -65,12 +60,6 @@ public class DeviceDataAcquisitionWebController {
     @Operation(summary = "删除数据采集")
     @PostMapping(path = "/{data-acquisition-code}", headers = "Command-Type=REMOVE")
     public void execute(@RequestBody @Validated RemoveDataAcquisitionCommand command) {
-        commandBus.execute(command);
-    }
-
-    @Operation(summary = "设置同步状态")
-    @PostMapping(path = "/{data-acquisition-code}", headers = "Command-Type=SET_SYNCHRONIZATION_STATE")
-    public void execute(@RequestBody @Validated SetDataAcquisitionSynchronizationStateCommand command) {
         commandBus.execute(command);
     }
 
@@ -119,14 +108,16 @@ public class DeviceDataAcquisitionWebController {
         }
     }
 
-    @EventListener(DeviceDataAcquisitionSynchronizationStateChangedEvent.class)
-    public void onListen(DeviceDataAcquisitionSynchronizationStateChangedEvent event) {
-        if (event.getSynchronizationState() != SYNCHRONIZING) return;
-        DeviceDataAcquisitionId dataAcquisitionId = event.getDataAcquisitionId();
-        DataAcquisitionDeferredResult deferredResult = deferredResultCache.remove(dataAcquisitionId);
-        if (deferredResult != null) {
-            log.info("中断轮询[key={}]", dataAcquisitionId);
-            deferredResult.setTimeoutResult();
+    @EventListener(DeviceDataAcquisitionChangedEvent.class)
+    public void onListen(DeviceDataAcquisitionChangedEvent event) {
+        DeviceDataAcquisition dataAcquisition = event.getDataAcquisition();
+        if (dataAcquisition.getSynchronizationState() == SYNCHRONIZING) {
+            DeviceDataAcquisitionId dataAcquisitionId = dataAcquisition.getDataAcquisitionId();
+            DataAcquisitionDeferredResult deferredResult = deferredResultCache.remove(dataAcquisitionId);
+            if (deferredResult != null) {
+                log.info("中断轮询[key={}]", dataAcquisitionId);
+                deferredResult.setTimeoutResult();
+            }
         }
     }
 
@@ -147,15 +138,14 @@ public class DeviceDataAcquisitionWebController {
         if (!listener.getExceptions().isEmpty()) {
             return new ResponseEntity<>(listener.getExceptions(), HttpStatus.BAD_REQUEST);
         }
-        List<BacnetDataPoint> bacnetDataPoints = listener.getBacnetDataPoints();
         DeviceDataAcquisitionId dataAcquisitionId = new DeviceDataAcquisitionId(dataAcquisitionCode);
-        SaveDataAcquisitionCommand command = new SaveDataAcquisitionCommand.Bacnet(dataAcquisitionId, bacnetDataPoints);
+        SaveDataAcquisitionCommand command = new SaveDataAcquisitionCommand(dataAcquisitionId);
+        DeviceDataPoints dataPoints = listener.toDataPoints();
+        command.setDataPoints(dataPoints);
         commandBus.execute(command);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Slf4j
-    @Getter
     public static class DeviceDataPointListener implements ReadListener<Map<Integer, String>> {
         private final Map<Integer, String> head = new HashMap<>();
         private final List<BacnetDataPoint> bacnetDataPoints = new ArrayList<>();
@@ -208,6 +198,14 @@ public class DeviceDataAcquisitionWebController {
                     new BacnetObject(objectType, objectInstance),
                     labels
             );
+        }
+
+        public DeviceDataPoints toDataPoints() {
+            return new BacnetDataPoints(bacnetDataPoints);
+        }
+
+        public List<ExcelDataConvertException> getExceptions() {
+            return exceptions;
         }
     }
 }

@@ -1,9 +1,6 @@
 package cn.ecosync.ibms.device.model;
 
-import cn.ecosync.ibms.bacnet.model.BacnetDataPoint;
 import cn.ecosync.ibms.util.CollectionUtils;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import io.prometheus.metrics.core.metrics.Info;
 import io.prometheus.metrics.model.snapshots.PrometheusNaming;
@@ -16,8 +13,6 @@ import java.util.List;
 
 @Getter
 @ToString
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
-@JsonSubTypes(@JsonSubTypes.Type(value = BacnetDataPoint.class, name = "BACNET"))
 public abstract class DeviceDataPoint {
     @Valid
     @JsonUnwrapped

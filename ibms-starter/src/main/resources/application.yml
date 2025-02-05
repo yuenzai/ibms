@@ -8,7 +8,7 @@ spring:
   application:
     name: dev
   datasource:
-    url: jdbc:mysql://database:3306/IBMS?serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://database:3306/ibms?serverTimezone=Asia/Shanghai
     username: root
     password: CJVixCszaS+7raa/5326YJDq3xrSBXHg
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -79,7 +79,7 @@ spring:
 #    placeholders:
 #      db-vendor: mysql
 
-#logging:
-#  level:
-#    org.springframework.jdbc.core.JdbcTemplate: debug
+logging:
+  level:
+    org.springframework.jdbc.core.JdbcTemplate: debug
 #    org.flywaydb: debug

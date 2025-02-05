@@ -12,7 +12,7 @@ import java.util.Objects;
 @Embeddable
 public class DeviceDataAcquisitionId {
     @NotBlank
-    @Column(name = "daq_code", nullable = false, updatable = false)
+    @Column(name = "data_acquisition_code", nullable = false, updatable = false)
     private String dataAcquisitionCode;
 
     protected DeviceDataAcquisitionId() {

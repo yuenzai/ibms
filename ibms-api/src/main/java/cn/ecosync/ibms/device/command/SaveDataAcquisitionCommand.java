@@ -1,43 +1,58 @@
 package cn.ecosync.ibms.device.command;
 
-import cn.ecosync.ibms.bacnet.model.BacnetDataPoint;
 import cn.ecosync.ibms.command.Command;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
+import cn.ecosync.ibms.device.model.DeviceDataPoints;
+import cn.ecosync.ibms.device.model.SynchronizationStateEnum;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import jakarta.validation.Valid;
 import lombok.ToString;
 import org.springframework.util.Assert;
 
-import java.util.List;
-
 @ToString
 public class SaveDataAcquisitionCommand implements Command {
     @Valid
     @JsonUnwrapped
-    protected DeviceDataAcquisitionId dataAcquisitionId;
-    private Long scrapeInterval;
+    private DeviceDataAcquisitionId dataAcquisitionId;
+    private Integer scrapeInterval;
+    @Valid
+    @JsonUnwrapped
+    private DeviceDataPoints dataPoints;
+    private SynchronizationStateEnum synchronizationState;
+
+    protected SaveDataAcquisitionCommand() {
+    }
+
+    public SaveDataAcquisitionCommand(DeviceDataAcquisitionId dataAcquisitionId) {
+        Assert.notNull(dataAcquisitionId, "dataAcquisitionId must not be null");
+        this.dataAcquisitionId = dataAcquisitionId;
+    }
 
     public DeviceDataAcquisitionId getDataAcquisitionId() {
         return dataAcquisitionId;
     }
 
-    public Long getScrapeInterval() {
+    public Integer getScrapeInterval() {
         return scrapeInterval;
     }
 
-    @ToString(callSuper = true)
-    public static class Bacnet extends SaveDataAcquisitionCommand {
-        private final List<BacnetDataPoint> dataPoints;
+    public void setScrapeInterval(Integer scrapeInterval) {
+        this.scrapeInterval = scrapeInterval;
+    }
 
-        public Bacnet(DeviceDataAcquisitionId dataAcquisitionId, List<BacnetDataPoint> dataPoints) {
-            Assert.notNull(dataAcquisitionId, "dataAcquisitionId must not be null");
-            Assert.notNull(dataPoints, "dataPoints must not be null");
-            this.dataAcquisitionId = dataAcquisitionId;
-            this.dataPoints = dataPoints;
-        }
+    public DeviceDataPoints getDataPoints() {
+        return dataPoints;
+    }
 
-        public List<BacnetDataPoint> getDataPoints() {
-            return dataPoints;
-        }
+    public void setDataPoints(DeviceDataPoints dataPoints) {
+        this.dataPoints = dataPoints;
+    }
+
+    public SynchronizationStateEnum getSynchronizationState() {
+        return synchronizationState;
+    }
+
+    public void setSynchronizationState(SynchronizationStateEnum synchronizationState) {
+        this.synchronizationState = synchronizationState;
     }
 }

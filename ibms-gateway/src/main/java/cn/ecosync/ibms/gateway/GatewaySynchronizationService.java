@@ -1,6 +1,6 @@
 package cn.ecosync.ibms.gateway;
 
-import cn.ecosync.ibms.device.command.SetDataAcquisitionSynchronizationStateCommand;
+import cn.ecosync.ibms.device.command.SaveDataAcquisitionCommand;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
 import cn.ecosync.ibms.util.StringUtils;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-import static cn.ecosync.ibms.device.model.IDeviceDataAcquisition.SynchronizationStateEnum.SYNCHRONIZED;
+import static cn.ecosync.ibms.device.model.SynchronizationStateEnum.SYNCHRONIZED;
 
 public class GatewaySynchronizationService implements CommandLineRunner {
     private static final Logger log = LoggerFactory.getLogger(GatewaySynchronizationService.class);
@@ -122,7 +122,10 @@ public class GatewaySynchronizationService implements CommandLineRunner {
 
         private void notifySynchronized() {
             log.info("通知 IBMS 已同步...");
-            dataAcquisitionService.execute(dataAcquisitionCode, new SetDataAcquisitionSynchronizationStateCommand(new DeviceDataAcquisitionId(dataAcquisitionCode), SYNCHRONIZED));
+            DeviceDataAcquisitionId dataAcquisitionId = new DeviceDataAcquisitionId(dataAcquisitionCode);
+            SaveDataAcquisitionCommand command = new SaveDataAcquisitionCommand(dataAcquisitionId);
+            command.setSynchronizationState(SYNCHRONIZED);
+            dataAcquisitionService.execute(dataAcquisitionCode, command);
         }
     }
 

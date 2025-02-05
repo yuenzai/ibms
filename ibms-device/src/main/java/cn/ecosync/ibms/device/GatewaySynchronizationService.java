@@ -3,11 +3,14 @@ package cn.ecosync.ibms.device;
 import cn.ecosync.ibms.AbstractSynchronizationService;
 import cn.ecosync.ibms.device.jpa.DeviceDataAcquisitionEntity;
 import cn.ecosync.ibms.device.jpa.DeviceGatewayEntity;
-import cn.ecosync.ibms.device.model.*;
+import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
+import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
+import cn.ecosync.ibms.device.model.DeviceGateway;
+import cn.ecosync.ibms.device.model.DeviceGatewayId;
 import cn.ecosync.ibms.device.model.IDeviceGateway.SynchronizationStateEnum;
 import cn.ecosync.ibms.device.query.GetGatewayQuery;
-import cn.ecosync.ibms.device.repository.jpa.DeviceDataAcquisitionJpaRepository;
-import cn.ecosync.ibms.device.repository.jpa.DeviceGatewayJpaRepository;
+import cn.ecosync.ibms.device.jpa.DeviceDataAcquisitionDao;
+import cn.ecosync.ibms.device.jpa.DeviceGatewayJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +26,7 @@ import java.util.stream.Collectors;
 public class GatewaySynchronizationService extends AbstractSynchronizationService<DeviceGatewayId, DeviceGateway, GetGatewayQuery> {
     private final Map<DeviceGatewayId, Consumer<DeviceGateway>> consumerMap = new ConcurrentHashMap<>();
     private final DeviceGatewayJpaRepository gatewayRepository;
-    private final DeviceDataAcquisitionJpaRepository dataAcquisitionRepository;
+    private final DeviceDataAcquisitionDao dataAcquisitionRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -42,9 +45,9 @@ public class GatewaySynchronizationService extends AbstractSynchronizationServic
         return gateway.withDataAcquisitions(dataAcquisitions);
     }
 
-    private IDeviceDataAcquisition getDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId) {
+    private DeviceDataAcquisition getDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId) {
         return dataAcquisitionRepository.findByDataAcquisitionId(dataAcquisitionId)
-                .map(DeviceDataAcquisitionEntity::getDataAcquisition)
+                .map(DeviceDataAcquisitionEntity::getPayload)
                 .orElse(null);
     }
 

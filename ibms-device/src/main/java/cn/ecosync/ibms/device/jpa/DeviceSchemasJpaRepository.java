@@ -1,6 +1,5 @@
-package cn.ecosync.ibms.device.repository.jpa;
+package cn.ecosync.ibms.device.jpa;
 
-import cn.ecosync.ibms.device.jpa.DeviceSchemasEntity;
 import cn.ecosync.ibms.device.model.DeviceSchemasId;
 import org.springframework.data.jpa.repository.JpaRepository;
 

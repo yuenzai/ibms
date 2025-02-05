@@ -1,7 +1,6 @@
-package cn.ecosync.ibms.device.repository.jpa;
+package cn.ecosync.ibms.device.jpa;
 
 import cn.ecosync.ibms.device.dto.DeviceProbe;
-import cn.ecosync.ibms.device.jpa.DeviceEntity;
 import cn.ecosync.ibms.device.model.DeviceId;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;

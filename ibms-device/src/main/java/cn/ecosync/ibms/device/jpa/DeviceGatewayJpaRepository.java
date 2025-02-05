@@ -1,6 +1,5 @@
-package cn.ecosync.ibms.device.repository.jpa;
+package cn.ecosync.ibms.device.jpa;
 
-import cn.ecosync.ibms.device.jpa.DeviceGatewayEntity;
 import cn.ecosync.ibms.device.model.DeviceGatewayId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

@@ -68,7 +68,7 @@ public class PrometheusTelemetryService implements MultiCollector {
         List<ScrapeConfig> scrapeConfigs = new ArrayList<>();
         for (DeviceDataAcquisition dataAcquisition : dataAcquisitionMap.values()) {
             Set<String> deviceCodes = new HashSet<>();
-            dataAcquisition.newInstruments((deviceCode, instrument) -> {
+            dataAcquisition.getDataPoints().newInstruments((deviceCode, instrument) -> {
                 deviceCodes.add(deviceCode);
                 instruments.put(deviceCode, instrument);
             });

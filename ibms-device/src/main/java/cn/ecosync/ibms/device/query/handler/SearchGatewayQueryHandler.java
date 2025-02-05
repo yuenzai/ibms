@@ -3,7 +3,7 @@ package cn.ecosync.ibms.device.query.handler;
 import cn.ecosync.ibms.device.jpa.DeviceGatewayEntity;
 import cn.ecosync.ibms.device.model.DeviceGateway;
 import cn.ecosync.ibms.device.query.SearchGatewayQuery;
-import cn.ecosync.ibms.device.repository.jpa.DeviceGatewayJpaRepository;
+import cn.ecosync.ibms.device.jpa.DeviceGatewayJpaRepository;
 import cn.ecosync.ibms.query.QueryHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

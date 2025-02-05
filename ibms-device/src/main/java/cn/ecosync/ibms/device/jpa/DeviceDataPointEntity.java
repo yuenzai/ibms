@@ -1,49 +1,41 @@
-//package cn.ecosync.ibms.device.jpa;
-//
-//import cn.ecosync.ibms.device.model.DeviceDataPoint;
-//import cn.ecosync.ibms.device.model.DeviceDataPointId;
-//import cn.ecosync.iframework.domain.Entity;
-//import jakarta.persistence.Column;
-//import jakarta.persistence.Convert;
-//import jakarta.persistence.Embedded;
-//import jakarta.persistence.Table;
-//import lombok.Getter;
-//import org.springframework.util.Assert;
-//
-//import java.util.Objects;
-//
-//@jakarta.persistence.Entity
-//@Table(name = "device_data_point")
-//public class DeviceDataPointEntity extends Entity {
-//    @Embedded
-//    private DeviceDataPointId dataPointId;
-//    @Getter
-//    @Convert(converter = DeviceDataPointConverter.class)
-//    @Column(name = "device_data_point", nullable = false)
-//    private DeviceDataPoint dataPoint;
-//
-//    protected DeviceDataPointEntity() {
-//    }
-//
-//    public DeviceDataPointEntity(DeviceDataPoint dataPoint) {
-//        Assert.notNull(dataPoint, "dataPoint must not be null");
-//        this.dataPointId = dataPoint.getDataPointId();
-//        this.dataPoint = dataPoint;
-//    }
-//
-//    public void save(DeviceDataPoint dataPoint) {
-//        this.dataPoint = dataPoint;
-//    }
-//
-//    @Override
-//    public boolean equals(Object o) {
-//        if (!(o instanceof DeviceDataPointEntity)) return false;
-//        DeviceDataPointEntity that = (DeviceDataPointEntity) o;
-//        return Objects.equals(this.dataPointId, that.dataPointId);
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return Objects.hashCode(dataPointId);
-//    }
-//}
+package cn.ecosync.ibms.device.jpa;
+
+import cn.ecosync.ibms.device.model.DeviceDataPointId;
+import jakarta.persistence.*;
+import org.springframework.util.Assert;
+
+import java.io.Serializable;
+import java.util.Objects;
+
+@Entity
+@Table(name = "device_data_point")
+public class DeviceDataPointEntity implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, updatable = false, unique = true)
+    private Long id;
+    @Column(name = "data_acquisition_id", nullable = false, updatable = false)
+    private Integer dataAcquisitionId;
+    @Embedded
+    private DeviceDataPointId dataPointId;
+
+    protected DeviceDataPointEntity() {
+    }
+
+    public DeviceDataPointEntity(DeviceDataPointId dataPointId) {
+        Assert.notNull(dataPointId, "dataPointId must not be null");
+        this.dataPointId = dataPointId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof DeviceDataPointEntity)) return false;
+        DeviceDataPointEntity that = (DeviceDataPointEntity) o;
+        return Objects.equals(this.dataPointId, that.dataPointId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(dataPointId);
+    }
+}

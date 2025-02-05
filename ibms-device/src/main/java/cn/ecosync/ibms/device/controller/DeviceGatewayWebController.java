@@ -1,12 +1,15 @@
 package cn.ecosync.ibms.device.controller;
 
+import cn.ecosync.ibms.command.CommandBus;
 import cn.ecosync.ibms.device.GatewaySynchronizationService;
-import cn.ecosync.ibms.device.command.*;
+import cn.ecosync.ibms.device.command.AddGatewayCommand;
+import cn.ecosync.ibms.device.command.GatewayCommand;
+import cn.ecosync.ibms.device.command.RemoveGatewayCommand;
+import cn.ecosync.ibms.device.command.SetGatewaySynchronizationStateCommand;
 import cn.ecosync.ibms.device.model.DeviceGateway;
 import cn.ecosync.ibms.device.model.DeviceGatewayId;
 import cn.ecosync.ibms.device.query.GetGatewayQuery;
 import cn.ecosync.ibms.device.query.SearchGatewayQuery;
-import cn.ecosync.ibms.command.CommandBus;
 import cn.ecosync.ibms.query.QueryBus;
 import cn.ecosync.ibms.serde.JsonSerde;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,11 +44,6 @@ public class DeviceGatewayWebController {
         switch (commandType) {
             case "ADD":
                 commandBus.execute(new AddGatewayCommand(gatewayId));
-                return new ResponseEntity<>(HttpStatus.OK);
-            case "SAVE":
-                command = jsonSerde.deserialize(request.getBody(), SaveGatewayCommand.class)
-                        .withGatewayId(gatewayId);
-                commandBus.execute(command);
                 return new ResponseEntity<>(HttpStatus.OK);
             case "REMOVE":
                 commandBus.execute(new RemoveGatewayCommand(gatewayId));

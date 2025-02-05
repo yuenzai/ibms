@@ -1,5 +1,7 @@
 package cn.ecosync.ibms.device.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.AssertTrue;
 import lombok.Getter;
 import org.springframework.util.Assert;
@@ -9,9 +11,12 @@ import java.util.Objects;
 import static cn.ecosync.ibms.Constants.PATTERN_CODE;
 
 @Getter
+@Embeddable
 public class DeviceDataPointId {
-    private String metricName;
+    @Column(name = "device_code", nullable = false, updatable = false)
     private String deviceCode;
+    @Column(name = "metric_name", nullable = false, updatable = false)
+    private String metricName;
 
     protected DeviceDataPointId() {
     }

@@ -1,37 +1,35 @@
 package cn.ecosync.ibms.device.model;
 
-import cn.ecosync.ibms.bacnet.model.BacnetDataAcquisition;
-import cn.ecosync.ibms.bacnet.model.BacnetDataAcquisition.BacnetDataAcquisitionBuilder;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import io.prometheus.metrics.model.registry.MultiCollector;
 import lombok.ToString;
 import org.springframework.util.Assert;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.function.BiConsumer;
-
-import static cn.ecosync.ibms.device.model.IDeviceDataAcquisition.SynchronizationStateEnum.UNSYNCHRONIZED;
+import static cn.ecosync.ibms.device.model.SynchronizationStateEnum.UNSYNCHRONIZED;
 
 @ToString
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
-@JsonSubTypes({@JsonSubTypes.Type(value = BacnetDataAcquisition.class, name = "BACNET")})
-public class DeviceDataAcquisition implements IDeviceDataAcquisition {
+public class DeviceDataAcquisition {
     @JsonUnwrapped
     private DeviceDataAcquisitionId dataAcquisitionId;
-    private Long scrapeInterval;
+    private Integer scrapeInterval;
     private SynchronizationStateEnum synchronizationState;
+    private DeviceDataPoints dataPoints;
 
     protected DeviceDataAcquisition() {
     }
 
-    public DeviceDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId, Long scrapeInterval, SynchronizationStateEnum synchronizationState) {
+    public DeviceDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId) {
+        this(dataAcquisitionId, null);
+    }
+
+    public DeviceDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId, Integer scrapeInterval) {
+        this(dataAcquisitionId, scrapeInterval, null, null);
+    }
+
+    public DeviceDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId, Integer scrapeInterval, DeviceDataPoints dataPoints, SynchronizationStateEnum synchronizationState) {
         Assert.notNull(dataAcquisitionId, "dataAcquisitionId must not be null");
-        Assert.notNull(scrapeInterval, "scrapeInterval must not be null");
         this.dataAcquisitionId = dataAcquisitionId;
-        this.scrapeInterval = scrapeInterval;
+        this.scrapeInterval = scrapeInterval != null ? scrapeInterval : 0;
+        this.dataPoints = dataPoints != null ? dataPoints : DeviceDataPoints.Empty.INSTANCE;
         this.synchronizationState = synchronizationState != null ? synchronizationState : UNSYNCHRONIZED;
     }
 
@@ -39,19 +37,16 @@ public class DeviceDataAcquisition implements IDeviceDataAcquisition {
         return dataAcquisitionId;
     }
 
-    @Override
-    public Long getScrapeInterval() {
+    public Integer getScrapeInterval() {
         return scrapeInterval;
     }
 
-    @Override
-    public SynchronizationStateEnum getSynchronizationState() {
-        return synchronizationState;
+    public DeviceDataPoints getDataPoints() {
+        return dataPoints;
     }
 
-    @Override
-    public Collection<? extends DeviceDataPoint> getDataPoints() {
-        return Collections.emptyList();
+    public SynchronizationStateEnum getSynchronizationState() {
+        return synchronizationState;
     }
 
     @Deprecated
@@ -59,31 +54,36 @@ public class DeviceDataAcquisition implements IDeviceDataAcquisition {
         return null;
     }
 
-    public void newInstruments(BiConsumer<String, MultiCollector> consumer) {
-    }
-
     public DeviceDataAcquisitionBuilder builder() {
         return new DeviceDataAcquisitionBuilder(this);
     }
 
     public static class DeviceDataAcquisitionBuilder {
-        protected DeviceDataAcquisitionId dataAcquisitionId;
-        protected Long scrapeInterval;
-        protected SynchronizationStateEnum synchronizationState;
+        private final DeviceDataAcquisitionId dataAcquisitionId;
+        private Integer scrapeInterval;
+        private DeviceDataPoints dataPoints;
+        private SynchronizationStateEnum synchronizationState;
 
-        public DeviceDataAcquisitionBuilder(DeviceDataAcquisition dataAcquisition) {
+        private DeviceDataAcquisitionBuilder(DeviceDataAcquisition dataAcquisition) {
             this(dataAcquisition.getDataAcquisitionId(), dataAcquisition.getScrapeInterval(), dataAcquisition.getSynchronizationState());
         }
 
-        public DeviceDataAcquisitionBuilder(DeviceDataAcquisitionId dataAcquisitionId, Long scrapeInterval, SynchronizationStateEnum synchronizationState) {
+        private DeviceDataAcquisitionBuilder(DeviceDataAcquisitionId dataAcquisitionId, Integer scrapeInterval, SynchronizationStateEnum synchronizationState) {
             this.dataAcquisitionId = dataAcquisitionId;
             this.scrapeInterval = scrapeInterval;
             this.synchronizationState = synchronizationState;
         }
 
-        public DeviceDataAcquisitionBuilder with(Long scrapeInterval) {
+        public DeviceDataAcquisitionBuilder with(Integer scrapeInterval) {
             if (scrapeInterval != null) {
                 this.scrapeInterval = scrapeInterval;
+            }
+            return this;
+        }
+
+        public DeviceDataAcquisitionBuilder with(DeviceDataPoints dataPoints) {
+            if (dataPoints != null) {
+                this.dataPoints = dataPoints;
             }
             return this;
         }
@@ -95,12 +95,8 @@ public class DeviceDataAcquisition implements IDeviceDataAcquisition {
             return this;
         }
 
-        public BacnetDataAcquisitionBuilder asBacnetBuilder() {
-            return new BacnetDataAcquisitionBuilder(dataAcquisitionId, scrapeInterval, synchronizationState, Collections.emptyList());
-        }
-
         public DeviceDataAcquisition build() {
-            return new DeviceDataAcquisition(dataAcquisitionId, scrapeInterval, synchronizationState);
+            return new DeviceDataAcquisition(dataAcquisitionId, scrapeInterval, dataPoints, synchronizationState);
         }
     }
 }
