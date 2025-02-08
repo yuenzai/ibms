@@ -126,7 +126,10 @@ public class BacnetInstrumentation implements MultiCollector {
             if (presentValue == null) continue;
             String metricName = bacnetDataPoint.getDataPointId().getMetricName();
             double value = presentValue.getValueAsNumber().doubleValue();
-            Labels labels = Labels.of("device_instance", deviceInstance.toString());
+            // {metric_type = "device"} * on (instance, metric_name) group_left (...) point_info
+            String[] labelNames = {"device_instance", "metric_type", "metric_name"};
+            String[] labelValues = {deviceInstance.toString(), "device", metricName};
+            Labels labels = Labels.of(labelNames, labelValues);
             GaugeSnapshot.GaugeDataPointSnapshot dataPoint = new GaugeSnapshot.GaugeDataPointSnapshot(value, labels, null);
             GaugeSnapshot metric = GaugeSnapshot.builder()
                     .name(metricName)
