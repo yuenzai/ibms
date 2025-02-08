@@ -5,7 +5,7 @@ import cn.ecosync.ibms.device.model.Device;
 import cn.ecosync.ibms.device.model.DeviceId;
 import cn.ecosync.ibms.device.model.DeviceSchemasId;
 import cn.ecosync.ibms.device.model.IDevice;
-import cn.ecosync.ibms.model.ConcurrencySafeEntity;
+import cn.ecosync.ibms.jpa.JpaEntity;
 import cn.ecosync.ibms.util.StringUtils;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -15,11 +15,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "device")
-public class DeviceEntity extends ConcurrencySafeEntity implements IDevice {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, updatable = false, unique = true)
-    private Integer id;
+public class DeviceEntity extends JpaEntity<Integer> implements IDevice {
     @Embedded
     private DeviceId deviceId;
     @Embedded

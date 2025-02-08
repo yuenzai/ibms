@@ -6,14 +6,14 @@ import org.springframework.data.domain.Sort;
 
 public abstract class PageQuery {
     private Integer page;
-    private Integer pagesize;
+    private Integer pageSize;
 
     protected PageQuery() {
     }
 
-    public PageQuery(Integer page, Integer pagesize) {
+    public PageQuery(Integer page, Integer pageSize) {
         this.page = page;
-        this.pagesize = pagesize;
+        this.pageSize = pageSize;
     }
 
     public Sort toSort() {
@@ -21,8 +21,8 @@ public abstract class PageQuery {
     }
 
     public Pageable toPageable() {
-        if (page != null && pagesize != null) {
-            return PageRequest.of(page, pagesize, toSort());
+        if (page != null && pageSize != null) {
+            return PageRequest.of(page, pageSize, toSort());
         } else {
             return Pageable.unpaged(toSort());
         }
@@ -32,15 +32,15 @@ public abstract class PageQuery {
         return page;
     }
 
-    public Integer getPagesize() {
-        return pagesize;
+    public Integer getPageSize() {
+        return pageSize;
     }
 
     @Override
     public String toString() {
         return "PageQuery{" +
                 "page=" + page +
-                ", pagesize=" + pagesize +
+                ", pageSize=" + pageSize +
                 '}';
     }
 }

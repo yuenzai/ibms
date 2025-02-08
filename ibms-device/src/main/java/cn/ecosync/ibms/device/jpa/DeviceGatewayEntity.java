@@ -4,7 +4,7 @@ import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.device.model.DeviceGateway;
 import cn.ecosync.ibms.device.model.DeviceGatewayId;
 import cn.ecosync.ibms.device.model.IDeviceGateway;
-import cn.ecosync.ibms.model.ConcurrencySafeEntity;
+import cn.ecosync.ibms.jpa.JpaEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.util.Assert;
@@ -14,11 +14,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "device_gateway")
-public class DeviceGatewayEntity extends ConcurrencySafeEntity implements IDeviceGateway {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, updatable = false, unique = true)
-    private Integer id;
+public class DeviceGatewayEntity extends JpaEntity<Integer> implements IDeviceGateway {
     @Embedded
     private DeviceGatewayId gatewayId;
     @Column(name = "synchronization_state", nullable = false)

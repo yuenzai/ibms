@@ -124,8 +124,8 @@ public class DeviceDataAcquisitionWebController {
     @Operation(summary = "查询数据采集")
     @GetMapping(headers = "Query-Type=SEARCH")
     public PagedModel<DeviceDataAcquisition> search(@RequestParam(name = "page", required = false) Integer page,
-                                                    @RequestParam(name = "pagesize", required = false) Integer pagesize) {
-        SearchDataAcquisitionQuery query = new SearchDataAcquisitionQuery(page, pagesize);
+                                                    @RequestParam(name = "pagesize", required = false) Integer pageSize) {
+        SearchDataAcquisitionQuery query = new SearchDataAcquisitionQuery(page, pageSize);
         Page<DeviceDataAcquisition> dataAcquisitions = queryBus.execute(query);
         return new PagedModel<>(dataAcquisitions);
     }

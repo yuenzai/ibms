@@ -44,7 +44,7 @@ public class DeviceDataAcquisitionJpaRepository implements DeviceDataAcquisition
                     .build();
             dataAcquisitionEntity.setPayload(dataAcquisition);
             if (command.getDataPoints() != null) {
-                Integer id = dataAcquisitionEntity.id;
+                Integer id = dataAcquisitionEntity.id();
                 jdbcTemplate.update(STATEMENT_DELETE, id);
                 Collection<? extends DeviceDataPoint> dataPoints = dataAcquisition.getDataPoints().toCollection();
                 jdbcTemplate.batchUpdate(STATEMENT_INSERT, dataPoints, 100, (ps, in) -> {
@@ -63,7 +63,7 @@ public class DeviceDataAcquisitionJpaRepository implements DeviceDataAcquisition
         DeviceDataAcquisitionEntity dataAcquisitionEntity = dataAcquisitionDao.findByDataAcquisitionId(dataAcquisitionId).orElse(null);
         if (dataAcquisitionEntity != null) {
             DeviceDataAcquisition dataAcquisition = dataAcquisitionEntity.getPayload();
-            jdbcTemplate.update(STATEMENT_DELETE, dataAcquisitionEntity.id);
+            jdbcTemplate.update(STATEMENT_DELETE, dataAcquisitionEntity.id());
             dataAcquisitionDao.delete(dataAcquisitionEntity);
             DeviceDataAcquisitionRemovedEvent event = new DeviceDataAcquisitionRemovedEvent(dataAcquisition);
             return Collections.singletonList(event);

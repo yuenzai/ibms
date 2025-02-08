@@ -4,12 +4,11 @@ import cn.ecosync.ibms.device.model.DeviceDataPointId;
 import jakarta.persistence.*;
 import org.springframework.util.Assert;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "device_data_point")
-public class DeviceDataPointEntity implements Serializable {
+public class DeviceDataPointEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false, unique = true)

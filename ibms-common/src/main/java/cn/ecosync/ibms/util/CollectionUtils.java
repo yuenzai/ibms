@@ -1,6 +1,5 @@
 package cn.ecosync.ibms.util;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
 
 import java.util.*;
@@ -11,15 +10,15 @@ import java.util.function.Function;
  * @since 2024
  */
 public class CollectionUtils extends org.springframework.util.CollectionUtils {
-    public static <T> Collection<T> nullSafeOf(Collection<T> collection) {
+    public static <T> Collection<T> nullSafeOf(@Nullable Collection<T> collection) {
         return isEmpty(collection) ? Collections.emptyList() : collection;
     }
 
-    public static <T> List<T> nullSafeOf(List<T> list) {
+    public static <T> List<T> nullSafeOf(@Nullable List<T> list) {
         return isEmpty(list) ? Collections.emptyList() : list;
     }
 
-    public static <T> Set<T> nullSafeOf(Set<T> set) {
+    public static <T> Set<T> nullSafeOf(@Nullable Set<T> set) {
         return isEmpty(set) ? Collections.emptySet() : set;
     }
 
@@ -47,32 +46,5 @@ public class CollectionUtils extends org.springframework.util.CollectionUtils {
             }
         }
         return true;
-    }
-
-    public static <T> Optional<T> firstElement(Iterable<T> iterable) {
-        Iterator<T> it = iterable.iterator();
-        T first = null;
-        if (it.hasNext()) {
-            first = it.next();
-        }
-        return Optional.ofNullable(first);
-    }
-
-    public static Object oneOrMore(List<?> list) {
-        if (isEmpty(list)) {
-            return null;
-        }
-        return list.size() > 1 ? list : firstElement(list);
-    }
-
-    public static Pageable of(Integer page, Integer pageSize) {
-        Pageable pageable;
-        if (pageSize != null && page != null) {
-            pageable = Pageable.ofSize(pageSize)
-                    .withPage(page - 1);
-        } else {
-            pageable = Pageable.unpaged();
-        }
-        return pageable;
     }
 }

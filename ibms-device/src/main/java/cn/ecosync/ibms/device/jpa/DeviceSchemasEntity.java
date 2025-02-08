@@ -4,7 +4,7 @@ import cn.ecosync.ibms.device.dto.DeviceSchema;
 import cn.ecosync.ibms.device.model.DeviceSchemas;
 import cn.ecosync.ibms.device.model.DeviceSchemasId;
 import cn.ecosync.ibms.device.model.IDeviceSchemas;
-import cn.ecosync.ibms.model.ConcurrencySafeEntity;
+import cn.ecosync.ibms.jpa.JpaEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.util.Assert;
@@ -14,11 +14,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "device_schemas")
-public class DeviceSchemasEntity extends ConcurrencySafeEntity implements IDeviceSchemas {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, updatable = false, unique = true)
-    private Integer id;
+public class DeviceSchemasEntity extends JpaEntity<Integer> implements IDeviceSchemas {
     @Embedded
     private DeviceSchemasId schemasId;
     @Getter

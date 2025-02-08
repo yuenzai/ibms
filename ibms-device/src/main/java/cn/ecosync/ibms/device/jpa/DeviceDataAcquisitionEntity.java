@@ -2,7 +2,7 @@ package cn.ecosync.ibms.device.jpa;
 
 import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
-import cn.ecosync.ibms.model.ConcurrencySafeEntity;
+import cn.ecosync.ibms.jpa.JpaEntity;
 import jakarta.persistence.*;
 import org.springframework.util.Assert;
 
@@ -10,11 +10,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "device_data_acquisition")
-public class DeviceDataAcquisitionEntity extends ConcurrencySafeEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, updatable = false, unique = true)
-    protected Integer id;
+public class DeviceDataAcquisitionEntity extends JpaEntity<Integer> {
     @Embedded
     private DeviceDataAcquisitionId dataAcquisitionId;
     @Convert(converter = DeviceDataAcquisitionConverter.class)
@@ -36,6 +32,11 @@ public class DeviceDataAcquisitionEntity extends ConcurrencySafeEntity {
 
     public void setPayload(DeviceDataAcquisition payload) {
         this.payload = payload;
+    }
+
+    @Override
+    protected Integer id() {
+        return super.id();
     }
 
     @Override
