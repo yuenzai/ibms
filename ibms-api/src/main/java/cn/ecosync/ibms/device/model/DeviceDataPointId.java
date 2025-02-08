@@ -27,7 +27,7 @@ public class DeviceDataPointId {
         Assert.isTrue(validate(), "");
     }
 
-    public String getPointName() {
+    public String pointName() {
         return deviceCode + "_" + metricName;
     }
 
@@ -50,6 +50,6 @@ public class DeviceDataPointId {
 
     @Override
     public String toString() {
-        return getPointName();
+        return pointName();
     }
 }

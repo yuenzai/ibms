@@ -42,7 +42,7 @@ public abstract class DeviceDataPoint {
     private String[] toLabelNames() {
         List<DeviceDataPointLabel> labels = getLabels();
         String[] names = new String[labels.size() + 1];
-        names[0] = "point_name";
+        names[0] = "metric_name";
         for (int i = 1; i <= labels.size(); i++) {
             names[i] = PrometheusNaming.sanitizeMetricName(labels.get(i - 1).getName());
         }
@@ -52,7 +52,7 @@ public abstract class DeviceDataPoint {
     public String[] toLabelValues() {
         List<DeviceDataPointLabel> labels = getLabels();
         String[] values = new String[labels.size() + 1];
-        values[0] = getDataPointId().getPointName();
+        values[0] = getDataPointId().getMetricName();
         for (int i = 1; i <= labels.size(); i++) {
             values[i] = labels.get(i - 1).getValue();
         }
