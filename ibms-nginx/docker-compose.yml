@@ -1,7 +1,6 @@
 services:
   nginx:
     image: nginx:1.27-bookworm
-    container_name: nginx
     restart: always
 #    extra_hosts:
 #      - "host.docker.internal:host-gateway"

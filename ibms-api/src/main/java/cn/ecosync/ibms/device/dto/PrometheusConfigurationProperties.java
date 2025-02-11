@@ -1,4 +1,4 @@
-package cn.ecosync.ibms.gateway;
+package cn.ecosync.ibms.device.dto;
 
 import cn.ecosync.ibms.util.CollectionUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;

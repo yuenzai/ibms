@@ -1,17 +1,20 @@
 include:
-  - mysql/docker-compose.yml
-  - nginx/docker-compose.yml
-  - otel/docker-compose.yml
+  - ibms-mysql/docker-compose.yml
+  - ibms-nginx/docker-compose.yml
+  - ibms-grafana/docker-compose.yml
+  - ibms-prometheus/docker-compose.yml
 
 services:
   ibms:
     build: .
-    image: ecosync/ibms:0.0.2
-    container_name: ibms
+    image: ecosync/ibms:0.0.3
+    network_mode: host
     depends_on:
       database:
         condition: service_healthy
     volumes:
       - ./ibms-starter/target/ibms-starter-0.0.1-SNAPSHOT.jar:/opt/app/ibms-starter-0.0.1-SNAPSHOT.jar
-      - ./ibms-starter/src/main/resources/application.yml:/opt/app/application.yml
+      - ./ibms-prometheus/prometheus/scrape_configs/scrape_config_device.yml:/opt/app/scrape_config_device.yml
     command: [ "java", "-jar", "ibms-starter-0.0.1-SNAPSHOT.jar" ]
+    environment:
+      BACNET_IFACE: ens18

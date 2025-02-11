@@ -3,6 +3,7 @@ package cn.ecosync.ibms.gateway;
 import cn.ecosync.ibms.device.command.SaveDataAcquisitionCommand;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.device.model.DeviceDataAcquisitionId;
+import cn.ecosync.ibms.device.model.TelemetryService;
 import cn.ecosync.ibms.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,29 +20,27 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 import static cn.ecosync.ibms.device.model.SynchronizationStateEnum.SYNCHRONIZED;
 
 public class GatewaySynchronizationService implements CommandLineRunner {
     private static final Logger log = LoggerFactory.getLogger(GatewaySynchronizationService.class);
 
+    private final Set<String> dataAcquisitionCodes;
     private final DataAcquisitionService dataAcquisitionService;
-    private final List<String> DATA_ACQUISITION_CODES;
     private final TaskScheduler taskScheduler;
-    private final PrometheusTelemetryService telemetryService;
+    private final TelemetryService telemetryService;
 
     public GatewaySynchronizationService(Environment environment, RestClient.Builder restClientBuilder,
-                                         TaskScheduler taskScheduler, PrometheusTelemetryService telemetryService) {
-        this.DATA_ACQUISITION_CODES = Arrays.stream(environment.getProperty("DATA_ACQUISITION_CODES", "").split("[,;]"))
-                .map(String::trim)
-                .collect(Collectors.toList());
-        if (DATA_ACQUISITION_CODES.isEmpty()) throw new RuntimeException("Environment variable required: DATA_ACQUISITION_CODES");
-        String IBMS_HOST = environment.getRequiredProperty("IBMS_HOST");
-        RestClient restClient = restClientBuilder.baseUrl("http://" + IBMS_HOST).build();
+                                         TaskScheduler taskScheduler, TelemetryService telemetryService) {
+        Set<String> dataAcquisitionCodes = StringUtils.commaDelimitedListToSet(environment.getProperty("DATA_ACQUISITION_CODES"));
+        Assert.notEmpty(dataAcquisitionCodes, "Environment variable required: DATA_ACQUISITION_CODES");
+        this.dataAcquisitionCodes = dataAcquisitionCodes;
+        String ibmsHost = environment.getProperty("IBMS_HOST");
+        Assert.hasText(ibmsHost, "Environment variable required: IBMS_HOST");
+        RestClient restClient = restClientBuilder.baseUrl("http://" + ibmsHost).build();
         RestClientAdapter adapter = RestClientAdapter.create(restClient);
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
         this.dataAcquisitionService = factory.createClient(DataAcquisitionService.class);
@@ -52,7 +51,7 @@ public class GatewaySynchronizationService implements CommandLineRunner {
     @Override
     public void run(String... args) {
         log.info("获取网关配置");
-        for (String dataAcquisitionCode : DATA_ACQUISITION_CODES) {
+        for (String dataAcquisitionCode : dataAcquisitionCodes) {
             if (!StringUtils.hasText(dataAcquisitionCode)) continue;
             DeviceDataAcquisitionSynchronizationService service = newInstance(dataAcquisitionCode);
             service.handle(dataAcquisitionService.get(dataAcquisitionCode));
@@ -64,13 +63,13 @@ public class GatewaySynchronizationService implements CommandLineRunner {
         private final String dataAcquisitionCode;
         private final DataAcquisitionService dataAcquisitionService;
         private final TaskScheduler taskScheduler;
-        private final PrometheusTelemetryService telemetryService;
+        private final TelemetryService telemetryService;
 
         public DeviceDataAcquisitionSynchronizationService(
                 String dataAcquisitionCode,
                 DataAcquisitionService dataAcquisitionService,
                 TaskScheduler taskScheduler,
-                PrometheusTelemetryService telemetryService) {
+                TelemetryService telemetryService) {
             Assert.hasText(dataAcquisitionCode, "dataAcquisitionCode must not be null");
             this.dataAcquisitionCode = dataAcquisitionCode;
             this.dataAcquisitionService = dataAcquisitionService;
@@ -101,10 +100,12 @@ public class GatewaySynchronizationService implements CommandLineRunner {
         private void handle(ResponseEntity<DeviceDataAcquisition> responseEntity) {
             HttpStatusCode statusCode = responseEntity.getStatusCode();
             if (statusCode.isSameCodeAs(HttpStatus.NO_CONTENT)) {
-                if (telemetryService.remove(new DeviceDataAcquisitionId(dataAcquisitionCode))) {
-                    log.info("采集配置不存在[{}]", dataAcquisitionCode);
-                    telemetryService.reload();
-                }
+//                if (telemetryService.remove(new DeviceDataAcquisitionId(dataAcquisitionCode))) {
+//                    log.info("采集配置不存在[{}]", dataAcquisitionCode);
+//                    telemetryService.reload();
+//                }
+                telemetryService.remove(new DeviceDataAcquisitionId(dataAcquisitionCode));
+                telemetryService.reload();
                 return;
             }
             if (statusCode.isSameCodeAs(HttpStatus.ACCEPTED)) return;

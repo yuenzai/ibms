@@ -1,0 +1,17 @@
+volumes:
+  prometheus-storage:
+
+services:
+  prometheus:
+    image: prom/prometheus:v3.1.0
+    network_mode: host
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus-storage:/prometheus
+    command:
+      - --web.listen-address=${PROMETHEUS_ENDPOINT:-0.0.0.0:9090}
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
+  #      - --web.route-prefix=/
+  #      - --web.external-url=http://${IBMS_HOST:?}/prometheus

@@ -1,4 +1,4 @@
-package cn.ecosync.ibms.gateway;
+package cn.ecosync.ibms.device.service;
 
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;

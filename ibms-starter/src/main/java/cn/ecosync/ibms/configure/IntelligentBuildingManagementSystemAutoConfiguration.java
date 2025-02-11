@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Import;
 import java.util.List;
 
 @AutoConfiguration
-@Import({JpaConfiguration.class})
+@Import({JpaConfiguration.class, DeviceConfiguration.class, GatewayConfiguration.class})
 public class IntelligentBuildingManagementSystemAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(JsonSerde.class)

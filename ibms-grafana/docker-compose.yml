@@ -1,0 +1,14 @@
+volumes:
+  grafana-storage:
+
+services:
+  grafana:
+    image: grafana/grafana:11.4.0
+    environment:
+      GF_DEFAULT_INSTANCE_NAME: ${COMPOSE_PROJECT_NAME}
+      GF_SERVER_ROOT_URL: http://${IBMS_HOST:?}/grafana
+      GF_SERVER_SERVE_FROM_SUB_PATH: true
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:?}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?}
+    volumes:
+      - grafana-storage:/var/lib/grafana
