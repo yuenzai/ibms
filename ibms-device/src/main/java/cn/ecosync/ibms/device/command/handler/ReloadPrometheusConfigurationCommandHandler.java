@@ -15,9 +15,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.client.support.RestClientAdapter;
-import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 import java.io.File;
 import java.util.Collections;
@@ -35,15 +32,11 @@ public class ReloadPrometheusConfigurationCommandHandler implements CommandHandl
     private final File deviceScrapeConfigFile;
     private final String serverPort;
 
-    public ReloadPrometheusConfigurationCommandHandler(Environment environment, RestClient.Builder restClientBuilder) {
-        String prometheusEndpoint = environment.getProperty("PROMETHEUS_ENDPOINT", "localhost:9090");
-        RestClient restClient = restClientBuilder.baseUrl("http://" + prometheusEndpoint).build();
-        RestClientAdapter adapter = RestClientAdapter.create(restClient);
-        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
-        this.prometheusService = factory.createClient(PrometheusService.class);
+    public ReloadPrometheusConfigurationCommandHandler(PrometheusService prometheusService, Environment environment) {
+        this.prometheusService = prometheusService;
         this.yamlSerde = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER))
                 .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
-        this.deviceScrapeConfigFile = new File("scrape_config_device.yml");
+        this.deviceScrapeConfigFile = new File("scrape_config_device.yml");//todo
         this.serverPort = environment.getProperty("server.port", "8080");
     }
 

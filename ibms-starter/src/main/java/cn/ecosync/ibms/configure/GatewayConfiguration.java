@@ -1,7 +1,6 @@
 package cn.ecosync.ibms.configure;
 
 import cn.ecosync.ibms.JsonSerdeContextHolder;
-import cn.ecosync.ibms.gateway.GatewaySynchronizationService;
 import cn.ecosync.ibms.gateway.PrometheusTelemetryService;
 import cn.ecosync.ibms.serde.JsonSerde;
 import io.prometheus.metrics.exporter.servlet.jakarta.PrometheusMetricsServlet;
@@ -12,11 +11,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.core.env.Environment;
-import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.web.client.RestClient;
 
 @EnableScheduling
 @Configuration(proxyBeanMethods = false)
@@ -48,14 +43,6 @@ public class GatewayConfiguration {
     }
 
     @Bean
-    @Profile("gateway")
-    public GatewaySynchronizationService gatewaySynchronizationService(
-            Environment environment, RestClient.Builder restClientBuilder, TaskScheduler taskScheduler) {
-        return new GatewaySynchronizationService(environment, restClientBuilder, taskScheduler, prometheusTelemetryService);
-    }
-
-    @Bean
-    @Profile("ibms")
     public PrometheusTelemetryService prometheusTelemetryService() {
         return prometheusTelemetryService;
     }
@@ -69,4 +56,20 @@ public class GatewayConfiguration {
         };
         return new FilterRegistrationBean<>(filter, deviceMetricsServlet);
     }
+//    @Bean
+//    public DataAcquisitionHttpService dataAcquisitionService(RestClient.Builder restClientBuilder, Environment environment) {
+//        String ibmsHost = environment.getProperty("IBMS_HOST");
+//        Assert.hasText(ibmsHost, "Environment variable required: IBMS_HOST");
+//        RestClient restClient = restClientBuilder.baseUrl("http://" + ibmsHost).build();
+//        RestClientAdapter adapter = RestClientAdapter.create(restClient);
+//        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
+//        return factory.createClient(DataAcquisitionHttpService.class);
+//    }
+//
+//    @Bean
+//    @ConditionalOnBean(DataAcquisitionHttpService.class)
+//    public GatewaySynchronizationService gatewaySynchronizationService(
+//            DataAcquisitionHttpService dataAcquisitionService, TaskScheduler taskScheduler, Environment environment) {
+//        return new GatewaySynchronizationService(dataAcquisitionService, prometheusTelemetryService, taskScheduler, environment);
+//    }
 }

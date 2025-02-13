@@ -23,8 +23,10 @@ public class PrometheusTelemetryService implements TelemetryService, MultiCollec
     private final Map<String, MultiCollector> instruments = new ConcurrentHashMap<>();
 
     @Override
-    public void add(DeviceDataAcquisition deviceDataAcquisition) {
-        dataAcquisitionMap.put(deviceDataAcquisition.getDataAcquisitionId(), deviceDataAcquisition);
+    public void add(DeviceDataAcquisition... deviceDataAcquisitions) {
+        for (DeviceDataAcquisition deviceDataAcquisition : deviceDataAcquisitions) {
+            dataAcquisitionMap.put(deviceDataAcquisition.getDataAcquisitionId(), deviceDataAcquisition);
+        }
     }
 
     @Override

@@ -12,6 +12,19 @@
 
     <artifactId>ibms-starter</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>cn.ecosync.ibms</groupId>
+            <artifactId>ibms-device</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>cn.ecosync.ibms</groupId>
+            <artifactId>ibms-gateway</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -98,11 +111,6 @@
                 <dependency>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-web</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>cn.ecosync.ibms</groupId>
-                    <artifactId>ibms-device</artifactId>
-                    <optional>true</optional>
                 </dependency>
             </dependencies>
         </profile>
