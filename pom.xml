@@ -14,8 +14,7 @@
         <module>ibms-parent</module>
         <module>ibms-common</module>
         <module>ibms-api</module>
-        <module>ibms-device</module>
-        <module>ibms-starter</module>
         <module>ibms-gateway</module>
+        <module>ibms-gateway-starter</module>
     </modules>
 </project>

@@ -1,6 +1,6 @@
 package cn.ecosync.ibms.bacnet.model;
 
-import cn.ecosync.ibms.device.model.DeviceDataPoints;
+import cn.ecosync.ibms.gateway.model.DeviceDataPoints;
 import cn.ecosync.ibms.util.CollectionUtils;
 import io.prometheus.metrics.model.registry.MultiCollector;
 import jakarta.validation.Valid;

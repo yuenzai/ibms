@@ -1,9 +1,9 @@
-package cn.ecosync.ibms.device.repository;
+package cn.ecosync.ibms.gateway.repository;
 
-import cn.ecosync.ibms.device.dto.DeviceDto;
-import cn.ecosync.ibms.device.dto.DeviceExtra;
-import cn.ecosync.ibms.device.dto.DevicePointDto;
-import cn.ecosync.ibms.device.dto.DeviceStatus;
+import cn.ecosync.ibms.gateway.dto.DeviceDto;
+import cn.ecosync.ibms.gateway.dto.DeviceExtra;
+import cn.ecosync.ibms.gateway.dto.DevicePointDto;
+import cn.ecosync.ibms.gateway.dto.DeviceStatus;
 import cn.ecosync.ibms.serde.JsonSerde;
 import cn.ecosync.ibms.serde.TypeReference;
 import cn.ecosync.ibms.util.CollectionUtils;

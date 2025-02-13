@@ -1,6 +1,3 @@
-volumes:
-  grafana-storage:
-
 services:
   grafana:
     image: grafana/grafana:11.4.0
@@ -11,4 +8,4 @@ services:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:?}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?}
     volumes:
-      - grafana-storage:/var/lib/grafana
+      - grafana:/var/lib/grafana

@@ -7,7 +7,7 @@ services:
     volumes:
       - ./my.cnf:/etc/mysql/conf.d/my.cnf
       - ./initdb.d:/docker-entrypoint-initdb.d
-      - ${DATA_DIR:?}/mysql:/var/lib/mysql
+      - database:/var/lib/mysql
     healthcheck:
       test: [ "CMD", "mysqladmin", "-uroot", "-p$$MYSQL_ROOT_PASSWORD", "ping", "-h", "localhost" ]
       timeout: 10s

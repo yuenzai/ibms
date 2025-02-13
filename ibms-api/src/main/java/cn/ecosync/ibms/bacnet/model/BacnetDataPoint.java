@@ -2,9 +2,9 @@ package cn.ecosync.ibms.bacnet.model;
 
 import cn.ecosync.ibms.bacnet.dto.BacnetObject;
 import cn.ecosync.ibms.bacnet.dto.BacnetObjectProperties;
-import cn.ecosync.ibms.device.model.DeviceDataPoint;
-import cn.ecosync.ibms.device.model.DeviceDataPointId;
-import cn.ecosync.ibms.device.model.DeviceDataPointLabel;
+import cn.ecosync.ibms.gateway.model.DeviceDataPoint;
+import cn.ecosync.ibms.gateway.model.DeviceDataPointId;
+import cn.ecosync.ibms.gateway.model.DeviceDataPointLabel;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

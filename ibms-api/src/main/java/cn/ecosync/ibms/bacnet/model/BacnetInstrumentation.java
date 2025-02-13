@@ -2,7 +2,7 @@ package cn.ecosync.ibms.bacnet.model;
 
 import cn.ecosync.ibms.bacnet.dto.*;
 import cn.ecosync.ibms.bacnet.dto.BacnetReadPropertyMultipleService.SegmentationNotSupportedException;
-import cn.ecosync.ibms.device.model.DeviceDataPoint;
+import cn.ecosync.ibms.gateway.model.DeviceDataPoint;
 import io.prometheus.metrics.core.metrics.Counter;
 import io.prometheus.metrics.core.metrics.Info;
 import io.prometheus.metrics.model.registry.MultiCollector;
