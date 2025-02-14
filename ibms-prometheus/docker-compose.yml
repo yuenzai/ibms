@@ -10,6 +10,6 @@ services:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.path=/prometheus
       - --web.enable-lifecycle
+      - --web.route-prefix=/
+      - --web.external-url=http://${IBMS_EXTERNAL_HOST:?}/prometheus
 #      - --web.listen-address=${PROMETHEUS_URL:-0.0.0.0:9090}
-#      - --web.route-prefix=/
-#      - --web.external-url=http://${IBMS_HOST:?}/prometheus

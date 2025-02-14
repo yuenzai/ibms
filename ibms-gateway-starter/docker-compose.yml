@@ -14,3 +14,4 @@ services:
       BACNET_IFACE: ens18
       IBMS_HOST: ${IBMS_HOST:?}
       IBMS_GATEWAY_CODE: ${IBMS_GATEWAY_CODE:?}
+      SERVER_PORT: ${IBMS_PORT:-8080}

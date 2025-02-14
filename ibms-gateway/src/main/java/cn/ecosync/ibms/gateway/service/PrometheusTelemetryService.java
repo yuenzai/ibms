@@ -42,7 +42,7 @@ public class PrometheusTelemetryService implements TelemetryService, MultiCollec
         this.dataAcquisitionRepository = dataAcquisitionRepository;
         this.yamlSerde = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER))
                 .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
-        this.gatewayHost = environment.getRequiredProperty("IBMS_HOST");
+        this.gatewayHost = environment.getRequiredProperty("IBMS_HOST") + ":" + environment.getProperty("SERVER_PORT");
         this.gatewayCode = environment.getRequiredProperty("IBMS_GATEWAY_CODE");
         this.scrapeConfigFile = new File("/opt/app/data/scrape_config_file.yml");
     }
@@ -51,7 +51,7 @@ public class PrometheusTelemetryService implements TelemetryService, MultiCollec
     public void reload() {
         Map<String, MultiCollector> instruments = new HashMap<>();
         List<ScrapeConfig> scrapeConfigs = new ArrayList<>();
-        ScrapeConfig gatewayScrapeConfig = new ScrapeConfig(gatewayCode, PATH_METRICS, 30, new StaticConfig(gatewayHost));
+        ScrapeConfig gatewayScrapeConfig = new ScrapeConfig(gatewayCode, "/ibms" + PATH_METRICS, 30, new StaticConfig(gatewayHost));
         scrapeConfigs.add(gatewayScrapeConfig);
 
         List<DeviceDataAcquisition> dataAcquisitions = dataAcquisitionRepository.search(Pageable.unpaged()).getContent();
@@ -94,6 +94,6 @@ public class PrometheusTelemetryService implements TelemetryService, MultiCollec
         String jobName = dataAcquisition.getDataAcquisitionId().toString();
         StaticConfig staticConfig = new StaticConfig(deviceCodes, Collections.singletonMap("target_type", "device"));
         List<RelabelConfig> relabelConfigs = RelabelConfig.toRelabelConfigs(gatewayHost);
-        return new ScrapeConfig(jobName, PATH_METRICS_DEVICES, dataAcquisition.getScrapeInterval(), relabelConfigs, staticConfig);
+        return new ScrapeConfig(jobName, "/ibms" + PATH_METRICS_DEVICES, dataAcquisition.getScrapeInterval(), relabelConfigs, staticConfig);
     }
 }
