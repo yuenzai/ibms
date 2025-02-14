@@ -4,5 +4,5 @@ import cn.ecosync.ibms.command.Command;
 import lombok.ToString;
 
 @ToString
-public class PushGatewayConfigurationCommand implements Command {
+public class ReloadTelemetryServiceCommand implements Command {
 }

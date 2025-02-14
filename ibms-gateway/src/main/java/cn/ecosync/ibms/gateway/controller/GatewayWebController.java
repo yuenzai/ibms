@@ -5,7 +5,7 @@ import cn.ecosync.ibms.bacnet.dto.BacnetObjectType;
 import cn.ecosync.ibms.bacnet.model.BacnetDataPoint;
 import cn.ecosync.ibms.bacnet.model.BacnetDataPoints;
 import cn.ecosync.ibms.command.CommandBus;
-import cn.ecosync.ibms.gateway.command.PushGatewayConfigurationCommand;
+import cn.ecosync.ibms.gateway.command.ReloadTelemetryServiceCommand;
 import cn.ecosync.ibms.gateway.command.RemoveDataAcquisitionCommand;
 import cn.ecosync.ibms.gateway.command.SaveDataAcquisitionCommand;
 import cn.ecosync.ibms.gateway.event.DeviceDataAcquisitionSavedEvent;
@@ -52,10 +52,10 @@ public class GatewayWebController {
     private final QueryBus queryBus;
     private final Map<DeviceDataAcquisitionId, DataAcquisitionDeferredResult> deferredResultCache = new ConcurrentHashMap<>();
 
-    @Operation(summary = "推送网关配置")
-    @PostMapping(headers = "Command-Type=PUSH")
+    @Operation(summary = "重载遥测服务")
+    @PostMapping(headers = "Command-Type=RELOAD")
     public void execute() {
-        PushGatewayConfigurationCommand command = new PushGatewayConfigurationCommand();
+        ReloadTelemetryServiceCommand command = new ReloadTelemetryServiceCommand();
         commandBus.execute(command);
     }
 
