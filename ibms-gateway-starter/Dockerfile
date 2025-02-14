@@ -2,7 +2,7 @@ FROM eclipse-temurin:17-jre-jammy
 
 RUN mkdir -p /opt/app/data /opt/lib && \
     apt-get update && \
-    apt-get install -y cmake git \
+    apt-get install -y cmake git && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt/lib
