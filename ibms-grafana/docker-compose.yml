@@ -1,6 +1,7 @@
 services:
   grafana:
     image: grafana/grafana:11.4.0
+    network_mode: host
     environment:
       GF_DEFAULT_INSTANCE_NAME: ${COMPOSE_PROJECT_NAME}
       GF_SERVER_ROOT_URL: http://${IBMS_HOST:?}/grafana

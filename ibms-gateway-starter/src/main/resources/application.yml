@@ -5,19 +5,15 @@ server:
 
 ---
 spring:
+  profiles:
+    active: @spring.profiles.active@
   application:
-    name: dev
-  datasource:
-    url: jdbc:mysql://database:3306/ibms?serverTimezone=Asia/Shanghai
-    username: root
-    password: CJVixCszaS+7raa/5326YJDq3xrSBXHg
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    name: ibms-gateway
   data:
     jpa:
       repositories:
         enabled: true
   jpa:
-    show-sql: true
     open-in-view: false
   quartz:
     job-store-type: jdbc
@@ -68,7 +64,3 @@ spring:
     sql-migration-separator: __
     sql-migration-suffixes: .sql
     validate-on-migrate: true
-
-logging:
-  level:
-    org.springframework.jdbc.core.JdbcTemplate: debug
