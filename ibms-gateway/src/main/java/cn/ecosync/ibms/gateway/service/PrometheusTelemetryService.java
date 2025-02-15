@@ -17,6 +17,8 @@ import io.prometheus.metrics.model.registry.PrometheusScrapeRequest;
 import io.prometheus.metrics.model.snapshots.MetricSnapshots;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Pageable;
 
@@ -28,7 +30,7 @@ import java.util.stream.Collectors;
 import static cn.ecosync.ibms.Constants.PATH_METRICS;
 import static cn.ecosync.ibms.Constants.PATH_METRICS_DEVICES;
 
-public class PrometheusTelemetryService implements TelemetryService, MultiCollector {
+public class PrometheusTelemetryService implements TelemetryService, MultiCollector, ApplicationRunner {
     private static final Logger log = LoggerFactory.getLogger(PrometheusTelemetryService.class);
 
     private final DeviceDataAcquisitionRepository dataAcquisitionRepository;
@@ -49,6 +51,7 @@ public class PrometheusTelemetryService implements TelemetryService, MultiCollec
 
     @Override
     public void reload() {
+        log.info("reload...");
         Map<String, MultiCollector> instruments = new HashMap<>();
         List<ScrapeConfig> scrapeConfigs = new ArrayList<>();
         ScrapeConfig gatewayScrapeConfig = new ScrapeConfig(gatewayCode, "/ibms" + PATH_METRICS, 30, new StaticConfig(gatewayHost));
@@ -95,5 +98,10 @@ public class PrometheusTelemetryService implements TelemetryService, MultiCollec
         StaticConfig staticConfig = new StaticConfig(deviceCodes, Collections.singletonMap("target_type", "device"));
         List<RelabelConfig> relabelConfigs = RelabelConfig.toRelabelConfigs(gatewayHost);
         return new ScrapeConfig(jobName, "/ibms" + PATH_METRICS_DEVICES, dataAcquisition.getScrapeInterval(), relabelConfigs, staticConfig);
+    }
+
+    @Override
+    public void run(ApplicationArguments args) {
+        reload();
     }
 }
