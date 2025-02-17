@@ -1,21 +1,25 @@
 #!/bin/bash
-
 IBMS_HOME=$(pwd)
 
 sudo tee /etc/systemd/system/ibms.service <<EOF
 [Unit]
-Description=ibms
-After=syslog.target network.target
+Description=Intelligent Building Management System
+Requires=docker.service
+After=docker.service
 
 [Service]
-User=metadata
-Group=metadata
-
-Type=exec
-ExecStart=java -jar ${IBMS_HOME}/ibms-starter/target/ibms-starter-0.0.1-SNAPSHOT.jar
+Type=oneshot
+RemainAfterExit=yes
 WorkingDirectory=${IBMS_HOME}
-SuccessExitStatus=143
+ExecStart=docker compose up -d
+ExecStop=docker compose down
+TimeoutStartSec=0
 
 [Install]
 WantedBy=multi-user.target
 EOF
+
+sudo systemctl daemon-reload
+sudo systemctl start ibms.service
+sudo systemctl enable ibms.service
+sudo systemctl status ibms.service
