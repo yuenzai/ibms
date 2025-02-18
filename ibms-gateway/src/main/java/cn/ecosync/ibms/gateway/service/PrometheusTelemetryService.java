@@ -2,6 +2,7 @@ package cn.ecosync.ibms.gateway.service;
 
 import cn.ecosync.ibms.gateway.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.gateway.model.DeviceDataAcquisitionRepository;
+import cn.ecosync.ibms.gateway.model.DeviceInfos.DeviceInfo;
 import cn.ecosync.ibms.gateway.model.PrometheusConfigurationProperties.RelabelConfig;
 import cn.ecosync.ibms.gateway.model.PrometheusConfigurationProperties.ScrapeConfig;
 import cn.ecosync.ibms.gateway.model.PrometheusConfigurationProperties.ScrapeConfigs;
@@ -12,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import io.prometheus.metrics.core.metrics.Info;
 import io.prometheus.metrics.model.registry.MultiCollector;
 import io.prometheus.metrics.model.registry.PrometheusScrapeRequest;
 import io.prometheus.metrics.model.snapshots.MetricSnapshots;
@@ -38,20 +40,22 @@ public class PrometheusTelemetryService implements TelemetryService, MultiCollec
     private final String gatewayHost;
     private final String gatewayCode;
     private final File scrapeConfigFile;
+    private final AtomicReference<Map<String, DeviceInfo>> deviceInfosRef = new AtomicReference<>(new HashMap<>());
     private final AtomicReference<Map<String, MultiCollector>> instrumentsRef = new AtomicReference<>(new HashMap<>());
 
     public PrometheusTelemetryService(DeviceDataAcquisitionRepository dataAcquisitionRepository, Environment environment) {
         this.dataAcquisitionRepository = dataAcquisitionRepository;
         this.yamlSerde = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER))
                 .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
-        this.gatewayHost = environment.getRequiredProperty("IBMS_HOST") + ":" + environment.getProperty("SERVER_PORT");
+        this.gatewayHost = environment.getRequiredProperty("IBMS_HOST");
         this.gatewayCode = environment.getRequiredProperty("IBMS_GATEWAY_CODE");
-        this.scrapeConfigFile = new File("/opt/app/data/scrape_config_file.yml");
+        this.scrapeConfigFile = new File("scrape_config_file.yml");
     }
 
     @Override
     public void reload() {
         log.info("reload...");
+        Map<String, DeviceInfo> deviceInfos = new HashMap<>();
         Map<String, MultiCollector> instruments = new HashMap<>();
         List<ScrapeConfig> scrapeConfigs = new ArrayList<>();
         ScrapeConfig gatewayScrapeConfig = new ScrapeConfig(gatewayCode, "/ibms" + PATH_METRICS, 30, new StaticConfig(gatewayHost));
@@ -59,6 +63,9 @@ public class PrometheusTelemetryService implements TelemetryService, MultiCollec
 
         List<DeviceDataAcquisition> dataAcquisitions = dataAcquisitionRepository.search(Pageable.unpaged()).getContent();
         for (DeviceDataAcquisition dataAcquisition : dataAcquisitions) {
+            dataAcquisition.getDeviceInfos()
+                    .getDeviceInfos()
+                    .forEach(in -> deviceInfos.put(in.getDeviceCode(), in));
             dataAcquisition.getDataPoints().newInstruments(instruments::put);
             ScrapeConfig scrapeConfig = toScrapeConfig(dataAcquisition);
             scrapeConfigs.add(scrapeConfig);
@@ -69,6 +76,7 @@ public class PrometheusTelemetryService implements TelemetryService, MultiCollec
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        deviceInfosRef.set(deviceInfos);
         instrumentsRef.set(instruments);
     }
 
@@ -76,12 +84,26 @@ public class PrometheusTelemetryService implements TelemetryService, MultiCollec
     public MetricSnapshots collect(PrometheusScrapeRequest scrapeRequest) {
         String deviceCode = CollectionUtils.firstElement(Arrays.asList(scrapeRequest.getParameterValues("target")));
         log.info("collect(requestPath={}, target={})", scrapeRequest.getRequestPath(), deviceCode);
+
+        Map<String, DeviceInfo> deviceInfos = deviceInfosRef.get();
+        Info deviceInfo = Optional.ofNullable(deviceInfos.get(deviceCode))
+                .map(DeviceInfo::toDeviceInfo)
+                .orElse(null);
+
         Map<String, MultiCollector> instruments = instrumentsRef.get();
-        return Optional.ofNullable(deviceCode)
+        MetricSnapshots metricSnapshots = Optional.ofNullable(deviceCode)
                 .filter(StringUtils::hasText)
                 .map(instruments::get)
                 .map(MultiCollector::collect)
                 .orElseGet(this::collect);
+        if (deviceInfo != null) {
+            MetricSnapshots.Builder metricsBuilder = MetricSnapshots.builder();
+            metricsBuilder.metricSnapshot(deviceInfo.collect());
+            metricSnapshots.stream()
+                    .forEach(metricsBuilder::metricSnapshot);
+            return metricsBuilder.build();
+        }
+        return metricSnapshots;
     }
 
     @Override

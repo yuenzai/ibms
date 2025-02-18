@@ -1,25 +1,18 @@
 package cn.ecosync.ibms.gateway.controller;
 
-import cn.ecosync.ibms.bacnet.dto.BacnetObject;
-import cn.ecosync.ibms.bacnet.dto.BacnetObjectType;
-import cn.ecosync.ibms.bacnet.model.BacnetDataPoint;
-import cn.ecosync.ibms.bacnet.model.BacnetDataPoints;
+import cn.ecosync.ibms.bacnet.command.ImportBacnetDataPointsCommand;
+import cn.ecosync.ibms.bacnet.command.ImportDeviceInfosCommand;
 import cn.ecosync.ibms.command.CommandBus;
 import cn.ecosync.ibms.gateway.command.ReloadTelemetryServiceCommand;
 import cn.ecosync.ibms.gateway.command.RemoveDataAcquisitionCommand;
 import cn.ecosync.ibms.gateway.command.SaveDataAcquisitionCommand;
 import cn.ecosync.ibms.gateway.event.DeviceDataAcquisitionSavedEvent;
-import cn.ecosync.ibms.gateway.model.*;
+import cn.ecosync.ibms.gateway.exception.ExcelAnalysisException;
+import cn.ecosync.ibms.gateway.model.DeviceDataAcquisition;
+import cn.ecosync.ibms.gateway.model.DeviceDataAcquisitionId;
 import cn.ecosync.ibms.gateway.query.GetDataAcquisitionQuery;
 import cn.ecosync.ibms.gateway.query.SearchDataAcquisitionQuery;
 import cn.ecosync.ibms.query.QueryBus;
-import cn.ecosync.ibms.util.CollectionUtils;
-import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.context.AnalysisContext;
-import com.alibaba.excel.exception.ExcelDataConvertException;
-import com.alibaba.excel.metadata.data.ReadCellData;
-import com.alibaba.excel.read.listener.ReadListener;
-import com.alibaba.excel.util.ConverterUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +29,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static cn.ecosync.ibms.gateway.model.SynchronizationStateEnum.SYNCHRONIZING;
@@ -140,80 +133,25 @@ public class GatewayWebController {
 
     @Operation(summary = "导入 BACnet 点位")
     @PostMapping(path = "/data-acquisition/{data-acquisition-code}", headers = "Command-Type=BACNET_IMPORT")
-    public ResponseEntity<Object> upload(@PathVariable("data-acquisition-code") String dataAcquisitionCode, @RequestPart("file") MultipartFile file) throws IOException {
-        DeviceDataPointListener listener = new DeviceDataPointListener();
-        EasyExcel.read(file.getInputStream(), listener).sheet().doRead();
-        if (!listener.getExceptions().isEmpty()) {
-            return new ResponseEntity<>(listener.getExceptions(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Object> bacnetImport(@PathVariable("data-acquisition-code") String dataAcquisitionCode, @RequestPart("file") MultipartFile file) throws IOException {
+        ImportBacnetDataPointsCommand command = new ImportBacnetDataPointsCommand(dataAcquisitionCode, file.getInputStream());
+        try {
+            commandBus.execute(command);
+        } catch (ExcelAnalysisException e) {
+            return new ResponseEntity<>(e.getCells(), HttpStatus.BAD_REQUEST);
         }
-        DeviceDataAcquisitionId dataAcquisitionId = new DeviceDataAcquisitionId(dataAcquisitionCode);
-        SaveDataAcquisitionCommand command = new SaveDataAcquisitionCommand(dataAcquisitionId);
-        DeviceDataPoints dataPoints = listener.toDataPoints();
-        command.setDataPoints(dataPoints);
-        commandBus.execute(command);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    public static class DeviceDataPointListener implements ReadListener<Map<Integer, String>> {
-        private final Map<Integer, String> head = new HashMap<>();
-        private final List<BacnetDataPoint> bacnetDataPoints = new ArrayList<>();
-        private final List<ExcelDataConvertException> exceptions = new ArrayList<>();
-
-        @Override
-        public void onException(Exception exception, AnalysisContext context) {
-            if (exception instanceof ExcelDataConvertException) {
-                exceptions.add((ExcelDataConvertException) exception);
-            } else {
-                log.error("", exception);
-            }
+    @Operation(summary = "导入设备信息")
+    @PostMapping(path = "/data-acquisition/{data-acquisition-code}", headers = "Command-Type=DEVICE_INFO_IMPORT")
+    public ResponseEntity<Object> deviceInfoImport(@PathVariable("data-acquisition-code") String dataAcquisitionCode, @RequestPart("file") MultipartFile file) throws IOException {
+        ImportDeviceInfosCommand command = new ImportDeviceInfosCommand(dataAcquisitionCode, file.getInputStream());
+        try {
+            commandBus.execute(command);
+        } catch (ExcelAnalysisException e) {
+            return new ResponseEntity<>(e.getCells(), HttpStatus.BAD_REQUEST);
         }
-
-        @Override
-        public void invokeHead(Map<Integer, ReadCellData<?>> headMap, AnalysisContext context) {
-            head.putAll(ConverterUtils.convertToStringMap(headMap, context));
-        }
-
-        @Override
-        public void invoke(Map<Integer, String> row, AnalysisContext context) {
-            bacnetDataPoints.add(toBacnetDataPoint(row));
-        }
-
-        @Override
-        public void doAfterAllAnalysed(AnalysisContext context) {
-        }
-
-        private BacnetDataPoint toBacnetDataPoint(Map<Integer, String> row) {
-            String deviceCode = row.get(0);
-            String metricName = row.get(1);
-            Integer deviceInstance = Integer.parseInt(row.get(2));
-            BacnetObjectType objectType = BacnetObjectType.valueOf(row.get(3));
-            Integer objectInstance = Integer.parseInt(row.get(4));
-
-            List<DeviceDataPointLabel> labels;
-            if (CollectionUtils.notEmpty(head) && head.size() > 5) {
-                labels = new ArrayList<>(head.size() - 5);
-                for (int i = 5; i < head.size(); i++) {
-                    String labelName = head.get(i);
-                    String labelValue = row.get(i);
-                    labels.add(new DeviceDataPointLabel(labelName, labelValue));
-                }
-            } else {
-                labels = Collections.emptyList();
-            }
-            return new BacnetDataPoint(
-                    new DeviceDataPointId(metricName, deviceCode),
-                    deviceInstance,
-                    new BacnetObject(objectType, objectInstance),
-                    labels
-            );
-        }
-
-        public DeviceDataPoints toDataPoints() {
-            return new BacnetDataPoints(bacnetDataPoints);
-        }
-
-        public List<ExcelDataConvertException> getExceptions() {
-            return exceptions;
-        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

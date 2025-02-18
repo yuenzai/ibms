@@ -2,9 +2,7 @@ package cn.ecosync.ibms.gateway.configure;
 
 import cn.ecosync.ibms.JsonSerdeContextHolder;
 import cn.ecosync.ibms.event.EventBus;
-import cn.ecosync.ibms.gateway.command.handler.ReloadTelemetryServiceCommandHandler;
-import cn.ecosync.ibms.gateway.command.handler.RemoveDataAcquisitionCommandHandler;
-import cn.ecosync.ibms.gateway.command.handler.SaveDataAcquisitionCommandHandler;
+import cn.ecosync.ibms.gateway.command.handler.*;
 import cn.ecosync.ibms.gateway.model.DeviceDataAcquisitionRepository;
 import cn.ecosync.ibms.gateway.query.handler.GetDataAcquisitionQueryHandler;
 import cn.ecosync.ibms.gateway.query.handler.SearchDataAcquisitionQueryHandler;
@@ -69,6 +67,16 @@ public class GatewayConfiguration {
     @Bean
     public ReloadTelemetryServiceCommandHandler reloadTelemetryServiceCommandHandler(TelemetryService telemetryService) {
         return new ReloadTelemetryServiceCommandHandler(telemetryService);
+    }
+
+    @Bean
+    public ImportBacnetDataPointsCommandHandler importBacnetDataPointsCommandHandler(DeviceDataAcquisitionRepository dataAcquisitionRepository, EventBus eventBus) {
+        return new ImportBacnetDataPointsCommandHandler(dataAcquisitionRepository, eventBus);
+    }
+
+    @Bean
+    public ImportDeviceInfosCommandHandler importDeviceInfosCommandHandler(DeviceDataAcquisitionRepository dataAcquisitionRepository, EventBus eventBus) {
+        return new ImportDeviceInfosCommandHandler(dataAcquisitionRepository, eventBus);
     }
 
     @Bean
