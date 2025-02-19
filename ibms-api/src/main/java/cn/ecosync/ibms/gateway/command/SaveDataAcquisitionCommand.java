@@ -2,8 +2,7 @@ package cn.ecosync.ibms.gateway.command;
 
 import cn.ecosync.ibms.command.Command;
 import cn.ecosync.ibms.gateway.model.DeviceDataAcquisitionId;
-import cn.ecosync.ibms.gateway.model.DeviceDataPoints;
-import cn.ecosync.ibms.gateway.model.DeviceInfos;
+import cn.ecosync.ibms.gateway.model.LabelTable;
 import cn.ecosync.ibms.gateway.model.SynchronizationStateEnum;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import jakarta.validation.Valid;
@@ -20,8 +19,8 @@ public class SaveDataAcquisitionCommand implements Command {
     @Min(0)
     @Max(120)
     private Integer scrapeInterval;
-    private DeviceInfos deviceInfos;
-    private DeviceDataPoints dataPoints;
+    private LabelTable deviceInfos;
+    private LabelTable dataPoints;
     private SynchronizationStateEnum synchronizationState;
 
     protected SaveDataAcquisitionCommand() {
@@ -44,19 +43,19 @@ public class SaveDataAcquisitionCommand implements Command {
         this.scrapeInterval = scrapeInterval;
     }
 
-    public DeviceInfos getDeviceInfos() {
+    public LabelTable getDeviceInfos() {
         return deviceInfos;
     }
 
-    public void setDeviceInfos(DeviceInfos deviceInfos) {
+    public void setDeviceInfos(LabelTable deviceInfos) {
         this.deviceInfos = deviceInfos;
     }
 
-    public DeviceDataPoints getDataPoints() {
+    public LabelTable getDataPoints() {
         return dataPoints;
     }
 
-    public void setDataPoints(DeviceDataPoints dataPoints) {
+    public void setDataPoints(LabelTable dataPoints) {
         this.dataPoints = dataPoints;
     }
 

@@ -8,4 +8,7 @@ public class Constants {
 
     public static final String PATH_METRICS = "/metrics";
     public static final String PATH_METRICS_DEVICES = "/metrics/devices";
+
+    public static final String LABEL_DEVICE_CODE = "device_code";
+    public static final String LABEL_METRIC_NAME = "metric_name";
 }

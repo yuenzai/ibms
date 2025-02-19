@@ -6,8 +6,8 @@ import cn.ecosync.ibms.gateway.command.handler.*;
 import cn.ecosync.ibms.gateway.model.DeviceDataAcquisitionRepository;
 import cn.ecosync.ibms.gateway.query.handler.GetDataAcquisitionQueryHandler;
 import cn.ecosync.ibms.gateway.query.handler.SearchDataAcquisitionQueryHandler;
-import cn.ecosync.ibms.gateway.service.PrometheusTelemetryService;
-import cn.ecosync.ibms.gateway.service.TelemetryService;
+import cn.ecosync.ibms.gateway.service.DeviceTelemetryService;
+import cn.ecosync.ibms.gateway.service.GatewayMetricsTelemetryService;
 import cn.ecosync.ibms.serde.JsonSerde;
 import io.prometheus.metrics.exporter.servlet.jakarta.PrometheusMetricsServlet;
 import io.prometheus.metrics.model.registry.PrometheusRegistry;
@@ -25,18 +25,21 @@ import static cn.ecosync.ibms.Constants.PATH_METRICS_DEVICES;
 
 @EnableScheduling
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnClass(PrometheusTelemetryService.class)
+@ConditionalOnClass(DeviceTelemetryService.class)
 public class GatewayConfiguration {
-    private final PrometheusTelemetryService prometheusTelemetryService;
+    private final GatewayMetricsTelemetryService gatewayMetricsTelemetryService;
+    private final DeviceTelemetryService deviceTelemetryService;
     private final ServletRegistrationBean<PrometheusMetricsServlet> gatewayMetricsServlet;
     private final ServletRegistrationBean<PrometheusMetricsServlet> deviceMetricsServlet;
 
-    public GatewayConfiguration(DeviceDataAcquisitionRepository dataAcquisitionRepository, Environment environment) {
+    public GatewayConfiguration() {
+        PrometheusRegistry defaultRegistry = PrometheusRegistry.defaultRegistry;
+        gatewayMetricsTelemetryService = new GatewayMetricsTelemetryService(defaultRegistry);
+        gatewayMetricsServlet = new ServletRegistrationBean<>(new PrometheusMetricsServlet(defaultRegistry), PATH_METRICS);
+
         PrometheusRegistry deviceMetricsRegistry = new PrometheusRegistry();
-        prometheusTelemetryService = new PrometheusTelemetryService(dataAcquisitionRepository, environment);
-        gatewayMetricsServlet = new ServletRegistrationBean<>(new PrometheusMetricsServlet(), PATH_METRICS);
+        deviceTelemetryService = new DeviceTelemetryService(deviceMetricsRegistry);
         deviceMetricsServlet = new ServletRegistrationBean<>(new PrometheusMetricsServlet(deviceMetricsRegistry), PATH_METRICS_DEVICES);
-        deviceMetricsRegistry.register(prometheusTelemetryService);
     }
 
     @Bean
@@ -50,8 +53,13 @@ public class GatewayConfiguration {
     }
 
     @Bean
-    public PrometheusTelemetryService prometheusTelemetryService() {
-        return prometheusTelemetryService;
+    public GatewayMetricsTelemetryService gatewayMetricsTelemetryService() {
+        return gatewayMetricsTelemetryService;
+    }
+
+    @Bean
+    public DeviceTelemetryService deviceTelemetryService() {
+        return deviceTelemetryService;
     }
 
     @Bean
@@ -65,8 +73,17 @@ public class GatewayConfiguration {
     }
 
     @Bean
-    public ReloadTelemetryServiceCommandHandler reloadTelemetryServiceCommandHandler(TelemetryService telemetryService) {
-        return new ReloadTelemetryServiceCommandHandler(telemetryService);
+    public ReloadTelemetryServiceCommandHandler reloadTelemetryServiceCommandHandler(
+            GatewayMetricsTelemetryService gatewayMetricsTelemetryService,
+            DeviceTelemetryService deviceTelemetryService,
+            DeviceDataAcquisitionRepository dataAcquisitionRepository,
+            Environment environment) {
+        return new ReloadTelemetryServiceCommandHandler(
+                gatewayMetricsTelemetryService,
+                deviceTelemetryService,
+                dataAcquisitionRepository,
+                environment
+        );
     }
 
     @Bean

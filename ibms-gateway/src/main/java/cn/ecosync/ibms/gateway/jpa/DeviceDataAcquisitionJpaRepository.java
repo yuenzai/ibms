@@ -1,22 +1,19 @@
 package cn.ecosync.ibms.gateway.jpa;
 
+import cn.ecosync.ibms.Constants;
 import cn.ecosync.ibms.event.Event;
 import cn.ecosync.ibms.gateway.command.SaveDataAcquisitionCommand;
 import cn.ecosync.ibms.gateway.event.DeviceDataAcquisitionRemovedEvent;
 import cn.ecosync.ibms.gateway.event.DeviceDataAcquisitionSavedEvent;
-import cn.ecosync.ibms.gateway.model.DeviceDataAcquisition;
-import cn.ecosync.ibms.gateway.model.DeviceDataAcquisitionId;
-import cn.ecosync.ibms.gateway.model.DeviceDataAcquisitionRepository;
-import cn.ecosync.ibms.gateway.model.DeviceDataPoint;
+import cn.ecosync.ibms.gateway.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -39,8 +36,8 @@ public class DeviceDataAcquisitionJpaRepository implements DeviceDataAcquisition
         } else {
             dataAcquisition = dataAcquisitionEntity.getPayload().builder()
                     .with(command.getScrapeInterval())
-                    .with(command.getDeviceInfos())
-                    .with(command.getDataPoints())
+                    .withDeviceInfos(command.getDeviceInfos())
+                    .withDataPoints(command.getDataPoints())
                     .with(command.getSynchronizationState())
                     .build();
             dataAcquisitionEntity.setPayload(dataAcquisition);
@@ -48,11 +45,22 @@ public class DeviceDataAcquisitionJpaRepository implements DeviceDataAcquisition
         if (command.getDataPoints() != null) {
             Integer id = dataAcquisitionEntity.id();
             jdbcTemplate.update(STATEMENT_DELETE, id);
-            Collection<? extends DeviceDataPoint> dataPoints = dataAcquisition.getDataPoints().toCollection();
-            jdbcTemplate.batchUpdate(STATEMENT_INSERT, dataPoints, 100, (ps, in) -> {
+
+            LabelTable dataPoints = dataAcquisition.getDataPoints();
+            List<String> deviceCodes = dataPoints.get(Constants.LABEL_DEVICE_CODE)
+                    .collect(Collectors.toList());
+            List<String> metricNames = dataPoints.get(Constants.LABEL_METRIC_NAME)
+                    .collect(Collectors.toList());
+
+            Collection<DeviceDataPointId> dataPointsIds = new ArrayList<>(dataPoints.size());
+            for (int i = 0; i < dataPoints.size(); i++) {
+                dataPointsIds.add(new DeviceDataPointId(metricNames.get(i), deviceCodes.get(i)));
+            }
+
+            jdbcTemplate.batchUpdate(STATEMENT_INSERT, dataPointsIds, 100, (ps, in) -> {
                 ps.setInt(1, id);
-                ps.setString(2, in.getDataPointId().getDeviceCode());
-                ps.setString(3, in.getDataPointId().getMetricName());
+                ps.setString(2, in.getDeviceCode());
+                ps.setString(3, in.getMetricName());
             });
         }
         DeviceDataAcquisitionSavedEvent event = new DeviceDataAcquisitionSavedEvent(dataAcquisition);

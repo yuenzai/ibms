@@ -2,9 +2,7 @@ package cn.ecosync.ibms.bacnet.model;
 
 import cn.ecosync.ibms.bacnet.dto.*;
 import cn.ecosync.ibms.bacnet.dto.BacnetReadPropertyMultipleService.SegmentationNotSupportedException;
-import cn.ecosync.ibms.gateway.model.DeviceDataPoint;
 import io.prometheus.metrics.core.metrics.Counter;
-import io.prometheus.metrics.core.metrics.Info;
 import io.prometheus.metrics.model.registry.MultiCollector;
 import io.prometheus.metrics.model.snapshots.GaugeSnapshot;
 import io.prometheus.metrics.model.snapshots.Labels;
@@ -32,7 +30,6 @@ public class BacnetInstrumentation implements MultiCollector {
 
     private final Counter scrapeCount;
     private final Counter scrapeFailureCount;
-    private final Info pointInfo;
 
     public BacnetInstrumentation(List<BacnetDataPoint> dataPoints) {
         Assert.notEmpty(dataPoints, "dataPoints must not be empty");
@@ -45,12 +42,6 @@ public class BacnetInstrumentation implements MultiCollector {
                 .name("scrape_failure_total")
                 .help("Total number of scrape failure")
                 .build();
-        Info pointInfo = dataPoints.get(0)
-                .toPointInfo();
-        dataPoints.stream()
-                .map(DeviceDataPoint::toLabelValues)
-                .forEach(pointInfo::addLabelValues);
-        this.pointInfo = pointInfo;
     }
 
     @Override
@@ -77,7 +68,6 @@ public class BacnetInstrumentation implements MultiCollector {
         }
         metricsBuilder.metricSnapshot(scrapeCount.collect());
         metricsBuilder.metricSnapshot(scrapeFailureCount.collect());
-        metricsBuilder.metricSnapshot(pointInfo.collect());
         return metricsBuilder.build();
     }
 

@@ -7,10 +7,7 @@ import cn.ecosync.ibms.gateway.command.SaveDataAcquisitionCommand;
 import cn.ecosync.ibms.gateway.exception.ExcelAnalysisException;
 import cn.ecosync.ibms.gateway.model.DeviceDataAcquisitionId;
 import cn.ecosync.ibms.gateway.model.DeviceDataAcquisitionRepository;
-import cn.ecosync.ibms.gateway.model.DeviceDataPointLabel;
-import cn.ecosync.ibms.gateway.model.DeviceInfos;
-import cn.ecosync.ibms.gateway.model.DeviceInfos.DeviceInfo;
-import cn.ecosync.ibms.util.CollectionUtils;
+import cn.ecosync.ibms.gateway.model.LabelTable;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.exception.ExcelDataConvertException;
@@ -18,9 +15,13 @@ import com.alibaba.excel.metadata.data.ReadCellData;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ConverterUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.util.ParsingUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -46,7 +47,7 @@ public class ImportDeviceInfosCommandHandler implements CommandHandler<ImportDev
         }
         DeviceDataAcquisitionId dataAcquisitionId = new DeviceDataAcquisitionId(command.getDataAcquisitionCode());
         SaveDataAcquisitionCommand command2 = new SaveDataAcquisitionCommand(dataAcquisitionId);
-        DeviceInfos deviceInfos = listener.toDeviceInfos();
+        LabelTable deviceInfos = listener.toLabelTable();
         command2.setDeviceInfos(deviceInfos);
         dataAcquisitionRepository.save(command2)
                 .forEach(eventBus::publish);
@@ -54,7 +55,7 @@ public class ImportDeviceInfosCommandHandler implements CommandHandler<ImportDev
 
     public static class DeviceInfoListener implements ReadListener<Map<Integer, String>> {
         private final Map<Integer, String> head = new HashMap<>();
-        private final List<DeviceInfo> deviceInfos = new ArrayList<>();
+        private final List<Map<Integer, String>> body = new ArrayList<>();
         private final List<ExcelDataConvertException> exceptions = new ArrayList<>();
 
         @Override
@@ -68,36 +69,23 @@ public class ImportDeviceInfosCommandHandler implements CommandHandler<ImportDev
 
         @Override
         public void invokeHead(Map<Integer, ReadCellData<?>> headMap, AnalysisContext context) {
-            head.putAll(ConverterUtils.convertToStringMap(headMap, context));
+            Map<Integer, String> head = ConverterUtils.convertToStringMap(headMap, context);
+            for (Map.Entry<Integer, String> entry : head.entrySet()) {
+                this.head.put(entry.getKey(), String.join("_", ParsingUtils.splitCamelCaseToLower(entry.getValue())));
+            }
         }
 
         @Override
         public void invoke(Map<Integer, String> row, AnalysisContext context) {
-            deviceInfos.add(toDeviceInfo(row));
+            body.add(row);
         }
 
         @Override
         public void doAfterAllAnalysed(AnalysisContext context) {
         }
 
-        private DeviceInfo toDeviceInfo(Map<Integer, String> row) {
-            String deviceCode = row.get(0);
-            List<DeviceDataPointLabel> labels;
-            if (CollectionUtils.notEmpty(head) && head.size() > 1) {
-                labels = new ArrayList<>(head.size() - 1);
-                for (int i = 1; i < head.size(); i++) {
-                    String labelName = head.get(i);
-                    String labelValue = row.get(i);
-                    labels.add(new DeviceDataPointLabel(labelName, labelValue));
-                }
-            } else {
-                labels = Collections.emptyList();
-            }
-            return new DeviceInfo(deviceCode, labels);
-        }
-
-        public DeviceInfos toDeviceInfos() {
-            return new DeviceInfos(deviceInfos);
+        public LabelTable toLabelTable() {
+            return new LabelTable(head, body);
         }
 
         public List<ExcelDataConvertException> getExceptions() {
