@@ -43,7 +43,7 @@ public class BacnetDataPoint extends LabelValues {
                 .map(labelValues::get)
                 .orElse(null);
         this.dataPointId = new DeviceDataPointId(metricName, deviceCode);
-        this.deviceInstance = Optional.ofNullable(reversedHead.get("object_instance"))
+        this.deviceInstance = Optional.ofNullable(reversedHead.get("device_instance"))
                 .map(labelValues::get)
                 .map(Integer::parseInt)
                 .orElse(null);
