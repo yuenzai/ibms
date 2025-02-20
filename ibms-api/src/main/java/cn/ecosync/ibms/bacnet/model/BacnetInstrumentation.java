@@ -2,7 +2,7 @@ package cn.ecosync.ibms.bacnet.model;
 
 import cn.ecosync.ibms.bacnet.dto.*;
 import cn.ecosync.ibms.bacnet.dto.BacnetReadPropertyMultipleService.SegmentationNotSupportedException;
-import io.prometheus.metrics.core.metrics.Counter;
+import io.prometheus.metrics.core.metrics.Gauge;
 import io.prometheus.metrics.model.registry.MultiCollector;
 import io.prometheus.metrics.model.snapshots.GaugeSnapshot;
 import io.prometheus.metrics.model.snapshots.Labels;
@@ -25,25 +25,20 @@ import static cn.ecosync.ibms.bacnet.dto.BacnetProperty.PROPERTY_PRESENT_VALUE;
 public class BacnetInstrumentation implements MultiCollector {
     private static final Logger log = LoggerFactory.getLogger(BacnetInstrumentation.class);
 
-    private final String deviceCode;
+    private final Labels LABEL_DEVICE_CODE;
     private final List<BacnetDataPoint> dataPoints;
     private final AtomicInteger segmentationCount = new AtomicInteger(1);
 
-    private final Counter scrapeCount;
-    private final Counter scrapeFailureCount;
+    private final Gauge deviceScrapeStatus;
 
     public BacnetInstrumentation(String deviceCode, List<BacnetDataPoint> dataPoints) {
         Assert.hasText(deviceCode, "deviceCode must not be null");
         Assert.notEmpty(dataPoints, "dataPoints must not be empty");
-        this.deviceCode = deviceCode;
+        this.LABEL_DEVICE_CODE = Labels.of("device_code", deviceCode);
         this.dataPoints = dataPoints;
-        this.scrapeCount = Counter.builder()
-                .name("scrape_total")
-                .help("Total number of scrape")
-                .build();
-        this.scrapeFailureCount = Counter.builder()
-                .name("scrape_failure_total")
-                .help("Total number of scrape failure")
+        this.deviceScrapeStatus = Gauge.builder()
+                .name("device_scrape_status")
+                .constLabels(LABEL_DEVICE_CODE)
                 .build();
     }
 
@@ -57,20 +52,18 @@ public class BacnetInstrumentation implements MultiCollector {
             while (true) {
                 try {
                     collect(entry.getKey(), entry.getValue(), metricsBuilder::metricSnapshot);
-                    scrapeCount.inc();
+                    deviceScrapeStatus.set(1);
                     break;
                 } catch (SegmentationNotSupportedException e) {
                     log.error("设备不支持分段传输");
                     segmentationCount.incrementAndGet();
                 } catch (Exception e) {
-                    scrapeFailureCount.inc();
-                    scrapeCount.inc();
+                    deviceScrapeStatus.set(0);
                     throw e;
                 }
             }
         }
-        metricsBuilder.metricSnapshot(scrapeCount.collect());
-        metricsBuilder.metricSnapshot(scrapeFailureCount.collect());
+        metricsBuilder.metricSnapshot(deviceScrapeStatus.collect());
         return metricsBuilder.build();
     }
 
@@ -119,11 +112,7 @@ public class BacnetInstrumentation implements MultiCollector {
             if (presentValue == null) continue;
             String metricName = bacnetDataPoint.getDataPointId().getMetricName();
             double value = presentValue.getValueAsNumber().doubleValue();
-            // {metric_type = "device"} * on (instance, metric_name) group_left (...) point_info
-//            String[] labelNames = {"device_code", "metric_type", "metric_name"};
-//            String[] labelValues = {deviceCode, "device", metricName};
-            Labels labels = Labels.of("device_code", deviceCode);
-            GaugeSnapshot.GaugeDataPointSnapshot dataPoint = new GaugeSnapshot.GaugeDataPointSnapshot(value, labels, null);
+            GaugeSnapshot.GaugeDataPointSnapshot dataPoint = new GaugeSnapshot.GaugeDataPointSnapshot(value, LABEL_DEVICE_CODE, null);
             GaugeSnapshot metric = GaugeSnapshot.builder()
                     .name(metricName)
                     .dataPoint(dataPoint)

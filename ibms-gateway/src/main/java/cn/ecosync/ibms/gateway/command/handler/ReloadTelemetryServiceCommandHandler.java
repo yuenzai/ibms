@@ -5,9 +5,9 @@ import cn.ecosync.ibms.gateway.command.ReloadTelemetryServiceCommand;
 import cn.ecosync.ibms.gateway.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.gateway.model.DeviceDataAcquisitionRepository;
 import cn.ecosync.ibms.gateway.model.LabelTable;
-import cn.ecosync.ibms.gateway.model.PrometheusConfigurationProperties;
 import cn.ecosync.ibms.gateway.model.PrometheusConfigurationProperties.RelabelConfig;
 import cn.ecosync.ibms.gateway.model.PrometheusConfigurationProperties.ScrapeConfig;
+import cn.ecosync.ibms.gateway.model.PrometheusConfigurationProperties.ScrapeConfigs;
 import cn.ecosync.ibms.gateway.model.PrometheusConfigurationProperties.StaticConfig;
 import cn.ecosync.ibms.gateway.service.DeviceTelemetryService;
 import cn.ecosync.ibms.gateway.service.GatewayMetricsTelemetryService;
@@ -69,7 +69,7 @@ public class ReloadTelemetryServiceCommandHandler implements CommandHandler<Relo
         }
 
         try {
-            yamlSerde.writeValue(scrapeConfigFile, new PrometheusConfigurationProperties.ScrapeConfigs(scrapeConfigs));
+            yamlSerde.writeValue(scrapeConfigFile, new ScrapeConfigs(scrapeConfigs));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
