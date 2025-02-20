@@ -25,14 +25,17 @@ import static cn.ecosync.ibms.bacnet.dto.BacnetProperty.PROPERTY_PRESENT_VALUE;
 public class BacnetInstrumentation implements MultiCollector {
     private static final Logger log = LoggerFactory.getLogger(BacnetInstrumentation.class);
 
+    private final String deviceCode;
     private final List<BacnetDataPoint> dataPoints;
     private final AtomicInteger segmentationCount = new AtomicInteger(1);
 
     private final Counter scrapeCount;
     private final Counter scrapeFailureCount;
 
-    public BacnetInstrumentation(List<BacnetDataPoint> dataPoints) {
+    public BacnetInstrumentation(String deviceCode, List<BacnetDataPoint> dataPoints) {
+        Assert.hasText(deviceCode, "deviceCode must not be null");
         Assert.notEmpty(dataPoints, "dataPoints must not be empty");
+        this.deviceCode = deviceCode;
         this.dataPoints = dataPoints;
         this.scrapeCount = Counter.builder()
                 .name("scrape_total")
@@ -75,13 +78,13 @@ public class BacnetInstrumentation implements MultiCollector {
         Assert.isTrue(segmentationCount.get() <= 5, "maxSegmentationCount must be less than 5");
         if (segmentationCount.get() == 1) {
             ReadPropertyMultipleAck ack = scrape(deviceInstance, dataPoints);
-            consume(deviceInstance, dataPoints, ack, pointMetricConsumer);
+            consume(dataPoints, ack, pointMetricConsumer);
         } else {
             log.info("开始分段采集[deviceInstance={}, segmentationCount={}]", deviceInstance, segmentationCount.get());
             int pageSize = dataPoints.size() / segmentationCount.get();
             paging(dataPoints, pageSize, (pageNumber, page) -> {
                 ReadPropertyMultipleAck ack = scrape(deviceInstance, page);
-                consume(deviceInstance, page, ack, pointMetricConsumer);
+                consume(page, ack, pointMetricConsumer);
             });
             log.info("分段采集结束[deviceInstance={}]", deviceInstance);
         }
@@ -105,7 +108,7 @@ public class BacnetInstrumentation implements MultiCollector {
         }
     }
 
-    private void consume(Integer deviceInstance, List<BacnetDataPoint> bacnetDataPoints, ReadPropertyMultipleAck ack, Consumer<GaugeSnapshot> pointMetricConsumer) {
+    private void consume(List<BacnetDataPoint> bacnetDataPoints, ReadPropertyMultipleAck ack, Consumer<GaugeSnapshot> pointMetricConsumer) {
         Map<BacnetObject, Map<BacnetProperty, BacnetPropertyResult>> propertiesMap = ack.toMap();
         for (BacnetDataPoint bacnetDataPoint : bacnetDataPoints) {
             BacnetObjectProperties objectProperties = bacnetDataPoint.toBacnetObjectProperties();
@@ -117,8 +120,8 @@ public class BacnetInstrumentation implements MultiCollector {
             String metricName = bacnetDataPoint.getDataPointId().getMetricName();
             double value = presentValue.getValueAsNumber().doubleValue();
             // {metric_type = "device"} * on (instance, metric_name) group_left (...) point_info
-            String[] labelNames = {"device_instance", "metric_type", "metric_name"};
-            String[] labelValues = {deviceInstance.toString(), "device", metricName};
+            String[] labelNames = {"device_code", "metric_type", "metric_name"};
+            String[] labelValues = {deviceCode, "device", metricName};
             Labels labels = Labels.of(labelNames, labelValues);
             GaugeSnapshot.GaugeDataPointSnapshot dataPoint = new GaugeSnapshot.GaugeDataPointSnapshot(value, labels, null);
             GaugeSnapshot metric = GaugeSnapshot.builder()

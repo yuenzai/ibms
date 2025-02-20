@@ -42,6 +42,6 @@ public class BacnetDataPoints extends LabelTable {
     public void newInstruments(BiConsumer<String, MultiCollector> consumer) {
         toLabelValues().stream()
                 .collect(Collectors.groupingBy(in -> in.getDataPointId().getDeviceCode()))
-                .forEach((deviceCode, dataPoints) -> consumer.accept(deviceCode, new BacnetInstrumentation(dataPoints)));
+                .forEach((deviceCode, dataPoints) -> consumer.accept(deviceCode, new BacnetInstrumentation(deviceCode, dataPoints)));
     }
 }
