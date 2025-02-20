@@ -23,8 +23,7 @@ import java.util.stream.Collectors;
 import static cn.ecosync.ibms.bacnet.dto.BacnetProperty.PROPERTY_PRESENT_VALUE;
 
 public class BacnetInstrumentation implements MultiCollector {
-    private static final Logger log = LoggerFactory.getLogger(BacnetInstrumentation.class);
-
+    private final Logger log;
     private final Labels LABEL_DEVICE_CODE;
     private final List<BacnetDataPoint> dataPoints;
     private final AtomicInteger segmentationCount = new AtomicInteger(1);
@@ -34,6 +33,7 @@ public class BacnetInstrumentation implements MultiCollector {
     public BacnetInstrumentation(String deviceCode, List<BacnetDataPoint> dataPoints) {
         Assert.hasText(deviceCode, "deviceCode must not be null");
         Assert.notEmpty(dataPoints, "dataPoints must not be empty");
+        this.log = LoggerFactory.getLogger("BacnetInstrumentation-" + deviceCode);
         this.LABEL_DEVICE_CODE = Labels.of("device_code", deviceCode);
         this.dataPoints = dataPoints;
         this.deviceScrapeStatus = Gauge.builder()
@@ -94,7 +94,7 @@ public class BacnetInstrumentation implements MultiCollector {
 
     private ReadPropertyMultipleAck doScrape(BacnetReadPropertyMultipleService service) {
         try {
-            return BacnetReadPropertyMultipleService.execute(service);
+            return BacnetReadPropertyMultipleService.execute(service, log);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -103,6 +103,7 @@ public class BacnetInstrumentation implements MultiCollector {
     }
 
     private void consume(List<BacnetDataPoint> bacnetDataPoints, ReadPropertyMultipleAck ack, Consumer<GaugeSnapshot> pointMetricConsumer) {
+        if (ack == null) return;
         Map<BacnetObject, Map<BacnetProperty, BacnetPropertyResult>> propertiesMap = ack.toMap();
         for (BacnetDataPoint bacnetDataPoint : bacnetDataPoints) {
             BacnetObjectProperties objectProperties = bacnetDataPoint.toBacnetObjectProperties();
