@@ -46,7 +46,7 @@ public class BacnetWhoIsService {
 //        String workingDirectory = Optional.ofNullable(processBuilder.directory())
 //                .map(File::getAbsolutePath)
 //                .orElseGet(() -> System.getProperty("user.dir"));
-        if (StringUtils.hasText(stdout)) log.info("{}", stdout);
+        if (StringUtils.hasText(stdout)) log.info("\n{}", stdout);
         if (StringUtils.hasText(stderr)) throw new RuntimeException(stderr);
         return BacnetWhoIsService.parseDeviceAddresses(stdout);
     }
