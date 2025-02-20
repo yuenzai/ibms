@@ -60,7 +60,7 @@ public class BacnetInstrumentation implements MultiCollector {
                 } catch (Exception e) {
                     deviceScrapeStatus.set(0);
                     log.error("", e);
-//                    throw e;
+                    break;
                 }
             }
         }
