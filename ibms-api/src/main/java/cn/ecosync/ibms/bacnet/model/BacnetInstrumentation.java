@@ -59,7 +59,8 @@ public class BacnetInstrumentation implements MultiCollector {
                     segmentationCount.incrementAndGet();
                 } catch (Exception e) {
                     deviceScrapeStatus.set(0);
-                    throw e;
+                    log.error("", e);
+//                    throw e;
                 }
             }
         }
