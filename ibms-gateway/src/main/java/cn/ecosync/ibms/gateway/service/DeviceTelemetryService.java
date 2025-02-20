@@ -1,5 +1,6 @@
 package cn.ecosync.ibms.gateway.service;
 
+import cn.ecosync.ibms.bacnet.dto.BacnetWhoIsService;
 import cn.ecosync.ibms.gateway.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.util.CollectionUtils;
 import cn.ecosync.ibms.util.StringUtils;
@@ -35,6 +36,13 @@ public class DeviceTelemetryService implements MultiCollector {
             dataAcquisition.getDataPoints().newInstruments(instruments::put);
         }
         instrumentsRef.set(instruments);
+
+        try {
+            BacnetWhoIsService service = new BacnetWhoIsService();
+            BacnetWhoIsService.execute(service);
+        } catch (Exception e) {
+            log.error("", e);
+        }
     }
 
     @Override

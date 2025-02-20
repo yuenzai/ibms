@@ -34,14 +34,10 @@ public class BacnetWhoIsService {
         return commands;
     }
 
-    private String toCommandString() {
-        return String.join(" ", toCommand());
-    }
-
     public static List<BacnetDeviceAddress> execute(BacnetWhoIsService service) throws Exception {
-        String command = service.toCommandString();
-        List<String> commands = Arrays.asList("/bin/bash", "-c", command);
-        ProcessBuilder processBuilder = new ProcessBuilder(commands);
+        List<String> command = service.toCommand();
+        log.info("Execute command[{}]", String.join(" ", command));
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
         Process process = processBuilder.start();
         String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8);
         String stderr = StreamUtils.copyToString(process.getErrorStream(), StandardCharsets.UTF_8);
@@ -49,7 +45,6 @@ public class BacnetWhoIsService {
 //        String workingDirectory = Optional.ofNullable(processBuilder.directory())
 //                .map(File::getAbsolutePath)
 //                .orElseGet(() -> System.getProperty("user.dir"));
-        log.info("Execute command[{}]", String.join(" ", command));
         if (StringUtils.hasText(stdout)) log.info("{}", stdout);
         if (StringUtils.hasText(stderr)) throw new RuntimeException(stderr);
         return BacnetWhoIsService.parseDeviceAddresses(stdout);
