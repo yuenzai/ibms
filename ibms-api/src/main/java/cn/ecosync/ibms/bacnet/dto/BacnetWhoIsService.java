@@ -36,8 +36,9 @@ public class BacnetWhoIsService {
 
     public static List<BacnetDeviceAddress> execute(BacnetWhoIsService service) throws Exception {
         List<String> command = service.toCommand();
-        log.info("Execute command[{}]", String.join(" ", command));
-        ProcessBuilder processBuilder = new ProcessBuilder(command);
+        String commandString = String.join(" ", command);
+        log.info("Execute command[{}]", commandString);
+        ProcessBuilder processBuilder = new ProcessBuilder("/bin/bash", "-c", commandString);
         Process process = processBuilder.start();
         String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8);
         String stderr = StreamUtils.copyToString(process.getErrorStream(), StandardCharsets.UTF_8);
