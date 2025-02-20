@@ -48,7 +48,7 @@ public class GatewayMetricsTelemetryService implements MultiCollector {
             collect(deviceInfos, deviceInfoBuilder, metricsBuilder::metricSnapshot);
 
             InfoSnapshot.Builder pointInfoBuilder = InfoSnapshot.builder()
-                    .name("point")
+                    .name("device_point")
                     .help("Point Info");
             LabelTable dataPoints = dataAcquisition.getDataPoints();
             collect(dataPoints, pointInfoBuilder, metricsBuilder::metricSnapshot);
