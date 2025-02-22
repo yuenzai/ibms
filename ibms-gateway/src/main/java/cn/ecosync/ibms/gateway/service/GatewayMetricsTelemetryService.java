@@ -29,7 +29,7 @@ public class GatewayMetricsTelemetryService implements MultiCollector {
     }
 
     public void reload(DeviceDataAcquisition... dataAcquisitions) {
-        log.info("reload...");
+        log.atInfo().log("重新加载配置");
         prometheusRegistry.clear();
         prometheusRegistry.register(this);
         JvmMetrics.builder().register(prometheusRegistry);

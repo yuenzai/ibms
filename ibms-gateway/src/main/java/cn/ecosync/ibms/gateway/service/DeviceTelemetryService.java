@@ -10,6 +10,7 @@ import io.prometheus.metrics.model.registry.PrometheusScrapeRequest;
 import io.prometheus.metrics.model.snapshots.MetricSnapshots;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,7 +29,7 @@ public class DeviceTelemetryService implements MultiCollector {
     }
 
     public void reload(DeviceDataAcquisition... dataAcquisitions) {
-        log.info("reload...");
+        log.atInfo().log("重新加载配置");
         prometheusRegistry.clear();
         prometheusRegistry.register(this);
         Map<String, MultiCollector> instruments = new HashMap<>();
@@ -41,20 +42,27 @@ public class DeviceTelemetryService implements MultiCollector {
             BacnetWhoIsService service = new BacnetWhoIsService();
             BacnetWhoIsService.execute(service);
         } catch (Exception e) {
-            log.error("", e);
+            log.atError().setCause(e).log("");
         }
     }
 
     @Override
     public MetricSnapshots collect(PrometheusScrapeRequest scrapeRequest) {
         String deviceCode = CollectionUtils.firstElement(Arrays.asList(scrapeRequest.getParameterValues("target")));
-        log.info("collect(requestPath={}, target={})", scrapeRequest.getRequestPath(), deviceCode);
+        if (!StringUtils.hasText(deviceCode)) return collect();
+        log.atInfo()
+                .addKeyValue("requestPath", scrapeRequest.getRequestPath())
+                .addKeyValue("target", deviceCode)
+                .log("collect");
         Map<String, MultiCollector> instruments = instrumentsRef.get();
-        return Optional.ofNullable(deviceCode)
+        MDC.put("deviceCode", deviceCode);
+        MetricSnapshots metricSnapshots = Optional.of(deviceCode)
                 .filter(StringUtils::hasText)
                 .map(instruments::get)
                 .map(MultiCollector::collect)
                 .orElseGet(this::collect);
+        MDC.remove("deviceCode");
+        return metricSnapshots;
     }
 
     @Override

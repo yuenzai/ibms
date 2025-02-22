@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.ToString;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.springframework.util.StreamUtils;
 
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @Getter
 @ToString
 public class BacnetReadPropertyMultipleService {
+    private static final Logger log = LoggerFactory.getLogger(BacnetReadPropertyMultipleService.class);
     private static final String SEGMENTATION_NOT_SUPPORTED = "BACnet Abort: Segmentation Not Supported";
 
     @NotNull
@@ -77,15 +79,16 @@ public class BacnetReadPropertyMultipleService {
         return prop;
     }
 
-    public static ReadPropertyMultipleAck execute(BacnetReadPropertyMultipleService service, Logger log) throws SegmentationNotSupportedException, IOException, InterruptedException {
+    public static ReadPropertyMultipleAck execute(BacnetReadPropertyMultipleService service) throws IOException, InterruptedException {
         List<String> command = service.toCommand();
-        log.info("Execute command[{}]", String.join(" ", command));
+        log.atInfo().addKeyValue("command", String.join(" ", command)).log("执行命令");
         ProcessBuilder processBuilder = new ProcessBuilder(command);
         processBuilder.redirectErrorStream(true);
         Process process = processBuilder.start();
-        String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8);
+        String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8)
+                .trim();
         int exitCode = process.waitFor();
-        log.info("exitCode:{}, stdout:{}", exitCode, stdout);
+        log.atInfo().addKeyValue("exitCode", exitCode).addKeyValue("stdout", stdout).log();
         if (!StringUtils.hasText(stdout)) return null;
         if (exitCode != 0) {
             if (stdout.startsWith(SEGMENTATION_NOT_SUPPORTED))

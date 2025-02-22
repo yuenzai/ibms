@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.support.PagedListHolder;
 import org.springframework.util.Assert;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,17 +24,18 @@ import java.util.stream.Collectors;
 import static cn.ecosync.ibms.bacnet.dto.BacnetProperty.PROPERTY_PRESENT_VALUE;
 
 public class BacnetInstrumentation implements MultiCollector {
-    private final Logger log;
+    private static final Logger log = LoggerFactory.getLogger(BacnetInstrumentation.class);
+
     private final Labels LABEL_DEVICE_CODE;
     private final List<BacnetDataPoint> dataPoints;
     private final AtomicInteger segmentationCount = new AtomicInteger(1);
+    private volatile boolean infiniteLoopOccurred = false;
 
     private final Gauge deviceScrapeStatus;
 
     public BacnetInstrumentation(String deviceCode, List<BacnetDataPoint> dataPoints) {
         Assert.hasText(deviceCode, "deviceCode must not be null");
         Assert.notEmpty(dataPoints, "dataPoints must not be empty");
-        this.log = LoggerFactory.getLogger("BacnetInstrumentation-" + deviceCode);
         this.LABEL_DEVICE_CODE = Labels.of("device_code", deviceCode);
         this.dataPoints = dataPoints;
         this.deviceScrapeStatus = Gauge.builder()
@@ -44,24 +46,26 @@ public class BacnetInstrumentation implements MultiCollector {
 
     @Override
     public MetricSnapshots collect() {
-        Assert.isTrue(segmentationCount.get() <= 5, "maxSegmentationCount must be less than 5");
+        Assert.state(!infiniteLoopOccurred, "infinite loop occurred");
+        Assert.state(segmentationCount.get() <= 5, "maxSegmentationCount must be less than 5");
         Map<Integer, List<BacnetDataPoint>> map = dataPoints.stream()
                 .collect(Collectors.groupingBy(BacnetDataPoint::getDeviceInstance));
         MetricSnapshots.Builder metricsBuilder = MetricSnapshots.builder();
         for (Map.Entry<Integer, List<BacnetDataPoint>> entry : map.entrySet()) {
-            while (true) {
+            for (int i = 0; i < 10; i++) {
                 try {
                     collect(entry.getKey(), entry.getValue(), metricsBuilder::metricSnapshot);
                     deviceScrapeStatus.set(1);
                     break;
                 } catch (SegmentationNotSupportedException e) {
-                    log.error("设备不支持分段传输");
+                    log.atWarn().log("设备不支持分段传输");
                     segmentationCount.incrementAndGet();
                 } catch (Exception e) {
                     deviceScrapeStatus.set(0);
-                    log.error("", e);
+                    log.atError().setCause(e).log("");
                     break;
                 }
+                if (i == 9) infiniteLoopOccurred = true;
             }
         }
         metricsBuilder.metricSnapshot(deviceScrapeStatus.collect());
@@ -74,13 +78,16 @@ public class BacnetInstrumentation implements MultiCollector {
             ReadPropertyMultipleAck ack = scrape(deviceInstance, dataPoints);
             consume(dataPoints, ack, pointMetricConsumer);
         } else {
-            log.info("开始分段采集[deviceInstance={}, segmentationCount={}]", deviceInstance, segmentationCount.get());
+            log.atInfo()
+                    .addKeyValue("deviceInstance", deviceInstance)
+                    .addKeyValue("segmentationCount", segmentationCount.get())
+                    .log("分段采集开始");
             int pageSize = dataPoints.size() / segmentationCount.get();
             paging(dataPoints, pageSize, (pageNumber, page) -> {
                 ReadPropertyMultipleAck ack = scrape(deviceInstance, page);
                 consume(page, ack, pointMetricConsumer);
             });
-            log.info("分段采集结束[deviceInstance={}]", deviceInstance);
+            log.atInfo().addKeyValue("deviceInstance", deviceInstance).log("分段采集结束");
         }
     }
 
@@ -94,10 +101,8 @@ public class BacnetInstrumentation implements MultiCollector {
 
     private ReadPropertyMultipleAck doScrape(BacnetReadPropertyMultipleService service) {
         try {
-            return BacnetReadPropertyMultipleService.execute(service, log);
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
+            return BacnetReadPropertyMultipleService.execute(service);
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
@@ -107,11 +112,15 @@ public class BacnetInstrumentation implements MultiCollector {
         Map<BacnetObject, Map<BacnetProperty, BacnetPropertyResult>> propertiesMap = ack.toMap();
         for (BacnetDataPoint bacnetDataPoint : bacnetDataPoints) {
             BacnetObjectProperties objectProperties = bacnetDataPoint.toBacnetObjectProperties();
-            Map<BacnetProperty, BacnetPropertyResult> propertyMap = propertiesMap.get(objectProperties.getBacnetObject());
-            BacnetPropertyValue presentValue = Optional.ofNullable(propertyMap.get(PROPERTY_PRESENT_VALUE))
+            BacnetObject bacnetObject = objectProperties.getBacnetObject();
+            BacnetPropertyValue presentValue = Optional.ofNullable(propertiesMap.get(bacnetObject))
+                    .map(in -> in.get(PROPERTY_PRESENT_VALUE))
                     .map(BacnetPropertyResult::getValue)
                     .orElse(null);
-            if (presentValue == null) continue;
+            if (presentValue == null) {
+                log.atWarn().addKeyValue("bacnetObject", bacnetObject).log("ack缺少该对象的当前值");
+                continue;
+            }
             String metricName = bacnetDataPoint.getDataPointId().getMetricName();
             double value = presentValue.getValueAsNumber().doubleValue();
             GaugeSnapshot.GaugeDataPointSnapshot dataPoint = new GaugeSnapshot.GaugeDataPointSnapshot(value, LABEL_DEVICE_CODE, null);
@@ -127,7 +136,7 @@ public class BacnetInstrumentation implements MultiCollector {
         Assert.isTrue(pageSize > 0, "pageSize must be greater than 0");
         PagedListHolder<T> pagedListHolder = new PagedListHolder<>(list);
         pagedListHolder.setPageSize(pageSize);
-        while (true) {
+        for (int i = 0; i < 10; i++) {
             List<T> page = pagedListHolder.getPageList();
             pageConsumer.accept(pagedListHolder.getPage(), page);
             if (pagedListHolder.isLastPage()) {
