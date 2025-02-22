@@ -88,7 +88,7 @@ public class BacnetReadPropertyMultipleService {
         String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8)
                 .trim();
         int exitCode = process.waitFor();
-        log.atInfo().addKeyValue("exitCode", exitCode).addKeyValue("stdout", stdout).log();
+        log.atInfo().addKeyValue("exitCode", exitCode).addKeyValue("stdout", stdout).log("命令执行完毕");
         if (!StringUtils.hasText(stdout)) return null;
         if (exitCode != 0) {
             if (stdout.startsWith(SEGMENTATION_NOT_SUPPORTED))
