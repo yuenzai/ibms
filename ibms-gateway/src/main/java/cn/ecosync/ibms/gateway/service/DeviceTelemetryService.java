@@ -53,7 +53,7 @@ public class DeviceTelemetryService implements MultiCollector {
         log.atInfo()
                 .addKeyValue("requestPath", scrapeRequest.getRequestPath())
                 .addKeyValue("target", deviceCode)
-                .log("collect");
+                .log("采集开始");
         Map<String, MultiCollector> instruments = instrumentsRef.get();
         MDC.put("deviceCode", deviceCode);
         MetricSnapshots metricSnapshots = Optional.of(deviceCode)
@@ -61,6 +61,7 @@ public class DeviceTelemetryService implements MultiCollector {
                 .map(instruments::get)
                 .map(MultiCollector::collect)
                 .orElseGet(this::collect);
+        log.atInfo().addKeyValue("sampleCount", metricSnapshots.size()).log("采集结束");
         MDC.remove("deviceCode");
         return metricSnapshots;
     }

@@ -1,5 +1,6 @@
 package cn.ecosync.ibms.gateway.command.handler;
 
+import cn.ecosync.ibms.bacnet.model.BacnetDataPoints;
 import cn.ecosync.ibms.command.CommandHandler;
 import cn.ecosync.ibms.gateway.command.ReloadTelemetryServiceCommand;
 import cn.ecosync.ibms.gateway.model.DeviceDataAcquisition;
@@ -33,9 +34,8 @@ public class ReloadTelemetryServiceCommandHandler implements CommandHandler<Relo
     private final DeviceTelemetryService deviceTelemetryService;
     private final DeviceDataAcquisitionRepository dataAcquisitionRepository;
     private final ObjectMapper yamlSerde;
-    private final String gatewayHost;
-    private final String gatewayCode;
     private final File scrapeConfigFile;
+    private final Environment environment;
 
     public ReloadTelemetryServiceCommandHandler(
             GatewayMetricsTelemetryService gatewayMetricsTelemetryService,
@@ -47,9 +47,8 @@ public class ReloadTelemetryServiceCommandHandler implements CommandHandler<Relo
         this.dataAcquisitionRepository = dataAcquisitionRepository;
         this.yamlSerde = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER))
                 .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
-        this.gatewayHost = environment.getRequiredProperty("IBMS_HOST");
-        this.gatewayCode = environment.getRequiredProperty("IBMS_GATEWAY_CODE");
         this.scrapeConfigFile = new File("scrape_config_file.yml");
+        this.environment = environment;
     }
 
     @Override
@@ -61,7 +60,7 @@ public class ReloadTelemetryServiceCommandHandler implements CommandHandler<Relo
         deviceTelemetryService.reload(dataAcquisitions);
 
         List<ScrapeConfig> scrapeConfigs = new ArrayList<>();
-        ScrapeConfig gatewayScrapeConfig = new ScrapeConfig(gatewayCode, "/ibms" + PATH_METRICS, 30, new StaticConfig(gatewayHost));
+        ScrapeConfig gatewayScrapeConfig = new ScrapeConfig(getGatewayCode(), "/ibms" + PATH_METRICS, 30, new StaticConfig(getGatewayHost()));
         scrapeConfigs.add(gatewayScrapeConfig);
         for (DeviceDataAcquisition dataAcquisition : dataAcquisitions) {
             ScrapeConfig scrapeConfig = toScrapeConfig(dataAcquisition);
@@ -81,7 +80,27 @@ public class ReloadTelemetryServiceCommandHandler implements CommandHandler<Relo
                 .collect(Collectors.toSet());
         String jobName = dataAcquisition.getDataAcquisitionId().toString();
         StaticConfig staticConfig = new StaticConfig(deviceCodes, Collections.singletonMap("target_type", "device"));
-        List<RelabelConfig> relabelConfigs = RelabelConfig.toRelabelConfigs(gatewayHost);
-        return new ScrapeConfig(jobName, "/ibms" + PATH_METRICS_DEVICES, dataAcquisition.getScrapeInterval(), relabelConfigs, staticConfig);
+        List<RelabelConfig> relabelConfigs = RelabelConfig.toRelabelConfigs(getGatewayHost());
+
+        Integer scrapeInterval = dataAcquisition.getScrapeInterval();
+        Integer scrapeTimeout = null;
+        if (dataAcquisition.getDataPoints() instanceof BacnetDataPoints) {
+            Integer bacnetApduTimeout = getBacnetApduTimeout();
+            scrapeTimeout = bacnetApduTimeout / 1000;
+            scrapeInterval = scrapeTimeout * 2;
+        }
+        return new ScrapeConfig(jobName, "/ibms" + PATH_METRICS_DEVICES, scrapeInterval, scrapeTimeout, relabelConfigs, staticConfig);
+    }
+
+    public String getGatewayHost() {
+        return environment.getRequiredProperty("IBMS_HOST");
+    }
+
+    public String getGatewayCode() {
+        return environment.getRequiredProperty("IBMS_GATEWAY_CODE");
+    }
+
+    private Integer getBacnetApduTimeout() {
+        return Integer.parseInt(environment.getProperty("BACNET_APDU_TIMEOUT", "3000"));
     }
 }

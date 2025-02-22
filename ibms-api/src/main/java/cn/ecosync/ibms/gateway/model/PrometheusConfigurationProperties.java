@@ -34,6 +34,8 @@ public class PrometheusConfigurationProperties {
         private String metricsPath;
         @JsonInclude(JsonInclude.Include.NON_NULL)
         private String scrapeInterval;
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        private String scrapeTimeout;
         private List<RelabelConfig> relabelConfigs;
         private List<StaticConfig> staticConfigs;
 
@@ -41,13 +43,18 @@ public class PrometheusConfigurationProperties {
         }
 
         public ScrapeConfig(String jobName, String metricsPath, Integer scrapeInterval, StaticConfig... staticConfigs) {
-            this(jobName, metricsPath, scrapeInterval, null, staticConfigs);
+            this(jobName, metricsPath, scrapeInterval, null, null, staticConfigs);
         }
 
-        public ScrapeConfig(String jobName, String metricsPath, Integer scrapeInterval, List<RelabelConfig> relabelConfigs, StaticConfig... staticConfigs) {
+        public ScrapeConfig(String jobName, String metricsPath, Integer scrapeInterval, Integer scrapeTimeout, List<RelabelConfig> relabelConfigs, StaticConfig... staticConfigs) {
             this.jobName = jobName;
             this.metricsPath = metricsPath;
-            this.scrapeInterval = scrapeInterval + "s";
+            this.scrapeInterval = Optional.ofNullable(scrapeInterval)
+                    .map(in -> in + "s")
+                    .orElse(null);
+            this.scrapeTimeout = Optional.ofNullable(scrapeTimeout)
+                    .map(in -> in + "s")
+                    .orElse(null);
             this.relabelConfigs = relabelConfigs;
             this.staticConfigs = Arrays.asList(staticConfigs);
         }

@@ -26,7 +26,8 @@ import static cn.ecosync.ibms.bacnet.dto.BacnetProperty.PROPERTY_PRESENT_VALUE;
 public class BacnetInstrumentation implements MultiCollector {
     private static final Logger log = LoggerFactory.getLogger(BacnetInstrumentation.class);
 
-    private final Labels LABEL_DEVICE_CODE;
+    private final String deviceCode;
+    private final Labels deviceCodeLabel;
     private final List<BacnetDataPoint> dataPoints;
     private final AtomicInteger segmentationCount = new AtomicInteger(1);
     private volatile boolean infiniteLoopOccurred = false;
@@ -36,11 +37,12 @@ public class BacnetInstrumentation implements MultiCollector {
     public BacnetInstrumentation(String deviceCode, List<BacnetDataPoint> dataPoints) {
         Assert.hasText(deviceCode, "deviceCode must not be null");
         Assert.notEmpty(dataPoints, "dataPoints must not be empty");
-        this.LABEL_DEVICE_CODE = Labels.of("device_code", deviceCode);
+        this.deviceCode = deviceCode;
+        this.deviceCodeLabel = Labels.of("device_code", deviceCode);
         this.dataPoints = dataPoints;
         this.deviceScrapeStatus = Gauge.builder()
                 .name("device_scrape_status")
-                .constLabels(LABEL_DEVICE_CODE)
+                .labelNames("device_code")
                 .build();
     }
 
@@ -55,13 +57,13 @@ public class BacnetInstrumentation implements MultiCollector {
             for (int i = 0; i < 10; i++) {
                 try {
                     collect(entry.getKey(), entry.getValue(), metricsBuilder::metricSnapshot);
-                    deviceScrapeStatus.set(1);
+                    deviceScrapeStatus.labelValues(deviceCode).set(1);
                     break;
                 } catch (SegmentationNotSupportedException e) {
                     log.atWarn().log("设备不支持分段传输");
                     segmentationCount.incrementAndGet();
                 } catch (Exception e) {
-                    deviceScrapeStatus.set(0);
+                    deviceScrapeStatus.labelValues(deviceCode).set(0);
                     log.atError().setCause(e).log("");
                     break;
                 }
@@ -123,7 +125,7 @@ public class BacnetInstrumentation implements MultiCollector {
             }
             String metricName = bacnetDataPoint.getDataPointId().getMetricName();
             double value = presentValue.getValueAsNumber().doubleValue();
-            GaugeSnapshot.GaugeDataPointSnapshot dataPoint = new GaugeSnapshot.GaugeDataPointSnapshot(value, LABEL_DEVICE_CODE, null);
+            GaugeSnapshot.GaugeDataPointSnapshot dataPoint = new GaugeSnapshot.GaugeDataPointSnapshot(value, deviceCodeLabel, null);
             GaugeSnapshot metric = GaugeSnapshot.builder()
                     .name(metricName)
                     .dataPoint(dataPoint)
