@@ -1,6 +1,5 @@
 package cn.ecosync.ibms.gateway.command.handler;
 
-import cn.ecosync.ibms.bacnet.model.BacnetDataPoints;
 import cn.ecosync.ibms.command.CommandHandler;
 import cn.ecosync.ibms.gateway.command.ReloadTelemetryServiceCommand;
 import cn.ecosync.ibms.gateway.model.DeviceDataAcquisition;
@@ -60,7 +59,9 @@ public class ReloadTelemetryServiceCommandHandler implements CommandHandler<Relo
         deviceTelemetryService.reload(dataAcquisitions);
 
         List<ScrapeConfig> scrapeConfigs = new ArrayList<>();
-        ScrapeConfig gatewayScrapeConfig = new ScrapeConfig(getGatewayCode(), "/ibms" + PATH_METRICS, 30, new StaticConfig(getGatewayHost()));
+        String metricsPath = "/ibms" + PATH_METRICS;
+        ScrapeConfig gatewayScrapeConfig = new ScrapeConfig(
+                getGatewayCode(), metricsPath, null, null, null, new StaticConfig(getGatewayHost()));
         scrapeConfigs.add(gatewayScrapeConfig);
         for (DeviceDataAcquisition dataAcquisition : dataAcquisitions) {
             ScrapeConfig scrapeConfig = toScrapeConfig(dataAcquisition);
@@ -82,14 +83,10 @@ public class ReloadTelemetryServiceCommandHandler implements CommandHandler<Relo
         StaticConfig staticConfig = new StaticConfig(deviceCodes, Collections.singletonMap("target_type", "device"));
         List<RelabelConfig> relabelConfigs = RelabelConfig.toRelabelConfigs(getGatewayHost());
 
+        String metricsPath = "/ibms" + PATH_METRICS_DEVICES;
         Integer scrapeInterval = dataAcquisition.getScrapeInterval();
-        Integer scrapeTimeout = null;
-        if (dataAcquisition.getDataPoints() instanceof BacnetDataPoints) {
-            Integer bacnetApduTimeout = getBacnetApduTimeout();
-            scrapeTimeout = bacnetApduTimeout / 1000;
-            scrapeInterval = scrapeTimeout * 2;
-        }
-        return new ScrapeConfig(jobName, "/ibms" + PATH_METRICS_DEVICES, scrapeInterval, scrapeTimeout, relabelConfigs, staticConfig);
+        Integer scrapeTimeout = dataAcquisition.getScrapeTimeout();
+        return new ScrapeConfig(jobName, metricsPath, scrapeInterval, scrapeTimeout, relabelConfigs, staticConfig);
     }
 
     public String getGatewayHost() {

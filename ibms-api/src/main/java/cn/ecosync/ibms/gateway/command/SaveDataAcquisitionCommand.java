@@ -6,7 +6,7 @@ import cn.ecosync.ibms.gateway.model.LabelTable;
 import cn.ecosync.ibms.gateway.model.SynchronizationStateEnum;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Min;
 import lombok.ToString;
 import org.springframework.util.Assert;
@@ -17,8 +17,8 @@ public class SaveDataAcquisitionCommand implements Command {
     @JsonUnwrapped
     private DeviceDataAcquisitionId dataAcquisitionId;
     @Min(0)
-    @Max(120)
     private Integer scrapeInterval;
+    private Integer scrapeTimeout;
     private LabelTable deviceInfos;
     private LabelTable dataPoints;
     private SynchronizationStateEnum synchronizationState;
@@ -43,6 +43,14 @@ public class SaveDataAcquisitionCommand implements Command {
         this.scrapeInterval = scrapeInterval;
     }
 
+    public Integer getScrapeTimeout() {
+        return scrapeTimeout;
+    }
+
+    public void setScrapeTimeout(Integer scrapeTimeout) {
+        this.scrapeTimeout = scrapeTimeout;
+    }
+
     public LabelTable getDeviceInfos() {
         return deviceInfos;
     }
@@ -65,5 +73,13 @@ public class SaveDataAcquisitionCommand implements Command {
 
     public void setSynchronizationState(SynchronizationStateEnum synchronizationState) {
         this.synchronizationState = synchronizationState;
+    }
+
+    @AssertTrue(message = "scrapeTimeout cannot be greater than the scrapeInterval")
+    public boolean assertScrapeTimeout() {
+        if (scrapeInterval != null && scrapeTimeout != null) {
+            return scrapeTimeout <= scrapeInterval;
+        }
+        return true;
     }
 }

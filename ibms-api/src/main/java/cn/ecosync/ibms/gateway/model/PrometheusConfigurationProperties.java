@@ -42,10 +42,6 @@ public class PrometheusConfigurationProperties {
         protected ScrapeConfig() {
         }
 
-        public ScrapeConfig(String jobName, String metricsPath, Integer scrapeInterval, StaticConfig... staticConfigs) {
-            this(jobName, metricsPath, scrapeInterval, null, null, staticConfigs);
-        }
-
         public ScrapeConfig(String jobName, String metricsPath, Integer scrapeInterval, Integer scrapeTimeout, List<RelabelConfig> relabelConfigs, StaticConfig... staticConfigs) {
             this.jobName = jobName;
             this.metricsPath = metricsPath;

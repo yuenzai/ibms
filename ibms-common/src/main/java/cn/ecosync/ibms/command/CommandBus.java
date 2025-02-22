@@ -36,7 +36,6 @@ public class CommandBus {
         Assert.notNull(commandHandler, "command handler not found: " + command.getClass().getCanonicalName());
         Method handleMethod = ReflectionUtils.findMethod(commandHandler.getClass(), "handle", (Class<?>[]) null);
         Assert.notNull(handleMethod, "handle method not found: " + commandHandler.getClass().getCanonicalName());
-        command.validate();
         ReflectionUtils.invokeMethod(handleMethod, commandHandler, command);
     }
 
