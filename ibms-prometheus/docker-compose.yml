@@ -1,15 +1,18 @@
+volumes:
+  prometheus:
+
 services:
   prometheus:
-    image: prom/prometheus:v3.1.0
+    image: prom/prometheus:v3.2.0
     network_mode: host
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./scrape_config_file.yml:/etc/prometheus/scrape_config_file.yml
       - prometheus:/prometheus
     command:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.path=/prometheus
-      - --web.enable-lifecycle
       - --web.route-prefix=/
       - --web.external-url=http://${IBMS_EXTERNAL_HOST:?}/prometheus
-#      - --web.listen-address=${PROMETHEUS_URL:-0.0.0.0:9090}
+      - --web.enable-remote-write-receiver
+      - --web.remote-write-receiver.accepted-protobuf-messages=io.prometheus.write.v2.Request
+      - --web.listen-address=${PROMETHEUS_URL:-0.0.0.0:9090}

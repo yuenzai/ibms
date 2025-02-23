@@ -3,9 +3,6 @@ include:
   - ibms-nginx/docker-compose.yml
   - ibms-prometheus/docker-compose.yml
   - ibms-grafana/docker-compose.yml
-  - ibms-gateway-starter/docker-compose.yml
 
 volumes:
   database:
-  prometheus:
-  grafana:

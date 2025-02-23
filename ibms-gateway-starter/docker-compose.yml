@@ -1,3 +1,6 @@
+volumes:
+  prometheus-gateway:
+
 services:
   gateway:
     build: .
@@ -8,9 +11,36 @@ services:
         condition: service_healthy
     volumes:
       - ./target/ibms-gateway-starter-0.0.1-SNAPSHOT.jar:/opt/app/ibms-gateway-starter-0.0.1-SNAPSHOT.jar
-      - ../ibms-prometheus/scrape_config_file.yml:/opt/app/scrape_config_file.yml
+      - ./scrape_config_file.yml:/opt/app/scrape_config_file.yml
     command: [ "java", "-jar", "ibms-gateway-starter-0.0.1-SNAPSHOT.jar" ]
     environment:
       BACNET_IFACE: ens18
       IBMS_HOST: ${IBMS_HOST:?}
       IBMS_GATEWAY_CODE: ${IBMS_GATEWAY_CODE:?}
+  # push
+  prometheus-agent:
+    image: prom/prometheus:v3.2.0
+    network_mode: host
+    volumes:
+      - ./prometheus-agent.yml:/etc/prometheus/prometheus.yml
+      - ./scrape_config_file.yml:/etc/prometheus/scrape_config_file.yml
+      - prometheus-gateway:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --config.auto-reload-interval=30s
+      - --storage.agent.path=/prometheus
+      - --enable-feature=auto-reload-config,metadata-wal-records
+      - --agent
+  # pull
+  prometheus:
+    image: prom/prometheus:v3.2.0
+    network_mode: host
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./scrape_config_file.yml:/etc/prometheus/scrape_config_file.yml
+      - prometheus-gateway:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --config.auto-reload-interval=30s
+      - --storage.tsdb.path=/prometheus
+      - --enable-feature=auto-reload-config
