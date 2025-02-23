@@ -31,16 +31,17 @@ services:
       - --storage.agent.path=/prometheus
       - --enable-feature=auto-reload-config,metadata-wal-records
       - --agent
+      - --web.listen-address=0.0.0.0:9091
   # pull
-  prometheus:
-    image: prom/prometheus:v3.2.0
-    network_mode: host
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./scrape_config_file.yml:/etc/prometheus/scrape_config_file.yml
-      - prometheus-gateway:/prometheus
-    command:
-      - --config.file=/etc/prometheus/prometheus.yml
-      - --config.auto-reload-interval=30s
-      - --storage.tsdb.path=/prometheus
-      - --enable-feature=auto-reload-config
+#  prometheus:
+#    image: prom/prometheus:v3.2.0
+#    network_mode: host
+#    volumes:
+#      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+#      - ./scrape_config_file.yml:/etc/prometheus/scrape_config_file.yml
+#      - prometheus-gateway:/prometheus
+#    command:
+#      - --config.file=/etc/prometheus/prometheus.yml
+#      - --config.auto-reload-interval=30s
+#      - --storage.tsdb.path=/prometheus
+#      - --enable-feature=auto-reload-config
