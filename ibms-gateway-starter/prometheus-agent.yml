@@ -1,6 +1,10 @@
 scrape_config_files:
   - scrape_config_file.yml
+scrape_configs:
+  - job_name: node
+    static_configs:
+      - targets: [ 0.0.0.0:9100 ]
 remote_write:
-  - url: "http://0.0.0.0:9090/api/v1/write"
-    protobuf_message: "io.prometheus.write.v2.Request"
+  - url: http://0.0.0.0:9090/api/v1/write
+    protobuf_message: io.prometheus.write.v2.Request
     remote_timeout: 30s
