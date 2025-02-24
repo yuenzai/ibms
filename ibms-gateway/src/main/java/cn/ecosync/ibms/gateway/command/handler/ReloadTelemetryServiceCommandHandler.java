@@ -59,10 +59,8 @@ public class ReloadTelemetryServiceCommandHandler implements CommandHandler<Relo
         deviceTelemetryService.reload(dataAcquisitions);
 
         List<ScrapeConfig> scrapeConfigs = new ArrayList<>();
-        String metricsPath = "/ibms" + PATH_METRICS;
-        ScrapeConfig gatewayScrapeConfig = new ScrapeConfig(
-                getGatewayCode(), metricsPath, null, null, null, new StaticConfig(getGatewayHost()));
-        scrapeConfigs.add(gatewayScrapeConfig);
+        scrapeConfigs.add(jvmScrapeConfig());
+        scrapeConfigs.add(ibmsScrapeConfig());
         for (DeviceDataAcquisition dataAcquisition : dataAcquisitions) {
             ScrapeConfig scrapeConfig = toScrapeConfig(dataAcquisition);
             scrapeConfigs.add(scrapeConfig);
@@ -73,6 +71,16 @@ public class ReloadTelemetryServiceCommandHandler implements CommandHandler<Relo
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private ScrapeConfig jvmScrapeConfig() {
+        String metricsPath = "/ibms" + PATH_METRICS_JVM;
+        return new ScrapeConfig("jvm", metricsPath, null, null, null, new StaticConfig(getGatewayHost()));
+    }
+
+    private ScrapeConfig ibmsScrapeConfig() {
+        String metricsPath = "/ibms" + PATH_METRICS;
+        return new ScrapeConfig(getGatewayCode(), metricsPath, null, null, null, new StaticConfig(getGatewayHost()));
     }
 
     private ScrapeConfig toScrapeConfig(DeviceDataAcquisition dataAcquisition) {
@@ -95,9 +103,5 @@ public class ReloadTelemetryServiceCommandHandler implements CommandHandler<Relo
 
     public String getGatewayCode() {
         return environment.getRequiredProperty("IBMS_GATEWAY_CODE");
-    }
-
-    private Integer getBacnetApduTimeout() {
-        return Integer.parseInt(environment.getProperty("BACNET_APDU_TIMEOUT", "3000"));
     }
 }

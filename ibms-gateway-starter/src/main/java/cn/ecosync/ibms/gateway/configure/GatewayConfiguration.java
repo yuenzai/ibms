@@ -10,6 +10,7 @@ import cn.ecosync.ibms.gateway.service.DeviceTelemetryService;
 import cn.ecosync.ibms.gateway.service.GatewayMetricsTelemetryService;
 import cn.ecosync.ibms.serde.JsonSerde;
 import io.prometheus.metrics.exporter.servlet.jakarta.PrometheusMetricsServlet;
+import io.prometheus.metrics.instrumentation.jvm.JvmMetrics;
 import io.prometheus.metrics.model.registry.PrometheusRegistry;
 import jakarta.servlet.Filter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -20,8 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import static cn.ecosync.ibms.Constants.PATH_METRICS;
-import static cn.ecosync.ibms.Constants.PATH_METRICS_DEVICES;
+import static cn.ecosync.ibms.Constants.*;
 
 @EnableScheduling
 @Configuration(proxyBeanMethods = false)
@@ -33,13 +33,24 @@ public class GatewayConfiguration {
     private final ServletRegistrationBean<PrometheusMetricsServlet> deviceMetricsServlet;
 
     public GatewayConfiguration() {
-        PrometheusRegistry defaultRegistry = PrometheusRegistry.defaultRegistry;
-        gatewayMetricsTelemetryService = new GatewayMetricsTelemetryService(defaultRegistry);
-        gatewayMetricsServlet = new ServletRegistrationBean<>(new PrometheusMetricsServlet(defaultRegistry), PATH_METRICS);
+        PrometheusRegistry ibmsMetricsRegistry = new PrometheusRegistry();
+        gatewayMetricsTelemetryService = new GatewayMetricsTelemetryService(ibmsMetricsRegistry);
+        gatewayMetricsServlet = new ServletRegistrationBean<>(new PrometheusMetricsServlet(ibmsMetricsRegistry), PATH_METRICS);
 
         PrometheusRegistry deviceMetricsRegistry = new PrometheusRegistry();
         deviceTelemetryService = new DeviceTelemetryService(deviceMetricsRegistry);
         deviceMetricsServlet = new ServletRegistrationBean<>(new PrometheusMetricsServlet(deviceMetricsRegistry), PATH_METRICS_DEVICES);
+    }
+
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnClass(JvmMetrics.class)
+    public static class JvmMetricsConfiguration {
+        @Bean
+        public ServletRegistrationBean<PrometheusMetricsServlet> jvmMetricsServlet() {
+            PrometheusRegistry jvmMetricsRegistry = new PrometheusRegistry();
+            JvmMetrics.builder().register(jvmMetricsRegistry);
+            return new ServletRegistrationBean<>(new PrometheusMetricsServlet(jvmMetricsRegistry), PATH_METRICS_JVM);
+        }
     }
 
     @Bean

@@ -3,7 +3,6 @@ package cn.ecosync.ibms.gateway.service;
 import cn.ecosync.ibms.gateway.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.gateway.model.LabelTable;
 import cn.ecosync.ibms.gateway.model.LabelValues;
-import io.prometheus.metrics.instrumentation.jvm.JvmMetrics;
 import io.prometheus.metrics.model.registry.MultiCollector;
 import io.prometheus.metrics.model.registry.PrometheusRegistry;
 import io.prometheus.metrics.model.snapshots.*;
@@ -32,7 +31,6 @@ public class GatewayMetricsTelemetryService implements MultiCollector {
         log.atInfo().log("重新加载配置");
         prometheusRegistry.clear();
         prometheusRegistry.register(this);
-        JvmMetrics.builder().register(prometheusRegistry);
         dataAcquisitionsRef.set(Arrays.asList(dataAcquisitions));
     }
 
@@ -42,14 +40,14 @@ public class GatewayMetricsTelemetryService implements MultiCollector {
         MetricSnapshots.Builder metricsBuilder = MetricSnapshots.builder();
         for (DeviceDataAcquisition dataAcquisition : dataAcquisitions) {
             InfoSnapshot.Builder deviceInfoBuilder = InfoSnapshot.builder()
-                    .name("device")
-                    .help("Device Info");
+                    .name("ibms_device")
+                    .help("IBMS Device Info");
             LabelTable deviceInfos = dataAcquisition.getDeviceInfos();
             collect(deviceInfos, deviceInfoBuilder, metricsBuilder::metricSnapshot);
 
             InfoSnapshot.Builder pointInfoBuilder = InfoSnapshot.builder()
-                    .name("device_point")
-                    .help("Point Info");
+                    .name("ibms_device_point")
+                    .help("IBMS Point Info");
             LabelTable dataPoints = dataAcquisition.getDataPoints();
             collect(dataPoints, pointInfoBuilder, metricsBuilder::metricSnapshot);
         }

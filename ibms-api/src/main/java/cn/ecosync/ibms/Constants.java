@@ -7,6 +7,7 @@ public class Constants {
     public static final Pattern PATTERN_CODE = Pattern.compile(REGEX_CODE);
 
     public static final String PATH_METRICS = "/metrics";
+    public static final String PATH_METRICS_JVM = "/metrics/jvm";
     public static final String PATH_METRICS_DEVICES = "/metrics/devices";
 
     public static final String LABEL_DEVICE_CODE = "device_code";
