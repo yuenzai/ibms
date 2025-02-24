@@ -49,7 +49,8 @@ public class GatewayWebController implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        execute();
+        ReloadTelemetryServiceCommand command = new ReloadTelemetryServiceCommand();
+        commandBus.execute(command);
     }
 
     @Operation(summary = "重载遥测服务")

@@ -52,7 +52,7 @@ public class ReloadTelemetryServiceCommandHandler implements CommandHandler<Relo
 
     @Override
     @Transactional(readOnly = true)
-    public void handle(ReloadTelemetryServiceCommand command) {
+    public synchronized void handle(ReloadTelemetryServiceCommand command) {
         DeviceDataAcquisition[] dataAcquisitions = dataAcquisitionRepository.search(Pageable.unpaged()).getContent()
                 .toArray(new DeviceDataAcquisition[0]);
         gatewayMetricsTelemetryService.reload(dataAcquisitions);
