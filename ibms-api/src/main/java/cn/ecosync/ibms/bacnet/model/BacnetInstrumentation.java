@@ -41,7 +41,7 @@ public class BacnetInstrumentation implements MultiCollector {
         this.deviceCodeLabel = Labels.of("device_code", deviceCode);
         this.dataPoints = dataPoints;
         this.deviceScrapeStatus = Gauge.builder()
-                .name("device_scrape_status")
+                .name("ibms_device_scrape_status")
                 .labelNames("device_code")
                 .build();
     }
