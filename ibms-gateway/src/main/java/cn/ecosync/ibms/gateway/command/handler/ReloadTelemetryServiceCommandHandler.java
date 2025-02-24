@@ -21,10 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static cn.ecosync.ibms.Constants.*;
 
@@ -85,10 +82,11 @@ public class ReloadTelemetryServiceCommandHandler implements CommandHandler<Relo
 
     private ScrapeConfig toScrapeConfig(DeviceDataAcquisition dataAcquisition) {
         LabelTable dataPoints = dataAcquisition.getDataPoints();
-        Set<String> deviceCodes = dataPoints.get(LABEL_DEVICE_CODE)
-                .collect(Collectors.toSet());
+        String[] deviceCodes = dataPoints.get(LABEL_DEVICE_CODE)
+                .distinct()
+                .toArray(String[]::new);
         String jobName = dataAcquisition.getDataAcquisitionId().toString();
-        StaticConfig staticConfig = new StaticConfig(deviceCodes, Collections.singletonMap("target_type", "device"));
+        StaticConfig staticConfig = new StaticConfig(deviceCodes);
         List<RelabelConfig> relabelConfigs = RelabelConfig.toRelabelConfigs(getGatewayHost());
 
         String metricsPath = "/ibms" + PATH_METRICS_DEVICES;

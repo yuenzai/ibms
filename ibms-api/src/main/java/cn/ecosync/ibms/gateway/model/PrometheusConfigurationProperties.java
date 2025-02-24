@@ -75,11 +75,11 @@ public class PrometheusConfigurationProperties {
         }
 
         public StaticConfig(String... targets) {
-            this(Arrays.asList(targets), Collections.emptyMap());
+            this(Collections.emptyMap(), targets);
         }
 
-        public StaticConfig(Collection<String> targets, Map<String, String> labels) {
-            this.targets = targets;
+        public StaticConfig(Map<String, String> labels, String... targets) {
+            this.targets = Arrays.asList(targets);
             this.labels = labels;
         }
 
