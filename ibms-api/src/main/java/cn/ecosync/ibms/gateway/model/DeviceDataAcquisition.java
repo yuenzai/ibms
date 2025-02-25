@@ -10,6 +10,7 @@ import static cn.ecosync.ibms.gateway.model.SynchronizationStateEnum.UNSYNCHRONI
 public class DeviceDataAcquisition {
     @JsonUnwrapped
     private DeviceDataAcquisitionId dataAcquisitionId;
+    private DeviceDataAcquisitionType dataAcquisitionType;
     private Integer scrapeInterval;
     private Integer scrapeTimeout;
     private SynchronizationStateEnum synchronizationState;
@@ -19,10 +20,12 @@ public class DeviceDataAcquisition {
     protected DeviceDataAcquisition() {
     }
 
-    public DeviceDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId, Integer scrapeInterval, Integer scrapeTimeout, LabelTable deviceInfos, LabelTable dataPoints, SynchronizationStateEnum synchronizationState) {
+    public DeviceDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId, DeviceDataAcquisitionType dataAcquisitionType, Integer scrapeInterval, Integer scrapeTimeout, LabelTable deviceInfos, LabelTable dataPoints, SynchronizationStateEnum synchronizationState) {
         Assert.notNull(dataAcquisitionId, "dataAcquisitionId must not be null");
+        Assert.notNull(dataAcquisitionType, "dataAcquisitionType must not be null");
         Assert.isTrue(scrapeInterval == null || (scrapeInterval >= 0 && scrapeInterval <= 120), "scrapeInterval must be between 0 and 120");
         this.dataAcquisitionId = dataAcquisitionId;
+        this.dataAcquisitionType = dataAcquisitionType;
         this.scrapeInterval = scrapeInterval != null ? scrapeInterval : 0;
         this.scrapeTimeout = scrapeTimeout != null ? scrapeTimeout : 0;
         this.deviceInfos = deviceInfos != null ? deviceInfos : LabelTable.EMPTY;
@@ -32,6 +35,10 @@ public class DeviceDataAcquisition {
 
     public DeviceDataAcquisitionId getDataAcquisitionId() {
         return dataAcquisitionId;
+    }
+
+    public DeviceDataAcquisitionType getDataAcquisitionType() {
+        return dataAcquisitionType;
     }
 
     public Integer getScrapeInterval() {
@@ -60,6 +67,7 @@ public class DeviceDataAcquisition {
 
     public static class DeviceDataAcquisitionBuilder {
         private final DeviceDataAcquisitionId dataAcquisitionId;
+        private final DeviceDataAcquisitionType dataAcquisitionType;
         private Integer scrapeInterval;
         private Integer scrapeTimeout;
         private LabelTable deviceInfos;
@@ -67,11 +75,12 @@ public class DeviceDataAcquisition {
         private SynchronizationStateEnum synchronizationState;
 
         private DeviceDataAcquisitionBuilder(DeviceDataAcquisition dataAcquisition) {
-            this(dataAcquisition.getDataAcquisitionId(), dataAcquisition.getScrapeInterval(), dataAcquisition.getScrapeTimeout(), dataAcquisition.getDeviceInfos(), dataAcquisition.getDataPoints(), dataAcquisition.getSynchronizationState());
+            this(dataAcquisition.getDataAcquisitionId(), dataAcquisition.getDataAcquisitionType(), dataAcquisition.getScrapeInterval(), dataAcquisition.getScrapeTimeout(), dataAcquisition.getDeviceInfos(), dataAcquisition.getDataPoints(), dataAcquisition.getSynchronizationState());
         }
 
-        private DeviceDataAcquisitionBuilder(DeviceDataAcquisitionId dataAcquisitionId, Integer scrapeInterval, Integer scrapeTimeout, LabelTable deviceInfos, LabelTable dataPoints, SynchronizationStateEnum synchronizationState) {
+        private DeviceDataAcquisitionBuilder(DeviceDataAcquisitionId dataAcquisitionId, DeviceDataAcquisitionType dataAcquisitionType, Integer scrapeInterval, Integer scrapeTimeout, LabelTable deviceInfos, LabelTable dataPoints, SynchronizationStateEnum synchronizationState) {
             this.dataAcquisitionId = dataAcquisitionId;
+            this.dataAcquisitionType = dataAcquisitionType;
             this.scrapeInterval = scrapeInterval;
             this.scrapeTimeout = scrapeTimeout;
             this.deviceInfos = deviceInfos;
@@ -115,7 +124,7 @@ public class DeviceDataAcquisition {
         }
 
         public DeviceDataAcquisition build() {
-            return new DeviceDataAcquisition(dataAcquisitionId, scrapeInterval, scrapeTimeout, deviceInfos, dataPoints, synchronizationState);
+            return new DeviceDataAcquisition(dataAcquisitionId, dataAcquisitionType, scrapeInterval, scrapeTimeout, deviceInfos, dataPoints, synchronizationState);
         }
     }
 }

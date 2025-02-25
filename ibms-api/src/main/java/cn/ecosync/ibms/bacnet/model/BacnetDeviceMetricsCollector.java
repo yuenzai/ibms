@@ -2,11 +2,12 @@ package cn.ecosync.ibms.bacnet.model;
 
 import cn.ecosync.ibms.bacnet.dto.*;
 import cn.ecosync.ibms.bacnet.dto.BacnetReadPropertyMultipleService.SegmentationNotSupportedException;
+import cn.ecosync.ibms.gateway.model.DeviceMetricsCollector;
 import io.prometheus.metrics.core.metrics.Gauge;
-import io.prometheus.metrics.model.registry.MultiCollector;
 import io.prometheus.metrics.model.snapshots.GaugeSnapshot;
+import io.prometheus.metrics.model.snapshots.InfoSnapshot;
 import io.prometheus.metrics.model.snapshots.Labels;
-import io.prometheus.metrics.model.snapshots.MetricSnapshots;
+import io.prometheus.metrics.model.snapshots.MetricSnapshot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.support.PagedListHolder;
@@ -23,8 +24,8 @@ import java.util.stream.Collectors;
 
 import static cn.ecosync.ibms.bacnet.dto.BacnetProperty.PROPERTY_PRESENT_VALUE;
 
-public class BacnetInstrumentation implements MultiCollector {
-    private static final Logger log = LoggerFactory.getLogger(BacnetInstrumentation.class);
+public class BacnetDeviceMetricsCollector implements DeviceMetricsCollector {
+    private static final Logger log = LoggerFactory.getLogger(BacnetDeviceMetricsCollector.class);
 
     private final String deviceCode;
     private final Labels deviceCodeLabel;
@@ -33,8 +34,10 @@ public class BacnetInstrumentation implements MultiCollector {
     private volatile boolean infiniteLoopOccurred = false;
 
     private final Gauge deviceScrapeStatus;
+    private final InfoSnapshot deviceInfo;
+    private final InfoSnapshot devicePointInfos;
 
-    public BacnetInstrumentation(String deviceCode, List<BacnetDataPoint> dataPoints) {
+    public BacnetDeviceMetricsCollector(String deviceCode, Labels deviceInfo, List<BacnetDataPoint> dataPoints) {
         Assert.hasText(deviceCode, "deviceCode must not be null");
         Assert.notEmpty(dataPoints, "dataPoints must not be empty");
         this.deviceCode = deviceCode;
@@ -44,19 +47,33 @@ public class BacnetInstrumentation implements MultiCollector {
                 .name("ibms_device_scrape_status")
                 .labelNames("device_code")
                 .build();
+        InfoSnapshot.Builder deviceInfoBuilder = InfoSnapshot.builder()
+                .name("ibms_device")
+                .help("IBMS Device Info");
+        Optional.ofNullable(deviceInfo)
+                .map(InfoSnapshot.InfoDataPointSnapshot::new)
+                .ifPresent(deviceInfoBuilder::dataPoint);
+        this.deviceInfo = deviceInfoBuilder.build();
+        InfoSnapshot.Builder devicePointInfoBuilder = InfoSnapshot.builder()
+                .name("ibms_device_point")
+                .help("IBMS Device Point Info");
+        dataPoints.stream()
+                .map(BacnetDataPoint::getLabels)
+                .map(InfoSnapshot.InfoDataPointSnapshot::new)
+                .forEach(devicePointInfoBuilder::dataPoint);
+        this.devicePointInfos = devicePointInfoBuilder.build();
     }
 
     @Override
-    public MetricSnapshots collect() {
+    public void collect(Consumer<MetricSnapshot> metricsConsumer) {
         Assert.state(!infiniteLoopOccurred, "infinite loop occurred");
         Assert.state(segmentationCount.get() <= 5, "maxSegmentationCount must be less than 5");
         Map<Integer, List<BacnetDataPoint>> map = dataPoints.stream()
                 .collect(Collectors.groupingBy(BacnetDataPoint::getDeviceInstance));
-        MetricSnapshots.Builder metricsBuilder = MetricSnapshots.builder();
         for (Map.Entry<Integer, List<BacnetDataPoint>> entry : map.entrySet()) {
             for (int i = 0; i < 10; i++) {
                 try {
-                    collect(entry.getKey(), entry.getValue(), metricsBuilder::metricSnapshot);
+                    collect(entry.getKey(), entry.getValue(), metricsConsumer::accept);
                     deviceScrapeStatus.labelValues(deviceCode).set(1);
                     break;
                 } catch (SegmentationNotSupportedException e) {
@@ -70,8 +87,9 @@ public class BacnetInstrumentation implements MultiCollector {
                 if (i == 9) infiniteLoopOccurred = true;
             }
         }
-        metricsBuilder.metricSnapshot(deviceScrapeStatus.collect());
-        return metricsBuilder.build();
+        metricsConsumer.accept(deviceScrapeStatus.collect());
+        metricsConsumer.accept(deviceInfo);
+        metricsConsumer.accept(devicePointInfos);
     }
 
     private void collect(Integer deviceInstance, List<BacnetDataPoint> dataPoints, Consumer<GaugeSnapshot> pointMetricConsumer) {

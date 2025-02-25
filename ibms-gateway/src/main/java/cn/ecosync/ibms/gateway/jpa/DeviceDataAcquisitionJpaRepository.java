@@ -30,7 +30,7 @@ public class DeviceDataAcquisitionJpaRepository implements DeviceDataAcquisition
         DeviceDataAcquisitionId dataAcquisitionId = command.getDataAcquisitionId();
         DeviceDataAcquisitionEntity dataAcquisitionEntity = dataAcquisitionDao.findByDataAcquisitionId(dataAcquisitionId).orElse(null);
         if (dataAcquisitionEntity == null) {
-            dataAcquisition = new DeviceDataAcquisition(dataAcquisitionId, command.getScrapeInterval(), command.getScrapeTimeout(), command.getDeviceInfos(), command.getDataPoints(), command.getSynchronizationState());
+            dataAcquisition = new DeviceDataAcquisition(dataAcquisitionId, command.getDataAcquisitionType(), command.getScrapeInterval(), command.getScrapeTimeout(), command.getDeviceInfos(), command.getDataPoints(), command.getSynchronizationState());
             dataAcquisitionEntity = new DeviceDataAcquisitionEntity(dataAcquisition);
             dataAcquisitionDao.save(dataAcquisitionEntity);
         } else {

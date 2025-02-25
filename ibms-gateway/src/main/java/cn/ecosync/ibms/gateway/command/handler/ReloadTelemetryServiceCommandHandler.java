@@ -52,12 +52,12 @@ public class ReloadTelemetryServiceCommandHandler implements CommandHandler<Relo
     public synchronized void handle(ReloadTelemetryServiceCommand command) {
         DeviceDataAcquisition[] dataAcquisitions = dataAcquisitionRepository.search(Pageable.unpaged()).getContent()
                 .toArray(new DeviceDataAcquisition[0]);
-        gatewayMetricsTelemetryService.reload(dataAcquisitions);
+//        gatewayMetricsTelemetryService.reload(dataAcquisitions);
         deviceTelemetryService.reload(dataAcquisitions);
 
         List<ScrapeConfig> scrapeConfigs = new ArrayList<>();
         scrapeConfigs.add(jvmScrapeConfig());
-        scrapeConfigs.add(ibmsScrapeConfig());
+//        scrapeConfigs.add(ibmsScrapeConfig());
         for (DeviceDataAcquisition dataAcquisition : dataAcquisitions) {
             ScrapeConfig scrapeConfig = toScrapeConfig(dataAcquisition);
             scrapeConfigs.add(scrapeConfig);
@@ -85,7 +85,7 @@ public class ReloadTelemetryServiceCommandHandler implements CommandHandler<Relo
         String[] deviceCodes = dataPoints.get(LABEL_DEVICE_CODE)
                 .distinct()
                 .toArray(String[]::new);
-        String jobName = dataAcquisition.getDataAcquisitionId().toString();
+        String jobName = "ibms";
         StaticConfig staticConfig = new StaticConfig(deviceCodes);
         List<RelabelConfig> relabelConfigs = RelabelConfig.toRelabelConfigs(getGatewayHost());
 
