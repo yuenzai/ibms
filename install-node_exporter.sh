@@ -29,7 +29,7 @@ Description=Node Exporter
 After=network.target
 
 [Service]
-ExecStart=${IBMS_HOME}/bin/node_exporter
+ExecStart=${IBMS_HOME}/bin/node_exporter --collector.systemd --collector.processes
 
 [Install]
 WantedBy=multi-user.target

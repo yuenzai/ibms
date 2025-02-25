@@ -21,8 +21,10 @@ services:
   prometheus-agent:
     image: prom/prometheus:v3.2.0
     network_mode: host
+    environment:
+      IBMS_GATEWAY_CODE: ${IBMS_GATEWAY_CODE}
     volumes:
-      - ./prometheus-agent.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - ./scrape_config_file.yml:/etc/prometheus/scrape_config_file.yml
       - prometheus-gateway:/prometheus
     command:
@@ -36,6 +38,8 @@ services:
 #  prometheus:
 #    image: prom/prometheus:v3.2.0
 #    network_mode: host
+#    environment:
+#      IBMS_GATEWAY_CODE: ${IBMS_GATEWAY_CODE}
 #    volumes:
 #      - ./prometheus.yml:/etc/prometheus/prometheus.yml
 #      - ./scrape_config_file.yml:/etc/prometheus/scrape_config_file.yml
