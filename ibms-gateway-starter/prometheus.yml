@@ -4,15 +4,15 @@ global:
 scrape_config_files:
   - scrape_config_file.yml
 remote_write:
-  - url: http://0.0.0.0:9090/api/v1/write
+  - url: http://localhost:9090/api/v1/write
     protobuf_message: io.prometheus.write.v2.Request
     remote_timeout: 30s
 scrape_configs:
   - job_name: node
     static_configs:
-      - targets: [ 0.0.0.0:9100 ]
+      - targets: [ localhost:9100 ]
 #  - job_name: cadvisor
 #    static_configs:
-#      - targets: [ 0.0.0.0:9338 ]
+#      - targets: [ localhost:9338 ]
 #rule_files:
 #  - rule_file.yml

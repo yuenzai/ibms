@@ -15,4 +15,4 @@ services:
       - --web.external-url=http://${IBMS_EXTERNAL_HOST:?}/prometheus
       - --web.enable-remote-write-receiver
       - --web.remote-write-receiver.accepted-protobuf-messages=io.prometheus.write.v2.Request
-      - --web.listen-address=${PROMETHEUS_URL:-0.0.0.0:9090}
+      - --web.listen-address=0.0.0.0:9090
