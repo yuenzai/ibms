@@ -16,7 +16,6 @@ services:
     environment:
       BACNET_IFACE: ens18
       IBMS_HOST: ${IBMS_HOST:?}
-      IBMS_GATEWAY_CODE: ${IBMS_GATEWAY_CODE:?}
   # push
   prometheus-agent:
     image: prom/prometheus:v3.2.0
