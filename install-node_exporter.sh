@@ -23,30 +23,7 @@ if [ ! -f ${IBMS_HOME}/bin/node_exporter ]; then
   cp tmp/${FILE_NAME}/node_exporter bin
 fi
 
-tee bin/node_exporter.sh <<EOF
-#!/bin/bash
-${IBMS_HOME}/bin/node_exporter \
---collector.disable-defaults \
---collector.cpu \
---collector.meminfo \
---collector.diskstats \
---collector.filesystem \
---collector.netclass \
---collector.netdev \
---collector.netstat \
---collector.loadavg \
---collector.stat \
---collector.arp \
---collector.filefd \
---collector.os \
---collector.pressure \
---collector.sockstat \
---collector.time \
---collector.uname \
---collector.tcpstat
-EOF
-
-chmod +x bin/node_exporter*
+chmod +x bin/node_exporter
 
 tee /etc/systemd/system/node_exporter.service <<EOF
 [Unit]
@@ -54,7 +31,7 @@ Description=Node Exporter
 After=network.target
 
 [Service]
-ExecStart=${IBMS_HOME}/bin/node_exporter.sh
+ExecStart=${IBMS_HOME}/bin/node_exporter
 
 [Install]
 WantedBy=multi-user.target
