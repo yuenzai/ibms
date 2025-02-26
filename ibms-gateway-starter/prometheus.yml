@@ -1,6 +1,6 @@
 global:
   external_labels:
-    host: ${IBMS_GATEWAY_CODE}
+    gateway_code: ${IBMS_GATEWAY_CODE}
 scrape_config_files:
   - scrape_config_file.yml
 scrape_configs:
