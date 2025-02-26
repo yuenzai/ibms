@@ -52,6 +52,7 @@ public class PrometheusConfigurationProperties {
         public ScrapeConfig(String jobName, String metricsPath, Boolean honorLabels, Integer scrapeInterval, Integer scrapeTimeout, List<RelabelConfig> relabelConfigs, StaticConfig... staticConfigs) {
             this.jobName = jobName;
             this.metricsPath = metricsPath;
+            this.honorLabels = honorLabels;
             this.scrapeInterval = Optional.ofNullable(scrapeInterval)
                     .map(in -> in + "s")
                     .orElse(null);
