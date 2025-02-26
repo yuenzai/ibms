@@ -39,6 +39,7 @@ ${IBMS_HOME}/bin/node_exporter \
 --collector.arp \
 --collector.filefd \
 --collector.os \
+--collector.pressure \
 --collector.sockstat \
 --collector.time \
 --collector.uname
