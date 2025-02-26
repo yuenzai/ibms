@@ -42,7 +42,8 @@ ${IBMS_HOME}/bin/node_exporter \
 --collector.pressure \
 --collector.sockstat \
 --collector.time \
---collector.uname
+--collector.uname \
+--collector.tcpstat
 EOF
 
 chmod +x bin/node_exporter*
