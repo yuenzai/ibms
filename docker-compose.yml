@@ -8,17 +8,17 @@ include:
 volumes:
   database:
 
-services:
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.49.2
-    privileged: true
-    ports:
-      - "9338:8080"
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-    devices:
-      - /dev/kmsg:/dev/kmsg
+#services:
+#  cadvisor:
+#    image: gcr.io/cadvisor/cadvisor:v0.49.2
+#    privileged: true
+#    ports:
+#      - "9338:8080"
+#    volumes:
+#      - /:/rootfs:ro
+#      - /var/run:/var/run:ro
+#      - /sys:/sys:ro
+#      - /var/lib/docker/:/var/lib/docker:ro
+#      - /dev/disk/:/dev/disk:ro
+#    devices:
+#      - /dev/kmsg:/dev/kmsg
