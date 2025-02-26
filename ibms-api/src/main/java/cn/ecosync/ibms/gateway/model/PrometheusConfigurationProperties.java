@@ -1,6 +1,7 @@
 package cn.ecosync.ibms.gateway.model;
 
 import cn.ecosync.ibms.util.CollectionUtils;
+import cn.ecosync.ibms.util.StringUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.ToString;
@@ -33,6 +34,8 @@ public class PrometheusConfigurationProperties {
         private String jobName;
         private String metricsPath;
         @JsonInclude(JsonInclude.Include.NON_NULL)
+        private Boolean honorLabels;
+        @JsonInclude(JsonInclude.Include.NON_NULL)
         private String scrapeInterval;
         @JsonInclude(JsonInclude.Include.NON_NULL)
         private String scrapeTimeout;
@@ -43,6 +46,10 @@ public class PrometheusConfigurationProperties {
         }
 
         public ScrapeConfig(String jobName, String metricsPath, Integer scrapeInterval, Integer scrapeTimeout, List<RelabelConfig> relabelConfigs, StaticConfig... staticConfigs) {
+            this(jobName, metricsPath, null, scrapeInterval, scrapeTimeout, relabelConfigs, staticConfigs);
+        }
+
+        public ScrapeConfig(String jobName, String metricsPath, Boolean honorLabels, Integer scrapeInterval, Integer scrapeTimeout, List<RelabelConfig> relabelConfigs, StaticConfig... staticConfigs) {
             this.jobName = jobName;
             this.metricsPath = metricsPath;
             this.scrapeInterval = Optional.ofNullable(scrapeInterval)
@@ -95,9 +102,6 @@ public class PrometheusConfigurationProperties {
     @Getter
     @ToString
     public static class RelabelConfig {
-        private static final RelabelConfig RELABEL1 = new RelabelConfig(Collections.singletonList("__address__"), "__param_target", null);
-        private static final RelabelConfig RELABEL2 = new RelabelConfig(Collections.singletonList("__param_target"), "instance", null);
-
         @JsonInclude(JsonInclude.Include.NON_NULL)
         private List<String> sourceLabels;
         @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -114,8 +118,12 @@ public class PrometheusConfigurationProperties {
             this.replacement = replacement;
         }
 
-        public static List<RelabelConfig> toRelabelConfigs(String replacement) {
-            return Arrays.asList(RELABEL1, RELABEL2, new RelabelConfig(null, "__address__", replacement));
+        public static List<RelabelConfig> toRelabelConfigs(String targetLabel, String replacement) {
+            targetLabel = Optional.ofNullable(targetLabel).filter(StringUtils::hasText).orElse("instance");
+            RelabelConfig RELABEL1 = new RelabelConfig(Collections.singletonList("__address__"), "__param_target", null);
+            RelabelConfig RELABEL2 = new RelabelConfig(Collections.singletonList("__param_target"), targetLabel, null);
+            RelabelConfig RELABEL3 = new RelabelConfig(null, "__address__", replacement);
+            return Arrays.asList(RELABEL1, RELABEL2, RELABEL3);
         }
     }
 }

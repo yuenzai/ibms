@@ -87,12 +87,12 @@ public class ReloadTelemetryServiceCommandHandler implements CommandHandler<Relo
                 .toArray(String[]::new);
         String jobName = "ibms";
         StaticConfig staticConfig = new StaticConfig(deviceCodes);
-        List<RelabelConfig> relabelConfigs = RelabelConfig.toRelabelConfigs(getGatewayHost());
+        List<RelabelConfig> relabelConfigs = RelabelConfig.toRelabelConfigs("device_code", getGatewayHost());
 
         String metricsPath = "/ibms" + PATH_METRICS_DEVICES;
         Integer scrapeInterval = dataAcquisition.getScrapeInterval();
         Integer scrapeTimeout = dataAcquisition.getScrapeTimeout();
-        return new ScrapeConfig(jobName, metricsPath, scrapeInterval, scrapeTimeout, relabelConfigs, staticConfig);
+        return new ScrapeConfig(jobName, metricsPath, true, scrapeInterval, scrapeTimeout, relabelConfigs, staticConfig);
     }
 
     public String getGatewayHost() {

@@ -28,7 +28,6 @@ public class BacnetDeviceMetricsCollector implements DeviceMetricsCollector {
     private static final Logger log = LoggerFactory.getLogger(BacnetDeviceMetricsCollector.class);
 
     private final String deviceCode;
-    private final Labels deviceCodeLabel;
     private final List<BacnetDataPoint> dataPoints;
     private final AtomicInteger segmentationCount = new AtomicInteger(1);
     private volatile boolean infiniteLoopOccurred = false;
@@ -41,7 +40,6 @@ public class BacnetDeviceMetricsCollector implements DeviceMetricsCollector {
         Assert.hasText(deviceCode, "deviceCode must not be null");
         Assert.notEmpty(dataPoints, "dataPoints must not be empty");
         this.deviceCode = deviceCode;
-        this.deviceCodeLabel = Labels.of("device_code", deviceCode);
         this.dataPoints = dataPoints;
         this.deviceScrapeStatus = Gauge.builder()
                 .name("ibms_device_scrape_status")
@@ -143,7 +141,7 @@ public class BacnetDeviceMetricsCollector implements DeviceMetricsCollector {
             }
             String metricName = bacnetDataPoint.getDataPointId().getMetricName();
             double value = presentValue.getValueAsNumber().doubleValue();
-            GaugeSnapshot.GaugeDataPointSnapshot dataPoint = new GaugeSnapshot.GaugeDataPointSnapshot(value, deviceCodeLabel, null);
+            GaugeSnapshot.GaugeDataPointSnapshot dataPoint = new GaugeSnapshot.GaugeDataPointSnapshot(value, Labels.EMPTY, null);
             GaugeSnapshot metric = GaugeSnapshot.builder()
                     .name(metricName)
                     .dataPoint(dataPoint)
