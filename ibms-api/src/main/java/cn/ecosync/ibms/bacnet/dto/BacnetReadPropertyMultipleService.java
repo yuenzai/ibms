@@ -17,6 +17,8 @@ import org.springframework.util.StreamUtils;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Getter
@@ -79,10 +81,17 @@ public class BacnetReadPropertyMultipleService {
         return prop;
     }
 
+    private static final AtomicInteger portIncrementer = new AtomicInteger(47900);
+    private static final Map<Integer, Integer> deviceInstanceAndPortBindMap = new ConcurrentHashMap<>();
+
     public static ReadPropertyMultipleAck execute(BacnetReadPropertyMultipleService service) throws IOException, InterruptedException {
+        Integer deviceInstance = service.getDeviceInstance();
+        Integer port = deviceInstanceAndPortBindMap.computeIfAbsent(deviceInstance, in -> portIncrementer.getAndIncrement());
         List<String> command = service.toCommand();
-        log.atInfo().addKeyValue("command", String.join(" ", command)).log("执行命令");
+        log.atInfo().addKeyValue("BACNET_IP_PORT", port).addKeyValue("command", String.join(" ", command)).log("执行命令");
         ProcessBuilder processBuilder = new ProcessBuilder(command);
+        Map<String, String> environment = processBuilder.environment();
+        environment.put("BACNET_IP_PORT", String.valueOf(port));
         processBuilder.redirectErrorStream(true);
         Process process = processBuilder.start();
         String stdout = StreamUtils.copyToString(process.getInputStream(), StandardCharsets.UTF_8)

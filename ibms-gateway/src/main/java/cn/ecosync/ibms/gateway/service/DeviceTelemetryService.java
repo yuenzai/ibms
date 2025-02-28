@@ -53,17 +53,17 @@ public class DeviceTelemetryService implements MultiCollector {
     @Override
     public MetricSnapshots collect(PrometheusScrapeRequest scrapeRequest) {
         String deviceCode = CollectionUtils.firstElement(Arrays.asList(scrapeRequest.getParameterValues("target")));
+        MDC.put("deviceCode", deviceCode);
         log.atInfo().addKeyValue("requestPath", scrapeRequest.getRequestPath()).addKeyValue("target", deviceCode).log("collect");
         if (!StringUtils.hasText(deviceCode)) return collect();
         Map<String, DeviceMetricsCollector> instruments = instrumentsRef.get();
-        MDC.put("deviceCode", deviceCode);
         MetricSnapshots.Builder metricsBuilder = MetricSnapshots.builder();
         Optional.of(deviceCode)
                 .filter(StringUtils::hasText)
                 .map(instruments::get)
                 .ifPresent(in -> in.collect(metricsBuilder::metricSnapshot));
         MetricSnapshots metricSnapshots = metricsBuilder.build();
-        log.atInfo().addKeyValue("sampleCount", metricSnapshots.size()).log("采集结束");
+        log.atInfo().addKeyValue("sampleCount", metricSnapshots.size()).log("");
         MDC.remove("deviceCode");
         return metricSnapshots;
     }
