@@ -1,8 +1,8 @@
 volumes:
   prometheus:
-    name: prometheus
+    name: ibms-prometheus
   grafana:
-    name: grafana
+    name: ibms-grafana
 
 services:
   prometheus:

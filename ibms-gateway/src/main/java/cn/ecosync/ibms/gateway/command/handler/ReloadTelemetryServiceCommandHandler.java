@@ -85,6 +85,6 @@ public class ReloadTelemetryServiceCommandHandler implements CommandHandler<Relo
     }
 
     public String getGatewayHost() {
-        return environment.getProperty("IBMS_HOST", "localhost:8080");
+        return environment.getProperty("GATEWAY_HOST", "localhost:8080");
     }
 }
