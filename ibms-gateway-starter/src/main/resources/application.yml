@@ -8,13 +8,14 @@ spring:
   profiles:
     active: @spring.profiles.active@
   application:
-    name: ibms-gateway
+    name: gateway
   data:
     jpa:
       repositories:
         enabled: true
   jpa:
     open-in-view: false
+    show-sql: true
   quartz:
     job-store-type: jdbc
     auto-startup: true
@@ -66,6 +67,8 @@ spring:
     validate-on-migrate: true
 
 logging:
+  level:
+    org.springframework.jdbc.core.JdbcTemplate: debug
   pattern:
     console: "%clr(%d{${LOG_DATEFORMAT_PATTERN:yyyy-MM-dd'T'HH:mm:ss.SSSXXX}}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}){} %clr(${PID:}){magenta} %clr(--- %esb(){APPLICATION_NAME}%esb{APPLICATION_GROUP}[%15.15t] ${LOG_CORRELATION_PATTERN:}){faint}%clr(%-40.40logger{39}){cyan} %clr(:){faint} %esb(%mdc){}%m%esb(%kvp){}%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
 #    console: "%clr(%d{${LOG_DATEFORMAT_PATTERN:yyyy-MM-dd'T'HH:mm:ss.SSSXXX}}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}){} %clr(${PID:}){magenta} %clr(--- %esb(){APPLICATION_NAME}%esb{APPLICATION_GROUP}[%15.15t] ${LOG_CORRELATION_PATTERN:}){faint}%clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"

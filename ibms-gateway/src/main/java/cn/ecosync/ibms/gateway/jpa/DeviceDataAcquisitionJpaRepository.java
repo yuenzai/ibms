@@ -35,6 +35,7 @@ public class DeviceDataAcquisitionJpaRepository implements DeviceDataAcquisition
             dataAcquisitionDao.save(dataAcquisitionEntity);
         } else {
             dataAcquisition = dataAcquisitionEntity.getPayload().builder()
+                    .withDeviceDataAcquisitionType(command.getDataAcquisitionType())
                     .withScrapeInterval(command.getScrapeInterval())
                     .withScrapeTimeout(command.getScrapeTimeout())
                     .withDeviceInfos(command.getDeviceInfos())

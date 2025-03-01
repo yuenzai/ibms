@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.ToString;
 import org.springframework.util.Assert;
 
+import static cn.ecosync.ibms.gateway.model.DeviceDataAcquisitionType.UNDEFINED;
 import static cn.ecosync.ibms.gateway.model.SynchronizationStateEnum.UNSYNCHRONIZED;
 
 @ToString
@@ -22,10 +23,9 @@ public class DeviceDataAcquisition {
 
     public DeviceDataAcquisition(DeviceDataAcquisitionId dataAcquisitionId, DeviceDataAcquisitionType dataAcquisitionType, Integer scrapeInterval, Integer scrapeTimeout, LabelTable deviceInfos, LabelTable dataPoints, SynchronizationStateEnum synchronizationState) {
         Assert.notNull(dataAcquisitionId, "dataAcquisitionId must not be null");
-        Assert.notNull(dataAcquisitionType, "dataAcquisitionType must not be null");
         Assert.isTrue(scrapeInterval == null || (scrapeInterval >= 0 && scrapeInterval <= 120), "scrapeInterval must be between 0 and 120");
         this.dataAcquisitionId = dataAcquisitionId;
-        this.dataAcquisitionType = dataAcquisitionType;
+        this.dataAcquisitionType = dataAcquisitionType != null ? dataAcquisitionType : UNDEFINED;
         this.scrapeInterval = scrapeInterval != null ? scrapeInterval : 0;
         this.scrapeTimeout = scrapeTimeout != null ? scrapeTimeout : 0;
         this.deviceInfos = deviceInfos != null ? deviceInfos : LabelTable.EMPTY;
@@ -67,7 +67,7 @@ public class DeviceDataAcquisition {
 
     public static class DeviceDataAcquisitionBuilder {
         private final DeviceDataAcquisitionId dataAcquisitionId;
-        private final DeviceDataAcquisitionType dataAcquisitionType;
+        private DeviceDataAcquisitionType dataAcquisitionType;
         private Integer scrapeInterval;
         private Integer scrapeTimeout;
         private LabelTable deviceInfos;
@@ -86,6 +86,13 @@ public class DeviceDataAcquisition {
             this.deviceInfos = deviceInfos;
             this.dataPoints = dataPoints;
             this.synchronizationState = synchronizationState;
+        }
+
+        public DeviceDataAcquisitionBuilder withDeviceDataAcquisitionType(DeviceDataAcquisitionType dataAcquisitionType) {
+            if (dataAcquisitionType != null) {
+                this.dataAcquisitionType = dataAcquisitionType;
+            }
+            return this;
         }
 
         public DeviceDataAcquisitionBuilder withScrapeInterval(Integer scrapeInterval) {

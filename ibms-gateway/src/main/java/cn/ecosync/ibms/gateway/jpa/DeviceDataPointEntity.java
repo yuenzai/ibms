@@ -12,7 +12,7 @@ public class DeviceDataPointEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false, unique = true)
-    private Long id;
+    private Integer id;
     @Column(name = "data_acquisition_id", nullable = false, updatable = false)
     private Integer dataAcquisitionId;
     @Embedded

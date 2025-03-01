@@ -1,5 +1,6 @@
 volumes:
   prometheus-gateway:
+  database-gateway:
 
 services:
   gateway:
@@ -33,7 +34,30 @@ services:
       - --enable-feature=auto-reload-config,metadata-wal-records
       - --agent
       - --web.listen-address=0.0.0.0:9091
-  # pull
+  postgresql:
+    image: postgres:14.17
+    network_mode: host
+    environment:
+      POSTGRES_PASSWORD: CJVixCszaS+7raa/5326YJDq3xrSBXHg
+    volumes:
+      - ./initdb-postgresql.sh:/docker-entrypoint-initdb.d/initdb.sh
+      - database-gateway:/var/lib/postgresql/data
+
+#  mysql:
+#    image: mysql:8.0.41
+#    network_mode: host
+#    environment:
+#      MYSQL_ROOT_PASSWORD: CJVixCszaS+7raa/5326YJDq3xrSBXHg
+#    healthcheck:
+#      test: [ "CMD", "mysqladmin", "-uroot", "-p$$MYSQL_ROOT_PASSWORD", "ping", "-h", "localhost" ]
+#      timeout: 10s
+#      interval: 30s
+#      retries: 10
+#      start_period: 180s
+#    volumes:
+#      - ./initdb-mysql.sh:/docker-entrypoint-initdb.d/initdb.sh
+#      - database-gateway:/var/lib/mysql
+#  # pull
 #  prometheus:
 #    image: prom/prometheus:v3.2.0
 #    network_mode: host
