@@ -36,4 +36,4 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/templates:/etc/nginx/templates
-      - ./tmp:/var/log/nginx
+      - ./tmp/nginx:/var/log/nginx
