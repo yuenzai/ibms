@@ -1,3 +1,0 @@
-rule_files:
-  - rule_file.yml
-scrape_configs:
