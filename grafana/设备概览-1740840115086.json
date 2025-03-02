@@ -1,0 +1,975 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "prometheus",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "__elements": {
+    "dee0upjkzzz7kf": {
+      "name": "设备状态概览",
+      "uid": "dee0upjkzzz7kf",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byFrameRefID",
+                "options": "total"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "总数"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byFrameRefID",
+                "options": "C"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "启动"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byFrameRefID",
+                "options": "S"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "运行"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byFrameRefID",
+                "options": "AL"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "故障"
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "red",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "percentChangeColorMode": "standard",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "11.4.0",
+        "targets": [
+          {
+            "datasource": {
+              "uid": "bed180ontqq68f"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "count(ibms_device_info{gateway_code=\"$gateway\", floor=~\"$floor\", room=~\"$room\"})",
+            "format": "time_series",
+            "instant": true,
+            "legendFormat": "__auto",
+            "range": false,
+            "refId": "total"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "bed180ontqq68f"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "sum(C * on(device_code) ibms_device_info{gateway_code=\"$gateway\", floor=~\"$floor\", room=~\"$room\"})",
+            "format": "time_series",
+            "hide": false,
+            "instant": true,
+            "legendFormat": "__auto",
+            "range": false,
+            "refId": "C"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "bed180ontqq68f"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "sum(S * on(device_code) ibms_device_info{gateway_code=\"$gateway\", floor=~\"$floor\", room=~\"$room\"})",
+            "format": "time_series",
+            "hide": false,
+            "instant": true,
+            "legendFormat": "__auto",
+            "range": false,
+            "refId": "S"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "bed180ontqq68f"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "sum(AL * on(device_code) ibms_device_info{gateway_code=\"$gateway\", floor=~\"$floor\", room=~\"$room\"})",
+            "format": "time_series",
+            "hide": false,
+            "instant": true,
+            "legendFormat": "__auto",
+            "range": false,
+            "refId": "AL"
+          }
+        ],
+        "type": "stat"
+      }
+    },
+    "aedmrc6vtzbwgf": {
+      "name": "设备状态表格",
+      "uid": "aedmrc6vtzbwgf",
+      "kind": 1,
+      "model": {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "transparent",
+              "mode": "fixed"
+            },
+            "custom": {
+              "align": "center",
+              "cellOptions": {
+                "type": "auto"
+              },
+              "filterable": true,
+              "inspect": false
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "text",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "device_code"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "设备编码"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Value #C"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "启停控制"
+                },
+                {
+                  "id": "mappings",
+                  "value": [
+                    {
+                      "options": {
+                        "0": {
+                          "color": "red",
+                          "index": 0,
+                          "text": "停机"
+                        },
+                        "1": {
+                          "color": "green",
+                          "index": 1,
+                          "text": "启动"
+                        }
+                      },
+                      "type": "value"
+                    }
+                  ]
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "type": "color-text"
+                  }
+                },
+                {
+                  "id": "custom.minWidth",
+                  "value": 100
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Value #S"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "运行状态"
+                },
+                {
+                  "id": "mappings",
+                  "value": [
+                    {
+                      "options": {
+                        "0": {
+                          "color": "red",
+                          "index": 0,
+                          "text": "停止"
+                        },
+                        "1": {
+                          "color": "green",
+                          "index": 1,
+                          "text": "运行"
+                        }
+                      },
+                      "type": "value"
+                    }
+                  ]
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "type": "color-text"
+                  }
+                },
+                {
+                  "id": "custom.minWidth",
+                  "value": 100
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Value #AL"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "故障状态"
+                },
+                {
+                  "id": "mappings",
+                  "value": [
+                    {
+                      "options": {
+                        "0": {
+                          "color": "green",
+                          "index": 0,
+                          "text": "正常"
+                        },
+                        "1": {
+                          "color": "red",
+                          "index": 1,
+                          "text": "故障"
+                        }
+                      },
+                      "type": "value"
+                    }
+                  ]
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "type": "color-text"
+                  }
+                },
+                {
+                  "id": "custom.minWidth",
+                  "value": 100
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Value #AM"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "自动状态"
+                },
+                {
+                  "id": "mappings",
+                  "value": [
+                    {
+                      "options": {
+                        "0": {
+                          "color": "text",
+                          "index": 0,
+                          "text": "手动"
+                        },
+                        "1": {
+                          "color": "text",
+                          "index": 1,
+                          "text": "自动"
+                        }
+                      },
+                      "type": "value"
+                    }
+                  ]
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "type": "color-text"
+                  }
+                },
+                {
+                  "id": "custom.minWidth",
+                  "value": 100
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Trend #ST"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "送风温度"
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "drawStyle": "line",
+                    "gradientMode": "hue",
+                    "hideValue": false,
+                    "lineStyle": {
+                      "dash": [
+                        10,
+                        10
+                      ],
+                      "fill": "solid"
+                    },
+                    "showPoints": "never",
+                    "spanNulls": 600000,
+                    "type": "sparkline"
+                  }
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "green",
+                    "mode": "fixed"
+                  }
+                },
+                {
+                  "id": "decimals",
+                  "value": 1
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Trend #RT"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "回风温度"
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "drawStyle": "line",
+                    "gradientMode": "hue",
+                    "hideValue": false,
+                    "lineStyle": {
+                      "dash": [
+                        10,
+                        10
+                      ],
+                      "fill": "solid"
+                    },
+                    "showPoints": "never",
+                    "spanNulls": 600000,
+                    "type": "sparkline"
+                  }
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "green",
+                    "mode": "fixed"
+                  }
+                },
+                {
+                  "id": "decimals",
+                  "value": 1
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Value #CVFB"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "水阀开度"
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "mode": "lcd",
+                    "type": "gauge",
+                    "valueDisplayMode": "color"
+                  }
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "continuous-GrYlRd"
+                  }
+                },
+                {
+                  "id": "min",
+                  "value": 0
+                },
+                {
+                  "id": "max",
+                  "value": 100
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Value #VFDFB"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "频率"
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "mode": "lcd",
+                    "type": "gauge",
+                    "valueDisplayMode": "color"
+                  }
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "continuous-GrYlRd"
+                  }
+                },
+                {
+                  "id": "min",
+                  "value": 0
+                },
+                {
+                  "id": "max",
+                  "value": 50
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Value #scrape_success_rate"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "采集成功率"
+                },
+                {
+                  "id": "unit",
+                  "value": "percent"
+                },
+                {
+                  "id": "thresholds",
+                  "value": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "red",
+                        "value": null
+                      },
+                      {
+                        "color": "yellow",
+                        "value": 80
+                      },
+                      {
+                        "color": "green",
+                        "value": 90
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "color"
+                },
+                {
+                  "id": "custom.cellOptions",
+                  "value": {
+                    "type": "color-text"
+                  }
+                },
+                {
+                  "id": "decimals",
+                  "value": 0
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Value #scrape_duration_seconds"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "平均采集时长"
+                },
+                {
+                  "id": "unit",
+                  "value": "s"
+                }
+              ]
+            }
+          ]
+        },
+        "maxDataPoints": 100,
+        "options": {
+          "cellHeight": "lg",
+          "footer": {
+            "countRows": false,
+            "enablePagination": true,
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "frameIndex": 2,
+          "showHeader": true
+        },
+        "pluginVersion": "11.4.0",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "bed180ontqq68f"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "C * on(device_code) ibms_device_info{gateway_code=\"$gateway\", floor=~\"$floor\", room=~\"$room\"}",
+            "format": "table",
+            "hide": false,
+            "instant": true,
+            "legendFormat": "__auto",
+            "range": false,
+            "refId": "C"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "bed180ontqq68f"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "S * on(device_code) ibms_device_info{gateway_code=\"$gateway\", floor=~\"$floor\", room=~\"$room\"}",
+            "format": "table",
+            "hide": false,
+            "instant": true,
+            "legendFormat": "__auto",
+            "range": false,
+            "refId": "S"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "bed180ontqq68f"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "AL * on(device_code) ibms_device_info{gateway_code=\"$gateway\", floor=~\"$floor\", room=~\"$room\"}",
+            "format": "table",
+            "hide": false,
+            "instant": true,
+            "legendFormat": "__auto",
+            "range": false,
+            "refId": "AL"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "bed180ontqq68f"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "AM * on(device_code) ibms_device_info{gateway_code=\"$gateway\", floor=~\"$floor\", room=~\"$room\"}",
+            "format": "table",
+            "hide": false,
+            "instant": true,
+            "legendFormat": "__auto",
+            "range": false,
+            "refId": "AM"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "bed180ontqq68f"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "ST * on(device_code) ibms_device_info{gateway_code=\"$gateway\", floor=~\"$floor\", room=~\"$room\"}",
+            "format": "time_series",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "ST"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "bed180ontqq68f"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "RT * on(device_code) ibms_device_info{gateway_code=\"$gateway\", floor=~\"$floor\", room=~\"$room\"}",
+            "format": "time_series",
+            "hide": false,
+            "instant": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "RT"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "bed180ontqq68f"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "CVFB * on(device_code) ibms_device_info{gateway_code=\"$gateway\", floor=~\"$floor\", room=~\"$room\"}",
+            "format": "table",
+            "hide": false,
+            "instant": true,
+            "legendFormat": "__auto",
+            "range": false,
+            "refId": "CVFB"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "bed180ontqq68f"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "VFDFB * on(device_code) ibms_device_info{gateway_code=\"$gateway\", floor=~\"$floor\", room=~\"$room\"}",
+            "format": "table",
+            "hide": false,
+            "instant": true,
+            "legendFormat": "__auto",
+            "range": false,
+            "refId": "VFDFB"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "bed180ontqq68f"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "increase(ibms_device_points_scraped_succeed_total{gateway_code=\"$gateway\"}[$__range]) / increase(ibms_device_points_scraped_total{gateway_code=\"$gateway\"}[$__range]) * 100 * on(device_code) ibms_device_info{gateway_code=\"$gateway\", floor=~\"$floor\", room=~\"$room\"}",
+            "format": "table",
+            "hide": false,
+            "instant": true,
+            "legendFormat": "__auto",
+            "range": false,
+            "refId": "scrape_success_rate"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "bed180ontqq68f"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "avg_over_time(scrape_duration_seconds[$__range]) * on(device_code) ibms_device_info{gateway_code=\"$gateway\", floor=~\"$floor\", room=~\"$room\"}",
+            "format": "table",
+            "hide": false,
+            "instant": true,
+            "legendFormat": "__auto",
+            "range": false,
+            "refId": "scrape_duration_seconds"
+          }
+        ],
+        "transformations": [
+          {
+            "filter": {
+              "id": "byRefId",
+              "options": "ST"
+            },
+            "id": "timeSeriesTable",
+            "options": {
+              "ST": {
+                "timeField": "Time"
+              }
+            },
+            "topic": "series"
+          },
+          {
+            "filter": {
+              "id": "byRefId",
+              "options": "RT"
+            },
+            "id": "timeSeriesTable",
+            "options": {
+              "RT": {
+                "timeField": "Time"
+              }
+            },
+            "topic": "series"
+          },
+          {
+            "id": "merge",
+            "options": {}
+          },
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "Time": true
+              },
+              "includeByName": {},
+              "indexByName": {
+                "Time": 9,
+                "Trend #RT": 6,
+                "Trend #ST": 5,
+                "Value #AL": 3,
+                "Value #AM": 4,
+                "Value #C": 1,
+                "Value #CVFB": 7,
+                "Value #S": 2,
+                "Value #VFDFB": 8,
+                "device_code": 0
+              },
+              "renameByName": {
+                "Value #scrape_success_rate": ""
+              }
+            }
+          }
+        ],
+        "type": "table"
+      }
+    }
+  },
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "11.4.0"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 0,
+        "y": 0
+      },
+      "id": 3,
+      "libraryPanel": {
+        "uid": "dee0upjkzzz7kf",
+        "name": "设备状态概览"
+      }
+    },
+    {
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 4
+      },
+      "id": 4,
+      "libraryPanel": {
+        "uid": "aedmrc6vtzbwgf",
+        "name": "设备状态表格"
+      }
+    }
+  ],
+  "refresh": "5m",
+  "schemaVersion": 40,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "definition": "label_values(ibms_device_info,gateway_code)",
+        "label": "网关",
+        "name": "gateway",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(ibms_device_info,gateway_code)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "definition": "label_values(ibms_device_info{gateway_code=\"$gateway\"},floor)",
+        "includeAll": true,
+        "label": "楼层",
+        "multi": true,
+        "name": "floor",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(ibms_device_info{gateway_code=\"$gateway\"},floor)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "definition": "label_values(ibms_device_info{gateway_code=\"$gateway\", floor=~\"$floor\"},room)",
+        "includeAll": true,
+        "label": "房间",
+        "multi": true,
+        "name": "room",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(ibms_device_info{gateway_code=\"$gateway\", floor=~\"$floor\"},room)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "sort": 3,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "设备概览",
+  "uid": "dedbi41j0u1ogf",
+  "version": 39,
+  "weekStart": ""
+}
