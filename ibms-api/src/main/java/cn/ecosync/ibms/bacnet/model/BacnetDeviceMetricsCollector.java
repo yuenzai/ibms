@@ -50,6 +50,8 @@ public class BacnetDeviceMetricsCollector implements DeviceMetricsCollector {
                 .name("ibms_device_points_scraped_succeed_total")
                 .labelNames(LABEL_DEVICE_CODE)
                 .build();
+        this.devicePointsScrapedTotal.initLabelValues(deviceCode);
+        this.devicePointsScrapedSucceedTotal.initLabelValues(deviceCode);
         InfoSnapshot.Builder deviceInfoBuilder = InfoSnapshot.builder()
                 .name("ibms_device");
         Optional.ofNullable(deviceInfo)
