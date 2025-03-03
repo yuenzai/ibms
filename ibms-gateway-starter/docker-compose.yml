@@ -16,8 +16,8 @@ services:
       - ./scrape_config_file.yml:/opt/app/scrape_config_file.yml
     command: [ "java", "-jar", "ibms-gateway-starter-0.0.1-SNAPSHOT.jar" ]
     environment:
-      BACNET_IFACE: ens18
-      GATEWAY_HOST: ${GATEWAY_HOST}
+      BACNET_IFACE: ${BACNET_IFACE:-eth0}
+      GATEWAY_HOST: ${GATEWAY_HOST:-localhost:8080}
   prometheus-agent:
     image: prom/prometheus:v3.2.0
     network_mode: host

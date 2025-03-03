@@ -16,5 +16,5 @@ GATEWAY_CODE=
 修改 prometheus.yml 文件的配置，将 remote_write.url 设为 IBMS 的地址，后缀 api/v1/write 是固定的，不需要修改。
 
 ```shell
-docker compose up -d
+bash install-gateway.sh
 ```

@@ -10,6 +10,7 @@ import cn.ecosync.ibms.gateway.model.PrometheusConfigurationProperties.ScrapeCon
 import cn.ecosync.ibms.gateway.model.PrometheusConfigurationProperties.ScrapeConfigs;
 import cn.ecosync.ibms.gateway.model.PrometheusConfigurationProperties.StaticConfig;
 import cn.ecosync.ibms.gateway.service.DeviceTelemetryService;
+import cn.ecosync.ibms.util.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static cn.ecosync.ibms.Constants.*;
 
@@ -85,6 +87,6 @@ public class ReloadTelemetryServiceCommandHandler implements CommandHandler<Relo
     }
 
     public String getGatewayHost() {
-        return environment.getProperty("GATEWAY_HOST", "localhost:8080");
+        return Optional.ofNullable(environment.getProperty("GATEWAY_HOST")).filter(StringUtils::hasText).orElse("localhost:8080");
     }
 }

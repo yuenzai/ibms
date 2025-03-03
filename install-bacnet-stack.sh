@@ -1,13 +1,13 @@
 #!/bin/bash
 
 if [ ! -f /var/lib/apt/periodic/update-success-stamp ] || [ $(stat -c %Y /var/lib/apt/periodic/update-success-stamp) -lt $(date -d '1 day ago' +%s) ]; then
-  apt-get update || exit 1;
+  sudo apt-get update || exit 1;
 else
   echo "apt already updated"
 fi
 
 if ! command -v cmake &> /dev/null || ! command -v git &> /dev/null; then
-  apt-get install -y cmake git || exit 1;
+  sudo apt-get install -y cmake git || exit 1;
 else
   echo "cmake and git already installed"
 fi
@@ -32,4 +32,4 @@ mkdir -p bacnet-stack/build && \
 cmake -S bacnet-stack -B bacnet-stack/build && \
 make -C bacnet-stack/build clean all
 
-cp bacnet-stack/build/{whois,readpropm,writeprop} /usr/local/bin
+sudo cp bacnet-stack/build/{whois,readpropm,writeprop} /usr/local/bin

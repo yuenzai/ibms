@@ -12,5 +12,5 @@ GRAFANA_ADMIN_PASSWORD=
 ```
 
 ```shell
-docker compose up -d
+bash install-ibms.sh
 ```
