@@ -65,6 +65,9 @@
     <profiles>
         <profile>
             <id>postgresql</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <spring.profiles.active>postgresql</spring.profiles.active>
             </properties>
@@ -109,9 +112,6 @@
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
         </profile>
     </profiles>
 </project>

@@ -3,6 +3,8 @@ volumes:
     name: gateway-prometheus-agent
   postgresql:
     name: gateway-postgresql
+  mysql:
+    name: gateway-mysql
 
 services:
   gateway:
@@ -27,11 +29,11 @@ services:
       - prometheus-agent:/prometheus
     command:
       - --config.file=/etc/prometheus/prometheus.yml
-      - --config.auto-reload-interval=30s
-      - --storage.agent.path=/prometheus
-      - --enable-feature=auto-reload-config,metadata-wal-records
-      - --agent
       - --web.listen-address=0.0.0.0:9090
+      - --config.auto-reload-interval=30s
+      - --enable-feature=auto-reload-config,metadata-wal-records
+      - --storage.tsdb.path=/prometheus
+  #      - --agent
   postgresql:
     image: postgres:14.17
     network_mode: host
@@ -54,17 +56,3 @@ services:
 #    volumes:
 #      - ./initdb-mysql.sh:/docker-entrypoint-initdb.d/initdb.sh
 #      - mysql:/var/lib/mysql
-#  prometheus:
-#    image: prom/prometheus:v3.2.0
-#    network_mode: host
-#    environment:
-#      GATEWAY_CODE: ${GATEWAY_CODE}
-#    volumes:
-#      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-#      - ./scrape_config_file.yml:/etc/prometheus/scrape_config_file.yml
-#      - prometheus:/prometheus
-#    command:
-#      - --config.file=/etc/prometheus/prometheus.yml
-#      - --config.auto-reload-interval=30s
-#      - --storage.tsdb.path=/prometheus
-#      - --enable-feature=auto-reload-config
