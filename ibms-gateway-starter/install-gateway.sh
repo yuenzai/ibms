@@ -2,6 +2,13 @@
 
 GATEWAY_HOME=$(pwd)
 
+netstat -tln | grep -E '9090' >/dev/null 2>&1
+
+if [ $? -eq 0 ]; then
+  echo "端口 9090 已被占用"
+  exit 1
+fi
+
 sudo tee /etc/systemd/system/ibms-gateway.service <<EOF
 [Unit]
 Description=Intelligent Building Management System Gateway
