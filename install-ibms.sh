@@ -1,6 +1,6 @@
 #!/bin/bash
 
-IBMS_HOME=$(pwd)
+IBMS_HOME=$(pwd)/ibms-starter
 
 sudo tee /etc/systemd/system/ibms.service <<EOF
 [Unit]
@@ -28,5 +28,5 @@ if [ ! $? -eq 0 ]; then
   echo "ibms install failed"
   sudo systemctl status ibms.service
 else
-  echo "ibms install successfully"
+  echo "ibms installed"
 fi

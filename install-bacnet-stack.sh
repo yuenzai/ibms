@@ -12,6 +12,8 @@ else
   echo "cmake and git already installed"
 fi
 
+cd /tmp
+
 if [ ! -d cJSON ]; then
   git clone --branch v1.7.18 https://github.com/DaveGamble/cJSON.git || exit 1;
 else
@@ -26,10 +28,12 @@ fi
 
 mkdir -p cJSON/build && \
 cmake -S cJSON -B cJSON/build && \
-make -C cJSON/build install
+sudo make -C cJSON/build install
 
 mkdir -p bacnet-stack/build && \
 cmake -S bacnet-stack -B bacnet-stack/build && \
-make -C bacnet-stack/build clean all
+sudo make -C bacnet-stack/build clean all
 
 sudo cp bacnet-stack/build/{whois,readpropm,writeprop} /usr/local/bin
+
+echo "bacnet-stack installed"

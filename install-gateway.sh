@@ -1,13 +1,6 @@
 #!/bin/bash
 
-GATEWAY_HOME=$(pwd)
-
-netstat -tln | grep -E '9090' >/dev/null 2>&1
-
-if [ $? -eq 0 ]; then
-  echo "端口 9090 已被占用"
-  exit 1
-fi
+GATEWAY_HOME=$(pwd)/ibms-gateway-starter
 
 sudo tee /etc/systemd/system/ibms-gateway.service <<EOF
 [Unit]
@@ -35,5 +28,5 @@ if [ ! $? -eq 0 ]; then
   echo "ibms-gateway install failed"
   sudo systemctl status ibms-gateway.service
 else
-  echo "ibms-gateway install successfully"
+  echo "ibms-gateway installed"
 fi
