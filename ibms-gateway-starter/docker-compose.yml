@@ -32,8 +32,8 @@ services:
       - --web.listen-address=0.0.0.0:9090
       - --config.auto-reload-interval=30s
       - --enable-feature=auto-reload-config,metadata-wal-records
-      - --storage.tsdb.path=/prometheus
-  #      - --agent
+      - --storage.agent.path=/prometheus
+      - --agent
   postgresql:
     image: postgres:14.17
     network_mode: host
