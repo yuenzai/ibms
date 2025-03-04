@@ -1,12 +1,12 @@
 volumes:
   prometheus:
-    name: ibms-prometheus
+    name: ${COMPOSE_PROJECT_NAME}-prometheus
   grafana:
-    name: ibms-grafana
+    name: ${COMPOSE_PROJECT_NAME}-grafana
 
 services:
   prometheus:
-    image: prom/prometheus:v3.2.0
+    image: prom/prometheus:v3.2.1
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus:/prometheus
@@ -14,22 +14,24 @@ services:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.path=/prometheus
       - --web.route-prefix=/
-      - --web.external-url=http://${IBMS_EXTERNAL_HOST:?}/prometheus
+      - --web.external-url=${IBMS_ORIGIN:?}/prometheus
       - --web.enable-remote-write-receiver
       - --web.remote-write-receiver.accepted-protobuf-messages=io.prometheus.write.v2.Request
       - --web.listen-address=0.0.0.0:9090
   grafana:
     image: grafana/grafana:11.4.0
-    environment:
-      GF_DEFAULT_INSTANCE_NAME: ${COMPOSE_PROJECT_NAME}
-      GF_SERVER_ROOT_URL: http://${IBMS_EXTERNAL_HOST:?}/grafana
-      GF_SERVER_SERVE_FROM_SUB_PATH: true
-      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:?}
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?}
     volumes:
       - grafana:/var/lib/grafana
+    environment:
+      GF_DEFAULT_INSTANCE_NAME: ${COMPOSE_PROJECT_NAME}
+      GF_SERVER_ROOT_URL: ${IBMS_ORIGIN:?}/grafana
+      GF_SERVER_SERVE_FROM_SUB_PATH: true
+      # admin user
+      GF_SECURITY_ADMIN_USER: ibms
+      # admin password
+      GF_SECURITY_ADMIN_PASSWORD: ibms
   nginx:
-    image: nginx:1.27-bookworm
+    image: nginx:1.27.4
     restart: always
     ports:
       - '80:80'

@@ -4,6 +4,8 @@ global:
 scrape_config_files:
   - scrape_config_file.yml
 remote_write:
+  # 远程写地址
+  # 格式：${IBMS_ORIGIN}/prometheus/api/v1/write
   - url: http://localhost/prometheus/api/v1/write
     protobuf_message: io.prometheus.write.v2.Request
     remote_timeout: 30s

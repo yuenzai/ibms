@@ -4,16 +4,13 @@ GATEWAY_HOME=$(pwd)
 
 sudo tee /etc/systemd/system/ibms-gateway.service <<EOF
 [Unit]
-Description=IBMS Gateway
+Description=Intelligent Building Management System Gateway
 Requires=docker.service
 After=docker.service
 
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-Environment="BACNET_IFACE=$BACNET_IFACE"
-Environment="GATEWAY_HOST=$GATEWAY_HOST"
-Environment="GATEWAY_CODE=$GATEWAY_CODE"
 WorkingDirectory=${GATEWAY_HOME}
 ExecStart=docker compose up -d
 ExecStop=docker compose down
@@ -25,5 +22,11 @@ EOF
 
 sudo systemctl daemon-reload && \
 sudo systemctl enable ibms-gateway.service && \
-sudo systemctl restart ibms-gateway.service && \
-sudo systemctl status ibms-gateway.service
+sudo systemctl restart ibms-gateway.service
+
+if [ ! $? -eq 0 ]; then
+  echo "ibms-gateway install failed"
+  sudo systemctl status ibms-gateway.service
+else
+  echo "ibms-gateway install successfully"
+fi
