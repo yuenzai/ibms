@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,9 +68,7 @@ public class ReloadTelemetryServiceCommandHandler implements CommandHandler<Relo
 
     private ScrapeConfig jvmScrapeConfig() {
         String metricsPath = "/ibms" + PATH_METRICS_JVM;
-        String applicationName = environment.getProperty("spring.application.name");
-        StaticConfig staticConfig = new StaticConfig(Collections.singletonMap("application", applicationName), getGatewayHost());
-        return new ScrapeConfig("jvm", metricsPath, null, null, null, staticConfig);
+        return new ScrapeConfig("jvm", metricsPath, null, null, null, new StaticConfig(getGatewayHost()));
     }
 
     private ScrapeConfig toScrapeConfig(DeviceDataAcquisition dataAcquisition) {
