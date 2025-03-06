@@ -1,0 +1,1 @@
+通过修改 [prometheus.yml](prometheus.yml) 的 remote_write.url 可以将采集到的指标发送到其他主机，默认是localhost。

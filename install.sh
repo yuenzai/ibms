@@ -22,8 +22,7 @@ WantedBy=multi-user.target
 EOF
 
 sudo systemctl daemon-reload && \
-sudo systemctl enable ${SERVICE_NAME}.service && \
-sudo systemctl restart ${SERVICE_NAME}.service
+sudo systemctl enable ${SERVICE_NAME}.service
 
 if [ ! $? -eq 0 ]; then
   echo "${SERVICE_NAME} install failed"
