@@ -18,7 +18,9 @@
 
 第一次运行构建时，可能需要一段时间来下载 Maven 和所有构建依赖项。 一旦您启动了 Maven 并下载了依赖项，这些就会缓存在您的 `$HOME/.m2` 目录中。
 
-## 部署
+## 配置
 
-- [ibms-starter](ibms-starter)
-- [ibms-gateway-starter](ibms-gateway-starter)
+* [ibms-starter](ibms-starter/.env)
+* [ibms-gateway-starter](ibms-gateway-starter/.env)
+
+没有默认值的变量都是必填的

@@ -16,18 +16,14 @@ services:
       - ./scrape_config_file.yml:/opt/app/scrape_config_file.yml
     command: [ "java", "-jar", "ibms-gateway-starter-0.0.1-SNAPSHOT.jar" ]
     environment:
-      # BACnet网络接口，默认值：eth0
-      BACNET_IFACE:
-      # 网关地址，prometheus-agent会从该地址采集数据，默认值：localhost:8080
-      GATEWAY_HOST:
-      # Web Server 端口，默认值：8080
-      SERVER_PORT:
+      BACNET_IFACE: ${BACNET_IFACE:-eth0}
+      GATEWAY_HOST: ${GATEWAY_HOST:-localhost}:${GATEWAY_PORT:-8080}
+      SERVER_PORT: ${GATEWAY_PORT:-8080}
   prometheus-agent:
     image: prom/prometheus:v3.2.1
     network_mode: host
     environment:
-      # 网关编码，所有从 prometheus-agent 采集到的指标都会附加一个 gateway_code 标签，建议为每个网关都设置一个网关编码，方便区分指标来源
-      GATEWAY_CODE:
+      GATEWAY_CODE: ${GATEWAY_CODE:?}
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - ./scrape_config_file.yml:/etc/prometheus/scrape_config_file.yml
