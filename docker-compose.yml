@@ -1,0 +1,3 @@
+include:
+  - ibms-server-starter/docker-compose.yml
+  - ibms-gateway-starter/docker-compose.yml
