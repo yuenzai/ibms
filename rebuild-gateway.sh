@@ -5,8 +5,6 @@ if [ ! $? -eq 0 ]; then
   exit 1
 fi
 
-cd ibms-gateway-starter
-
 docker compose down gateway && \
 docker compose up -d gateway && \
-docker compose logs -f --tail 1
+docker compose logs -f --tail 1 gateway

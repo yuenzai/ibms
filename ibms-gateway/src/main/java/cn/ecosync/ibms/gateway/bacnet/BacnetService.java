@@ -60,8 +60,9 @@ public class BacnetService implements ApplicationRunner, DisposableBean {
                 refs.addIndex(oid, pid, propertyArrayIndex);
             }
         }
-
-        return RequestUtils.readProperties(localDevice, remoteDevice, refs, false, null);
+        PropertyValues propertyValues = RequestUtils.readProperties(localDevice, remoteDevice, refs, false, null);
+        log.info("{}", propertyValues);
+        return propertyValues;
     }
 
     public void initialize() throws Exception {
