@@ -1,8 +1,7 @@
 package cn.ecosync.ibms.gateway.service;
 
-import cn.ecosync.ibms.bacnet.dto.BacnetWhoIsService;
+import cn.ecosync.ibms.bacnet.BacnetDeviceMetricsCollector;
 import cn.ecosync.ibms.bacnet.model.BacnetDataPoint;
-import cn.ecosync.ibms.bacnet.model.BacnetDeviceMetricsCollector;
 import cn.ecosync.ibms.gateway.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.gateway.model.DeviceInfos;
 import cn.ecosync.ibms.gateway.model.DeviceMetricsCollector;
@@ -38,16 +37,16 @@ public class DeviceTelemetryService implements MultiCollector {
         prometheusRegistry.register(this);
         Map<String, DeviceMetricsCollector> instruments = new HashMap<>();
         for (DeviceDataAcquisition dataAcquisition : dataAcquisitions) {
-            newDeviceMetricsCollector(dataAcquisition, instruments::put);
+            switch (dataAcquisition.getDataAcquisitionType()) {
+                case BACNET:
+                    newBacnetDeviceMetricsCollector(dataAcquisition, instruments::put);
+                    break;
+                case MODBUS:
+                    // no op
+                    break;
+            }
         }
         instrumentsRef.set(instruments);
-
-        try {
-            BacnetWhoIsService service = new BacnetWhoIsService();
-            BacnetWhoIsService.execute(service);
-        } catch (Exception e) {
-            log.atError().setCause(e).log("");
-        }
     }
 
     @Override
@@ -73,22 +72,19 @@ public class DeviceTelemetryService implements MultiCollector {
         return new MetricSnapshots();
     }
 
-    private void newDeviceMetricsCollector(DeviceDataAcquisition dataAcquisition, BiConsumer<String, DeviceMetricsCollector> consumer) {
+    private void newBacnetDeviceMetricsCollector(DeviceDataAcquisition dataAcquisition, BiConsumer<String, DeviceMetricsCollector> consumer) {
         DeviceInfos deviceInfos = new DeviceInfos(dataAcquisition.getDeviceInfos());
-        switch (dataAcquisition.getDataAcquisitionType()) {
-            case BACNET:
-                Map<String, List<BacnetDataPoint>> deviceDataPointsMap = dataAcquisition.getDataPoints()
-                        .toLabels()
-                        .stream()
-                        .map(BacnetDataPoint::new)
-                        .collect(Collectors.groupingBy(in -> in.getDataPointId().getDeviceCode()));
-                for (Map.Entry<String, List<BacnetDataPoint>> entry : deviceDataPointsMap.entrySet()) {
-                    String deviceCode = entry.getKey();
-                    List<BacnetDataPoint> dataPoints = entry.getValue();
-                    Labels deviceInfo = deviceInfos.get(deviceCode);
-                    DeviceMetricsCollector deviceMetricsCollector = new BacnetDeviceMetricsCollector(deviceCode, deviceInfo, dataPoints);
-                    consumer.accept(deviceCode, deviceMetricsCollector);
-                }
+        Map<String, List<BacnetDataPoint>> deviceDataPointsMap = dataAcquisition.getDataPoints()
+                .toLabels()
+                .stream()
+                .map(BacnetDataPoint::new)
+                .collect(Collectors.groupingBy(in -> in.getDataPointId().getDeviceCode()));
+        for (Map.Entry<String, List<BacnetDataPoint>> entry : deviceDataPointsMap.entrySet()) {
+            String deviceCode = entry.getKey();
+            List<BacnetDataPoint> dataPoints = entry.getValue();
+            Labels deviceInfo = deviceInfos.get(deviceCode);
+            DeviceMetricsCollector deviceMetricsCollector = new BacnetDeviceMetricsCollector(deviceCode, deviceInfo, dataPoints);
+            consumer.accept(deviceCode, deviceMetricsCollector);
         }
     }
 }

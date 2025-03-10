@@ -20,6 +20,7 @@
         <springdoc.version>2.7.0</springdoc.version>
         <swagger-api.version>2.2.25</swagger-api.version>
         <easyexcel.version>3.3.4</easyexcel.version>
+        <bacnet4j.version>6.0.1</bacnet4j.version>
     </properties>
 
     <dependencies>
@@ -29,6 +30,20 @@
             <optional>true</optional>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>ias-releases</id>
+            <name>Infinite Automation Release Repository</name>
+            <url>https://maven.mangoautomation.net/repository/ias-release/</url>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -66,6 +81,11 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>easyexcel</artifactId>
                 <version>${easyexcel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.infiniteautomation</groupId>
+                <artifactId>bacnet4j</artifactId>
+                <version>${bacnet4j.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

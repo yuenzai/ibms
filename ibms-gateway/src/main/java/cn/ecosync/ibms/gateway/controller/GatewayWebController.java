@@ -1,5 +1,6 @@
 package cn.ecosync.ibms.gateway.controller;
 
+import cn.ecosync.ibms.bacnet.BacnetUtils;
 import cn.ecosync.ibms.bacnet.command.ImportBacnetDataPointsCommand;
 import cn.ecosync.ibms.bacnet.command.ImportDeviceInfosCommand;
 import cn.ecosync.ibms.command.CommandBus;
@@ -49,6 +50,12 @@ public class GatewayWebController implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
+        try {
+            BacnetUtils.initialize();
+            BacnetUtils.sendWhoIs();
+        } catch (Exception e) {
+            log.atError().setCause(e).log("");
+        }
         ReloadTelemetryServiceCommand command = new ReloadTelemetryServiceCommand();
         commandBus.execute(command);
     }
