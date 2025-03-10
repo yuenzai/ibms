@@ -1,4 +1,4 @@
-package cn.ecosync.ibms.bacnet;
+package cn.ecosync.ibms.gateway.bacnet;
 
 import cn.ecosync.ibms.bacnet.dto.BacnetObject;
 import cn.ecosync.ibms.bacnet.dto.BacnetObjectProperties;
@@ -30,17 +30,19 @@ public class BacnetDeviceMetricsCollector implements DeviceMetricsCollector {
 
     private final String deviceCode;
     private final List<BacnetDataPoint> dataPoints;
+    private final BacnetService bacnetService;
 
     private final Counter devicePointsScrapedTotal;
     private final Counter devicePointsScrapedSucceedTotal;
     private final InfoSnapshot deviceInfo;
     private final InfoSnapshot devicePointInfos;
 
-    public BacnetDeviceMetricsCollector(String deviceCode, Labels deviceInfo, List<BacnetDataPoint> dataPoints) {
+    public BacnetDeviceMetricsCollector(String deviceCode, Labels deviceInfo, List<BacnetDataPoint> dataPoints, BacnetService bacnetService) {
         Assert.hasText(deviceCode, "deviceCode must not be null");
         Assert.notEmpty(dataPoints, "dataPoints must not be empty");
         this.deviceCode = deviceCode;
         this.dataPoints = Collections.unmodifiableList(new ArrayList<>(dataPoints));
+        this.bacnetService = bacnetService;
         this.devicePointsScrapedTotal = Counter.builder()
                 .name("ibms_device_points_scraped_total")
                 .labelNames(LABEL_DEVICE_CODE)
@@ -104,7 +106,7 @@ public class BacnetDeviceMetricsCollector implements DeviceMetricsCollector {
     }
 
     private PropertyValues doScrape(BacnetReadPropertyMultipleService service) throws Exception {
-        return BacnetUtils.execute(service);
+        return bacnetService.execute(service);
     }
 
     private void consume(List<BacnetDataPoint> bacnetDataPoints, PropertyValues ack, Consumer<MetricSnapshot> pointMetricConsumer) {
@@ -115,7 +117,7 @@ public class BacnetDeviceMetricsCollector implements DeviceMetricsCollector {
             ObjectIdentifier oid = new ObjectIdentifier(bacnetObject.getObjectType().getCode(), bacnetObject.getObjectInstance());
             ObjectPropertyReference opr = new ObjectPropertyReference(oid, PropertyIdentifier.presentValue);
             Encodable encodable = PropertyValues.getNullOnError(ack.getNoErrorCheck(opr));
-            Number presentValue = BacnetUtils.getValueAsNumber(encodable);
+            Number presentValue = BacnetService.getValueAsNumber(encodable);
             if (presentValue == null) {
                 log.atWarn().addKeyValue("bacnetObject", bacnetObject).log("ack缺少该对象的当前值");
                 continue;

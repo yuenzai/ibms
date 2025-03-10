@@ -1,19 +1,17 @@
 package cn.ecosync.ibms.gateway.configure;
 
-import cn.ecosync.ibms.JsonSerdeContextHolder;
 import cn.ecosync.ibms.event.EventBus;
+import cn.ecosync.ibms.gateway.bacnet.BacnetService;
 import cn.ecosync.ibms.gateway.command.handler.*;
 import cn.ecosync.ibms.gateway.model.DeviceDataAcquisitionRepository;
 import cn.ecosync.ibms.gateway.query.handler.GetDataAcquisitionQueryHandler;
 import cn.ecosync.ibms.gateway.query.handler.SearchDataAcquisitionQueryHandler;
 import cn.ecosync.ibms.gateway.service.DeviceTelemetryService;
-import cn.ecosync.ibms.serde.JsonSerde;
+import cn.ecosync.ibms.gateway.service.GatewayApplicationService;
 import io.prometheus.metrics.exporter.servlet.jakarta.PrometheusMetricsServlet;
 import io.prometheus.metrics.instrumentation.jvm.JvmMetrics;
 import io.prometheus.metrics.model.registry.PrometheusRegistry;
-import jakarta.servlet.Filter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,11 +26,13 @@ import static cn.ecosync.ibms.Constants.PATH_METRICS_JVM;
 @ConditionalOnClass(DeviceTelemetryService.class)
 public class GatewayConfiguration {
     private final DeviceTelemetryService deviceTelemetryService;
+    private final BacnetService bacnetService;
     private final ServletRegistrationBean<PrometheusMetricsServlet> deviceMetricsServlet;
 
     public GatewayConfiguration() {
         PrometheusRegistry deviceMetricsRegistry = new PrometheusRegistry();
-        deviceTelemetryService = new DeviceTelemetryService(deviceMetricsRegistry);
+        bacnetService = new BacnetService();
+        deviceTelemetryService = new DeviceTelemetryService(deviceMetricsRegistry, bacnetService);
         deviceMetricsServlet = new ServletRegistrationBean<>(new PrometheusMetricsServlet(deviceMetricsRegistry), PATH_METRICS_DEVICES);
     }
 
@@ -53,30 +53,33 @@ public class GatewayConfiguration {
     }
 
     @Bean
+    public BacnetService bacnetService() {
+        return bacnetService;
+    }
+
+    @Bean
     public DeviceTelemetryService deviceTelemetryService() {
         return deviceTelemetryService;
     }
 
+//    @Bean
+//    public FilterRegistrationBean<Filter> jsonSerdeFilter(JsonSerde jsonSerde) {
+//        Filter filter = (servletRequest, servletResponse, filterChain) -> {
+//            JsonSerdeContextHolder.set(jsonSerde);
+//            filterChain.doFilter(servletRequest, servletResponse);
+//            JsonSerdeContextHolder.clear();
+//        };
+//        return new FilterRegistrationBean<>(filter, deviceMetricsServlet);
+//    }
+
     @Bean
-    public FilterRegistrationBean<Filter> jsonSerdeFilter(JsonSerde jsonSerde) {
-        Filter filter = (servletRequest, servletResponse, filterChain) -> {
-            JsonSerdeContextHolder.set(jsonSerde);
-            filterChain.doFilter(servletRequest, servletResponse);
-            JsonSerdeContextHolder.clear();
-        };
-        return new FilterRegistrationBean<>(filter, deviceMetricsServlet);
+    public GatewayApplicationService gatewayApplicationService(DeviceTelemetryService deviceTelemetryService, DeviceDataAcquisitionRepository dataAcquisitionRepository, Environment environment) {
+        return new GatewayApplicationService(deviceTelemetryService, dataAcquisitionRepository, environment);
     }
 
     @Bean
-    public ReloadTelemetryServiceCommandHandler reloadTelemetryServiceCommandHandler(
-            DeviceTelemetryService deviceTelemetryService,
-            DeviceDataAcquisitionRepository dataAcquisitionRepository,
-            Environment environment) {
-        return new ReloadTelemetryServiceCommandHandler(
-                deviceTelemetryService,
-                dataAcquisitionRepository,
-                environment
-        );
+    public ReloadTelemetryServiceCommandHandler reloadTelemetryServiceCommandHandler(GatewayApplicationService gatewayApplicationService) {
+        return new ReloadTelemetryServiceCommandHandler(gatewayApplicationService);
     }
 
     @Bean

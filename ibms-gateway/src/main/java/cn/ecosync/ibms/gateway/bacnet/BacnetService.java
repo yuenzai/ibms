@@ -1,4 +1,4 @@
-package cn.ecosync.ibms.bacnet;
+package cn.ecosync.ibms.gateway.bacnet;
 
 import cn.ecosync.ibms.bacnet.dto.BacnetObject;
 import cn.ecosync.ibms.bacnet.dto.BacnetObjectProperties;
@@ -8,7 +8,6 @@ import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.RemoteDevice;
 import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
 import com.serotonin.bacnet4j.npdu.ip.IpNetworkBuilder;
-import com.serotonin.bacnet4j.service.unconfirmed.WhoIsRequest;
 import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.transport.Transport;
 import com.serotonin.bacnet4j.type.Encodable;
@@ -18,25 +17,28 @@ import com.serotonin.bacnet4j.type.primitive.Double;
 import com.serotonin.bacnet4j.type.primitive.*;
 import com.serotonin.bacnet4j.util.PropertyReferences;
 import com.serotonin.bacnet4j.util.PropertyValues;
+import com.serotonin.bacnet4j.util.RemoteDeviceDiscoverer;
 import com.serotonin.bacnet4j.util.RequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-public class BacnetUtils {
-    public static final Logger log = LoggerFactory.getLogger(BacnetUtils.class);
+public class BacnetService implements ApplicationRunner, DisposableBean {
+    public static final Logger log = LoggerFactory.getLogger(BacnetService.class);
     public static final String ENV_BACNET_IFACE = "BACNET_IFACE";
 
-    private static LocalDevice localDevice;
+    private LocalDevice localDevice;
+    private RemoteDeviceDiscoverer remoteDeviceDiscoverer;
 
-    public static PropertyValues execute(BacnetReadPropertyMultipleService service) throws Exception {
+    public PropertyValues execute(BacnetReadPropertyMultipleService service) throws Exception {
         if (localDevice == null || !localDevice.isInitialized()) {
             log.atError().log("本地设备未初始化");
             return null;
@@ -62,7 +64,7 @@ public class BacnetUtils {
         return RequestUtils.readProperties(localDevice, remoteDevice, refs, false, null);
     }
 
-    public static void initialize() throws Exception {
+    public void initialize() throws Exception {
         if (localDevice != null) {
             localDevice.terminate();
             log.atInfo().log("关闭本地设备");
@@ -70,21 +72,50 @@ public class BacnetUtils {
 
         log.atInfo().log("开始初始化");
 
-        // 指定网络接口名称，例如 "eth0" 或 "wlan0"
         String interfaceName = System.getenv(ENV_BACNET_IFACE);
         if (interfaceName == null || interfaceName.isEmpty()) {
             log.atError().addKeyValue("env", ENV_BACNET_IFACE).log("环境变量未设置");
             return;
         }
 
-        // 获取网络接口的 IP 地址和广播地址
-        InetAddress localAddress = getLocalAddress(interfaceName);
-        InetAddress broadcastAddress = getBroadcastAddress(interfaceName);
-
-        if (localAddress == null || broadcastAddress == null) {
-            log.atError().addKeyValue(ENV_BACNET_IFACE, interfaceName).log("无法获取网络接口的地址或广播地址");
+        NetworkInterface networkInterface = NetworkInterface.getByName(interfaceName);
+        if (networkInterface == null) {
+            log.atInfo().log("networkInterface is null");
             return;
         }
+
+        InetAddress localAddress = null;
+        InetAddress broadcastAddress = null;
+        for (InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
+            InetAddress address = interfaceAddress.getAddress();
+            InetAddress broadcast = interfaceAddress.getBroadcast();
+            log.atInfo()
+                    .addKeyValue("localAddress", address)
+                    .addKeyValue("broadcastAddress", broadcast)
+                    .log("");
+            if (!(address instanceof Inet4Address)) {
+                continue;
+            }
+            localAddress = address;
+            broadcastAddress = broadcast;
+        }
+
+        if (localAddress == null) {
+            log.atError().addKeyValue(ENV_BACNET_IFACE, interfaceName).log("无法获取网络接口的地址");
+        }
+
+        if (broadcastAddress == null) {
+            log.atError().addKeyValue(ENV_BACNET_IFACE, interfaceName).log("无法获取网络接口的广播地址");
+        }
+
+        if (localAddress == null || broadcastAddress == null) {
+            return;
+        }
+
+        log.atInfo()
+                .addKeyValue("localAddress", localAddress)
+                .addKeyValue("broadcastAddress", broadcastAddress)
+                .log("绑定地址");
 
         // 创建网络配置
         IpNetwork network = new IpNetworkBuilder()
@@ -104,58 +135,16 @@ public class BacnetUtils {
         log.atInfo().log("初始化成功");
     }
 
-    public static void sendWhoIs() throws Exception {
+    public void sendWhoIs() {
         if (localDevice == null || !localDevice.isInitialized()) {
             log.atError().log("本地设备未初始化");
             return;
         }
-
         log.atInfo().log("发送 WhoIs 请求");
-        localDevice.sendGlobalBroadcast(new WhoIsRequest());
-
-        TimeUnit.SECONDS.sleep(5);
-
-        localDevice.getRemoteDevices().forEach(in ->
-                log.atInfo().addKeyValue("deviceInstance", in.getInstanceNumber()).log("找到设备"));
-
-//        localDevice.startRemoteDeviceDiscovery(in -> {
-//            int remoteDeviceInstance = in.getInstanceNumber();
-//            log.atInfo().addKeyValue("deviceInstance", remoteDeviceInstance).log("找到设备");
-//        });
-    }
-
-    /**
-     * 获取指定网络接口的本地 IP 地址
-     */
-    private static InetAddress getLocalAddress(String interfaceName) throws SocketException {
-        NetworkInterface networkInterface = NetworkInterface.getByName(interfaceName);
-        if (networkInterface == null) {
-            return null;
-        }
-        Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
-        while (addresses.hasMoreElements()) {
-            InetAddress address = addresses.nextElement();
-            if (!address.isLoopbackAddress() && address.isSiteLocalAddress()) {
-                return address;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 获取指定网络接口的广播地址
-     */
-    private static InetAddress getBroadcastAddress(String interfaceName) throws SocketException {
-        NetworkInterface networkInterface = NetworkInterface.getByName(interfaceName);
-        if (networkInterface == null) {
-            return null;
-        }
-        for (InterfaceAddress address : networkInterface.getInterfaceAddresses()) {
-            if (address.getAddress() != null) {
-                return address.getBroadcast();
-            }
-        }
-        return null;
+        remoteDeviceDiscoverer = localDevice.startRemoteDeviceDiscovery(in -> {
+            int remoteDeviceInstance = in.getInstanceNumber();
+            log.atInfo().addKeyValue("deviceInstance", remoteDeviceInstance).log("找到设备");
+        });
     }
 
     public static Number getValueAsNumber(Encodable encodable) {
@@ -182,5 +171,21 @@ public class BacnetUtils {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public void run(ApplicationArguments args) {
+        try {
+            initialize();
+            sendWhoIs();
+        } catch (Exception e) {
+            log.atError().setCause(e).log("");
+        }
+    }
+
+    @Override
+    public void destroy() {
+        remoteDeviceDiscoverer.stop();
+        localDevice.terminate();
     }
 }

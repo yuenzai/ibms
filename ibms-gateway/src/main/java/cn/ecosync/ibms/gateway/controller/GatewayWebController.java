@@ -1,6 +1,5 @@
 package cn.ecosync.ibms.gateway.controller;
 
-import cn.ecosync.ibms.bacnet.BacnetUtils;
 import cn.ecosync.ibms.bacnet.command.ImportBacnetDataPointsCommand;
 import cn.ecosync.ibms.bacnet.command.ImportDeviceInfosCommand;
 import cn.ecosync.ibms.command.CommandBus;
@@ -19,8 +18,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedModel;
@@ -41,24 +38,12 @@ import static cn.ecosync.ibms.gateway.model.SynchronizationStateEnum.SYNCHRONIZI
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/gateway")
-public class GatewayWebController implements ApplicationRunner {
+public class GatewayWebController {
     private static final Logger log = LoggerFactory.getLogger(GatewayWebController.class);
 
     private final CommandBus commandBus;
     private final QueryBus queryBus;
     private final Map<DeviceDataAcquisitionId, DataAcquisitionDeferredResult> deferredResultCache = new ConcurrentHashMap<>();
-
-    @Override
-    public void run(ApplicationArguments args) {
-        try {
-            BacnetUtils.initialize();
-            BacnetUtils.sendWhoIs();
-        } catch (Exception e) {
-            log.atError().setCause(e).log("");
-        }
-        ReloadTelemetryServiceCommand command = new ReloadTelemetryServiceCommand();
-        commandBus.execute(command);
-    }
 
     @Operation(summary = "重载遥测服务")
     @PostMapping(headers = "Command-Type=RELOAD")

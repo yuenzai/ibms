@@ -1,7 +1,8 @@
 package cn.ecosync.ibms.gateway.service;
 
-import cn.ecosync.ibms.bacnet.BacnetDeviceMetricsCollector;
 import cn.ecosync.ibms.bacnet.model.BacnetDataPoint;
+import cn.ecosync.ibms.gateway.bacnet.BacnetDeviceMetricsCollector;
+import cn.ecosync.ibms.gateway.bacnet.BacnetService;
 import cn.ecosync.ibms.gateway.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.gateway.model.DeviceInfos;
 import cn.ecosync.ibms.gateway.model.DeviceMetricsCollector;
@@ -25,10 +26,12 @@ public class DeviceTelemetryService implements MultiCollector {
     private static final Logger log = LoggerFactory.getLogger(DeviceTelemetryService.class);
 
     private final PrometheusRegistry prometheusRegistry;
+    private final BacnetService bacnetService;
     private final AtomicReference<Map<String, DeviceMetricsCollector>> instrumentsRef = new AtomicReference<>(new HashMap<>());
 
-    public DeviceTelemetryService(PrometheusRegistry prometheusRegistry) {
+    public DeviceTelemetryService(PrometheusRegistry prometheusRegistry, BacnetService bacnetService) {
         this.prometheusRegistry = prometheusRegistry;
+        this.bacnetService = bacnetService;
     }
 
     public void reload(DeviceDataAcquisition... dataAcquisitions) {
@@ -83,7 +86,7 @@ public class DeviceTelemetryService implements MultiCollector {
             String deviceCode = entry.getKey();
             List<BacnetDataPoint> dataPoints = entry.getValue();
             Labels deviceInfo = deviceInfos.get(deviceCode);
-            DeviceMetricsCollector deviceMetricsCollector = new BacnetDeviceMetricsCollector(deviceCode, deviceInfo, dataPoints);
+            DeviceMetricsCollector deviceMetricsCollector = new BacnetDeviceMetricsCollector(deviceCode, deviceInfo, dataPoints, bacnetService);
             consumer.accept(deviceCode, deviceMetricsCollector);
         }
     }
