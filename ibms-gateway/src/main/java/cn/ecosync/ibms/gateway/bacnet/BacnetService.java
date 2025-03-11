@@ -143,6 +143,9 @@ public class BacnetService implements ApplicationRunner, DisposableBean {
             log.atError().log("本地设备未初始化");
             return;
         }
+        if (remoteDeviceDiscoverer != null) {
+            remoteDeviceDiscoverer.stop();
+        }
         log.atInfo().log("发送 WhoIs 请求");
         remoteDeviceDiscoverer = localDevice.startRemoteDeviceDiscovery(in -> {
             int remoteDeviceInstance = in.getInstanceNumber();
