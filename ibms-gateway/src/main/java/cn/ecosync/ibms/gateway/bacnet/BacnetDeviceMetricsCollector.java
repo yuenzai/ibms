@@ -5,7 +5,6 @@ import cn.ecosync.ibms.bacnet.dto.BacnetObjectProperties;
 import cn.ecosync.ibms.bacnet.dto.BacnetReadPropertyMultipleService;
 import cn.ecosync.ibms.bacnet.model.BacnetDataPoint;
 import cn.ecosync.ibms.gateway.model.DeviceMetricsCollector;
-import com.serotonin.bacnet4j.type.Encodable;
 import com.serotonin.bacnet4j.type.constructed.ObjectPropertyReference;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
@@ -116,8 +115,11 @@ public class BacnetDeviceMetricsCollector implements DeviceMetricsCollector {
             BacnetObject bacnetObject = objectProperties.getBacnetObject();
             ObjectIdentifier oid = new ObjectIdentifier(bacnetObject.getObjectType().getCode(), bacnetObject.getObjectInstance());
             ObjectPropertyReference opr = new ObjectPropertyReference(oid, PropertyIdentifier.presentValue);
-            Encodable encodable = PropertyValues.getNullOnError(ack.getNoErrorCheck(opr));
-            Number presentValue = BacnetService.getValueAsNumber(encodable);
+
+            Number presentValue = Optional.ofNullable(ack.getNoErrorCheck(opr))
+                    .map(PropertyValues::getNullOnError)
+                    .map(BacnetService::getValueAsNumber)
+                    .orElse(null);
             if (presentValue == null) {
                 log.atWarn().addKeyValue("bacnetObject", bacnetObject).log("ack缺少该对象的当前值");
                 continue;

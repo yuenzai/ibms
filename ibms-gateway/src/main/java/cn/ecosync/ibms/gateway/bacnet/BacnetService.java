@@ -6,19 +6,27 @@ import cn.ecosync.ibms.bacnet.dto.BacnetProperty;
 import cn.ecosync.ibms.bacnet.dto.BacnetReadPropertyMultipleService;
 import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.RemoteDevice;
+import com.serotonin.bacnet4j.exception.*;
 import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
 import com.serotonin.bacnet4j.npdu.ip.IpNetworkBuilder;
+import com.serotonin.bacnet4j.service.acknowledgement.ReadPropertyMultipleAck;
+import com.serotonin.bacnet4j.service.confirmed.ReadPropertyMultipleRequest;
 import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.serotonin.bacnet4j.transport.Transport;
 import com.serotonin.bacnet4j.type.Encodable;
+import com.serotonin.bacnet4j.type.constructed.PropertyReference;
+import com.serotonin.bacnet4j.type.constructed.ReadAccessResult;
+import com.serotonin.bacnet4j.type.constructed.ReadAccessSpecification;
+import com.serotonin.bacnet4j.type.constructed.SequenceOf;
+import com.serotonin.bacnet4j.type.enumerated.AbortReason;
+import com.serotonin.bacnet4j.type.enumerated.ErrorClass;
+import com.serotonin.bacnet4j.type.enumerated.ErrorCode;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
+import com.serotonin.bacnet4j.type.error.ErrorClassAndCode;
 import com.serotonin.bacnet4j.type.primitive.Boolean;
 import com.serotonin.bacnet4j.type.primitive.Double;
 import com.serotonin.bacnet4j.type.primitive.*;
-import com.serotonin.bacnet4j.util.PropertyReferences;
-import com.serotonin.bacnet4j.util.PropertyValues;
-import com.serotonin.bacnet4j.util.RemoteDeviceDiscoverer;
-import com.serotonin.bacnet4j.util.RequestUtils;
+import com.serotonin.bacnet4j.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -29,7 +37,9 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class BacnetService implements ApplicationRunner, DisposableBean {
     public static final Logger log = LoggerFactory.getLogger(BacnetService.class);
@@ -60,7 +70,7 @@ public class BacnetService implements ApplicationRunner, DisposableBean {
                 refs.addIndex(oid, pid, propertyArrayIndex);
             }
         }
-        PropertyValues propertyValues = RequestUtils.readProperties(localDevice, remoteDevice, refs, false, null);
+        PropertyValues propertyValues = readProperties(localDevice, remoteDevice, refs);
         log.info("{}", propertyValues);
         return propertyValues;
     }
@@ -126,8 +136,8 @@ public class BacnetService implements ApplicationRunner, DisposableBean {
 
         // 创建传输层
         Transport transport = new DefaultTransport(network);
-        transport.setTimeout(3000);
-        transport.setSegTimeout(3000);
+//        transport.setTimeout(3000);
+//        transport.setSegTimeout(3000);
 
         // 创建本地设备
         localDevice = new LocalDevice(ObjectIdentifier.UNINITIALIZED, transport);
@@ -193,5 +203,99 @@ public class BacnetService implements ApplicationRunner, DisposableBean {
     public void destroy() {
         remoteDeviceDiscoverer.stop();
         localDevice.terminate();
+    }
+
+    private static PropertyValues readProperties(LocalDevice localDevice, RemoteDevice remoteDevice, PropertyReferences refs) throws BACnetException {
+        Map<ObjectIdentifier, List<PropertyReference>> properties;
+        PropertyValues propertyValues = new PropertyValues();
+        ReadListenerUpdater updater = new ReadListenerUpdater(null, propertyValues, refs.size());
+
+        // Read property multiple can be used. Determine the max references
+        int maxRef = remoteDevice.getMaxReadMultipleReferences();
+
+        // If the device supports read property multiple, send them all at once, or at least in partitions.
+        List<PropertyReferences> partitions = refs.getPropertiesPartitioned(maxRef);
+        int counter = 0;
+        while (!partitions.isEmpty()) {
+            PropertyReferences partition = partitions.get(0);
+            properties = partition.getProperties();
+            List<ReadAccessSpecification> specs = new ArrayList<>();
+            for (ObjectIdentifier oid : properties.keySet())
+                specs.add(new ReadAccessSpecification(oid, new SequenceOf<>(properties.get(oid))));
+
+            ReadPropertyMultipleRequest request = new ReadPropertyMultipleRequest(new SequenceOf<>(specs));
+
+            ReadPropertyMultipleAck ack;
+            try {
+                ack = localDevice.send(remoteDevice, request).get();
+                counter++;
+
+                List<ReadAccessResult> results = ack.getListOfReadAccessResults().getValues();
+                ObjectIdentifier oid;
+                for (ReadAccessResult objectResult : results) {
+                    oid = objectResult.getObjectIdentifier();
+                    for (ReadAccessResult.Result result : objectResult.getListOfResults().getValues()) {
+                        updater.increment(remoteDevice.getInstanceNumber(), oid, result.getPropertyIdentifier(),
+                                result.getPropertyArrayIndex(), result.getReadResult().getDatum());
+                        if (updater.cancelled())
+                            break;
+                    }
+
+                    if (updater.cancelled())
+                        break;
+                }
+
+                partitions.remove(0);
+            } catch (ServiceTooBigException e) {
+                if (partition.size() < 2)
+                    throw e;
+
+                // Reduce the device's max references.
+                remoteDevice.reduceMaxReadMultipleReferences(partition.size());
+
+                // Create a new PropertyReferences instance from the remaining references.
+                PropertyReferences remaining = new PropertyReferences(partitions);
+
+                // Repartition the remaining requests.
+                partitions = remaining.getPropertiesPartitioned(remoteDevice.getMaxReadMultipleReferences());
+            } catch (AbortAPDUException e) {
+                AbortReason abortReason = e.getApdu().getAbortReason();
+                log.atWarn().addKeyValue("abortReason", abortReason).log("Chunked request failed");
+                if (AbortReason.bufferOverflow.equals(abortReason) || AbortReason.segmentationNotSupported.equals(abortReason)) {
+                    if (partition.size() < 2) {
+                        throw e;
+                    }
+
+                    // Reduce the device's max references.
+                    remoteDevice.reduceMaxReadMultipleReferences(partition.size());
+
+                    // Create a new PropertyReferences instance from the remaining references.
+                    PropertyReferences remaining = new PropertyReferences(partitions);
+
+                    // Repartition the remaining requests.
+                    partitions = remaining.getPropertiesPartitioned(remoteDevice.getMaxReadMultipleReferences());
+                } else {
+                    throw new BACnetException("Completed " + counter + " requests. Excepted on: " + request, e);
+                }
+            } catch (BACnetTimeoutException e) {
+                if (counter == 0) {
+                    // For the first request, rethrow the exception
+                    throw e;
+                }
+                // Otherwise, populate the properties with errors.
+                RequestUtils.populateWithError(remoteDevice, properties, updater, new ErrorClassAndCode(ErrorClass.device, ErrorCode.timeout));
+                partitions.remove(0);
+            } catch (ErrorAPDUException e) {
+                log.atError().setCause(e).log("");
+                RequestUtils.populateWithError(remoteDevice, properties, updater, e.getError());
+                partitions.remove(0);
+            } catch (BACnetException e) {
+                throw new BACnetException("Completed " + counter + " requests. Excepted on: " + request, e);
+            }
+            if (updater.cancelled()) {
+                break;
+            }
+        }
+        return propertyValues;
     }
 }
