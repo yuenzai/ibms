@@ -126,6 +126,8 @@ public class BacnetService implements ApplicationRunner, DisposableBean {
 
         // 创建传输层
         Transport transport = new DefaultTransport(network);
+        transport.setTimeout(3000);
+        transport.setSegTimeout(3000);
 
         // 创建本地设备
         localDevice = new LocalDevice(ObjectIdentifier.UNINITIALIZED, transport);

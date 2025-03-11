@@ -91,10 +91,10 @@ public class BacnetDeviceMetricsCollector implements DeviceMetricsCollector {
     }
 
     private void collect(Integer deviceInstance, List<BacnetDataPoint> dataPoints, Consumer<MetricSnapshot> pointMetricConsumer) throws Exception {
-        log.atInfo().addKeyValue("deviceInstance", deviceInstance).addKeyValue("deviceInstance", deviceInstance).log("采集开始");
+        log.atInfo().addKeyValue("deviceInstance", deviceInstance).log("采集开始");
         PropertyValues ack = scrape(deviceInstance, dataPoints);
         consume(dataPoints, ack, pointMetricConsumer);
-        log.atInfo().addKeyValue("deviceInstance", deviceInstance).addKeyValue("deviceInstance", deviceInstance).log("采集结束");
+        log.atInfo().addKeyValue("deviceInstance", deviceInstance).log("采集结束");
     }
 
     private PropertyValues scrape(Integer deviceInstance, List<BacnetDataPoint> dataPoints) throws Exception {
