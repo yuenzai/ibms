@@ -4,6 +4,7 @@ import cn.ecosync.ibms.bacnet.model.BacnetDataPoint;
 import cn.ecosync.ibms.gateway.bacnet.BacnetDeviceMetricsCollector;
 import cn.ecosync.ibms.gateway.bacnet.BacnetService;
 import cn.ecosync.ibms.gateway.model.DeviceDataAcquisition;
+import cn.ecosync.ibms.gateway.model.DeviceDataAcquisitionId;
 import cn.ecosync.ibms.gateway.model.DeviceInfos;
 import cn.ecosync.ibms.gateway.model.DeviceMetricsCollector;
 import cn.ecosync.ibms.util.CollectionUtils;
@@ -35,7 +36,10 @@ public class DeviceTelemetryService implements MultiCollector {
     }
 
     public void reload(DeviceDataAcquisition... dataAcquisitions) {
-        log.atInfo().log("重新加载配置");
+        List<DeviceDataAcquisitionId> dataAcquisitionIds = Arrays.stream(dataAcquisitions)
+                .map(DeviceDataAcquisition::getDataAcquisitionId)
+                .collect(Collectors.toList());
+        log.atInfo().addKeyValue("dataAcquisitionCodes", dataAcquisitionIds).log("重新加载配置");
         prometheusRegistry.clear();
         prometheusRegistry.register(this);
         Map<String, DeviceMetricsCollector> instruments = new HashMap<>();
