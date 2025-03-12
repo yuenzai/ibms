@@ -37,6 +37,9 @@ bash install.sh
 ```
 
 **Dashboard**
+
+以下图表的数据都是从真实设备采集而来
+
 ![WX20250312-150226@2x.png](grafana/WX20250312-150226%402x.png)
 ![WX20250312-150300@2x.png](grafana/WX20250312-150300%402x.png)
 ![WX20250312-150321@2x.png](grafana/WX20250312-150321%402x.png)
