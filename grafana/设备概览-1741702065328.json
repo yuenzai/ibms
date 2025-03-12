@@ -224,6 +224,15 @@
                 {
                   "id": "displayName",
                   "value": "设备编码"
+                },
+                {
+                  "id": "links",
+                  "value": [
+                    {
+                      "title": "",
+                      "url": "http://110.41.57.238:7601/grafana/d/cedbcmsox1r0ga/e8aebe-e5a487-e8afa6-e68385?orgId=1&from=now-12h&to=now&timezone=Asia%2FShanghai&var-gateway=qie&var-device=${__data.fields.device_code}&refresh=5m"
+                    }
+                  ]
                 }
               ]
             },
@@ -508,6 +517,14 @@
                 {
                   "id": "max",
                   "value": 100
+                },
+                {
+                  "id": "unit",
+                  "value": "percent"
+                },
+                {
+                  "id": "decimals",
+                  "value": 1
                 }
               ]
             },
@@ -627,7 +644,7 @@
           "frameIndex": 2,
           "showHeader": true
         },
-        "pluginVersion": "11.4.0",
+        "pluginVersion": "11.5.2",
         "targets": [
           {
             "datasource": {
@@ -845,7 +862,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.4.0"
+      "version": "11.5.2"
     },
     {
       "type": "datasource",
@@ -891,8 +908,8 @@
     },
     {
       "gridPos": {
-        "h": 8,
-        "w": 12,
+        "h": 17,
+        "w": 24,
         "x": 0,
         "y": 4
       },
@@ -911,6 +928,7 @@
       {
         "current": {},
         "definition": "label_values(ibms_device_info,gateway_code)",
+        "hide": 2,
         "label": "网关",
         "name": "gateway",
         "options": [],
@@ -945,6 +963,7 @@
         "allValue": ".*",
         "current": {},
         "definition": "label_values(ibms_device_info{gateway_code=\"$gateway\", floor=~\"$floor\"},room)",
+        "hide": 2,
         "includeAll": true,
         "label": "房间",
         "multi": true,
@@ -970,6 +989,6 @@
   "timezone": "browser",
   "title": "设备概览",
   "uid": "dedbi41j0u1ogf",
-  "version": 39,
+  "version": 3,
   "weekStart": ""
 }

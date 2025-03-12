@@ -62,10 +62,10 @@
             "values": false
           },
           "showPercentChange": false,
-          "textMode": "auto",
+          "textMode": "value",
           "wideLayout": true
         },
-        "pluginVersion": "11.4.0",
+        "pluginVersion": "11.5.2",
         "targets": [
           {
             "datasource": {
@@ -413,11 +413,12 @@
             "sortDesc": true
           },
           "tooltip": {
+            "hideZeros": false,
             "mode": "single",
             "sort": "none"
           }
         },
-        "pluginVersion": "11.4.0",
+        "pluginVersion": "11.5.2",
         "targets": [
           {
             "datasource": {
@@ -460,13 +461,19 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "11.4.0"
+      "version": "11.5.2"
     },
     {
       "type": "datasource",
       "id": "prometheus",
       "name": "Prometheus",
       "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
     }
   ],
   "annotations": {
@@ -520,7 +527,7 @@
     {
       "gridPos": {
         "h": 8,
-        "w": 15,
+        "w": 12,
         "x": 0,
         "y": 4
       },
@@ -529,6 +536,109 @@
         "uid": "aed1x6xc3hd6od",
         "name": "温度趋势"
       }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "水阀开度",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 4
+      },
+      "id": 4,
+      "maxDataPoints": 100,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "CVFB{gateway_code=\"$gateway\", device_code=\"$device\"}",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          }
+        }
+      ],
+      "title": "水阀开度",
+      "type": "timeseries"
     }
   ],
   "refresh": "5m",
@@ -539,6 +649,7 @@
       {
         "current": {},
         "definition": "label_values(ibms_device_info,gateway_code)",
+        "hide": 2,
         "label": "网关",
         "name": "gateway",
         "options": [],
@@ -576,6 +687,6 @@
   "timezone": "Asia/Shanghai",
   "title": "设备详情",
   "uid": "cedbcmsox1r0ga",
-  "version": 13,
+  "version": 8,
   "weekStart": ""
 }

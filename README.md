@@ -35,3 +35,8 @@ docker compose up -d
 # 设置开机自启动
 bash install.sh
 ```
+
+**Dashboard**
+![WX20250312-150226@2x.png](grafana/WX20250312-150226%402x.png)
+![WX20250312-150300@2x.png](grafana/WX20250312-150300%402x.png)
+![WX20250312-150321@2x.png](grafana/WX20250312-150321%402x.png)
