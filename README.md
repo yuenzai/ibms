@@ -47,5 +47,5 @@ bash install.sh
 
 **架构图**
 
-![WX20250313-143218@2x.png](grafana/WX20250313-143218%402x.png)
+![WX20250313-143631@2x.png](grafana/WX20250313-143631%402x.png)
 
