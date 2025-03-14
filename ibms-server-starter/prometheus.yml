@@ -1,1 +1,5 @@
+remote_write:
+  - url: http://server:8080/ibms/prometheus/api/v1/write
+    protobuf_message: io.prometheus.write.v2.Request
+    remote_timeout: 30s
 scrape_configs:
