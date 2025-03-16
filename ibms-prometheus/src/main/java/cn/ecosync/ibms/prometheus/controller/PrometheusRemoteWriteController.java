@@ -3,6 +3,7 @@ package cn.ecosync.ibms.prometheus.controller;
 import cn.ecosync.ibms.prometheus.protos.Request;
 import cn.ecosync.ibms.prometheus.protos.Sample;
 import cn.ecosync.ibms.prometheus.protos.TimeSeries;
+import io.prometheus.metrics.model.snapshots.Labels;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.ServletRequest;
 import org.slf4j.Logger;
@@ -42,17 +43,22 @@ public class PrometheusRemoteWriteController {
     private int handle(Request request) {
         int sampleCount = 0;
         for (TimeSeries timeSeries : request.getTimeseriesList()) {
-            sampleCount += handle(timeSeries);
+            sampleCount += handle(request, timeSeries);
         }
         return sampleCount;
     }
 
-    private int handle(TimeSeries timeSeries) {
+    private int handle(Request request, TimeSeries timeSeries) {
         int sampleCount = 0;
+        String metricName = request.getSymbols(timeSeries.getLabelsRefs(1));
+        String[] keyValuePairs = timeSeries.getLabelsRefsList().stream()
+                .skip(2)
+                .map(request::getSymbols)
+                .toArray(String[]::new);
+        Labels labels = Labels.of(keyValuePairs);
+        log.atInfo().addKeyValue("metricName", metricName).addKeyValue("labels", labels).log("TimeSeries");
         for (Sample sample : timeSeries.getSamplesList()) {
-            log.atInfo().addKeyValue("value", sample.getValue())
-                    .addKeyValue("timestamp", sample.getTimestamp())
-                    .log("Sample");
+            log.atInfo().addKeyValue("value", sample.getValue()).addKeyValue("timestamp", sample.getTimestamp()).log("Sample");
             sampleCount++;
         }
         return sampleCount;
