@@ -7,14 +7,31 @@ services:
     build: .
     image: ecosync/spark:3.5.5
     environment:
+      - SPARK_MASTER_HOST=0.0.0.0
+      - SPARK_MASTER_PORT=7077
+      - SPARK_MASTER_WEBUI_PORT=8080
+      - SPARK_NO_DAEMONIZE=true
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:?}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:?}
     volumes:
       - ./spark-defaults.conf:/opt/spark/conf/spark-defaults.conf
     command:
-      - "$SPARK_HOME/sbin/start-master.sh"
-      - "--host"
-      - "0.0.0.0"
+      - "/opt/spark/sbin/start-master.sh"
+  spark-worker:
+    build: .
+    image: ecosync/spark:3.5.5
+    environment:
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=1g
+      - SPARK_WORKER_WEBUI_PORT=8081
+      - SPARK_NO_DAEMONIZE=true
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:?}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:?}
+    volumes:
+      - ./spark-defaults.conf:/opt/spark/conf/spark-defaults.conf
+    command:
+      - "/opt/spark/sbin/start-worker.sh"
+      - "spark://spark-master:7077"
   postgresql:
     image: postgres:14.17
     environment:
