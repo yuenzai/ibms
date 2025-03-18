@@ -1,0 +1,27 @@
+volumes:
+  postgresql:
+    name: ${COMPOSE_PROJECT_NAME}-postgresql
+
+services:
+  spark-master:
+    build: .
+    image: ecosync/spark:3.5.5
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:?}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:?}
+    volumes:
+      - ./spark-defaults.conf:/opt/spark/conf/spark-defaults.conf
+    command:
+      - "$SPARK_HOME/sbin/start-master.sh"
+      - "--host"
+      - "0.0.0.0"
+  postgresql:
+    image: postgres:14.17
+    environment:
+      POSTGRES_PASSWORD: CJVixCszaS+7raa/5326YJDq3xrSBXHg
+    volumes:
+      - ./initdb-postgresql.sh:/docker-entrypoint-initdb.d/initdb.sh
+      - postgresql:/var/lib/postgresql/data
+
+# /opt/entrypoint.sh $SPARK_HOME/sbin/start-master.sh --host 0.0.0.0
+# docker run -it --rm spark:3.5.5-scala2.12-java17-ubuntu bash
