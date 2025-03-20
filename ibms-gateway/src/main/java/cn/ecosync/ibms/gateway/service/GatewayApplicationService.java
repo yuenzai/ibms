@@ -4,7 +4,6 @@ import cn.ecosync.ibms.gateway.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.gateway.model.DeviceDataAcquisitionRepository;
 import cn.ecosync.ibms.gateway.model.LabelTable;
 import cn.ecosync.ibms.gateway.model.PrometheusConfigurationProperties.*;
-import cn.ecosync.ibms.util.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -16,7 +15,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static cn.ecosync.ibms.Constants.*;
 
@@ -41,12 +39,12 @@ public class GatewayApplicationService {
                 .toArray(new DeviceDataAcquisition[0]);
         deviceTelemetryService.reload(dataAcquisitions);
 
-        String gatewayCode = environment.getRequiredProperty("GATEWAY_CODE");
-        String ibmsOrigin = environment.getRequiredProperty("IBMS_ORIGIN");
+        String gatewayCode = environment.getRequiredProperty("IBMS_GATEWAY_CODE");
+        String dataOrigin = environment.getRequiredProperty("IBMS_DATA_ORIGIN");
 
         Prometheus.Builder builder = Prometheus.builder()
                 .withGlobal(new Global(Collections.singletonMap("gateway_code", gatewayCode)))
-                .addRemoteWrite(new RemoteWrite(ibmsOrigin + "/ibms/data/prometheus/api/v1/write", null, Collections.singletonMap("Gateway-Code", gatewayCode)))
+                .addRemoteWrite(new RemoteWrite(dataOrigin + "/ibms/data/prometheus/api/v1/write", null, Collections.singletonMap("Gateway-Code", gatewayCode)))
                 .addScrapeConfig(jvmScrapeConfig())
                 .addScrapeConfig(ScrapeConfig.NODE_EXPORTER);
 
@@ -84,6 +82,6 @@ public class GatewayApplicationService {
     }
 
     public String getGatewayHost() {
-        return Optional.ofNullable(environment.getProperty("GATEWAY_HOST")).filter(StringUtils::hasText).orElse("localhost:8080");
+        return environment.getRequiredProperty("IBMS_GATEWAY_HOST");
     }
 }

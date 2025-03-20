@@ -14,17 +14,21 @@ services:
   gateway:
     build: .
     image: ecosync/ibms-gateway:0.0.1
+    network_mode: host
     volumes:
       - ./target/ibms-gateway-starter-0.0.1-SNAPSHOT.jar:/opt/app/ibms-gateway-starter-0.0.1-SNAPSHOT.jar
       - ./prometheus.yml:/opt/app/prometheus.yml
     command: [ "java", "-jar", "/opt/app/ibms-gateway-starter-0.0.1-SNAPSHOT.jar" ]
     environment:
-      BACNET_IFACE: ${BACNET_IFACE:-eth0}
-      GATEWAY_HOST: ${GATEWAY_HOST:-localhost}:${GATEWAY_PORT:-8080}
-      SERVER_PORT: ${GATEWAY_PORT:-8080}
+      IBMS_GATEWAY_CODE: ${IBMS_GATEWAY_CODE:?}
+      IBMS_DATA_ORIGIN: ${IBMS_DATA_ORIGIN:?}
+      BACNET_IFACE: ${IBMS_GATEWAY_BACNET_IFACE:-eth0}
+      IBMS_GATEWAY_HOST: ${IBMS_GATEWAY_HOST:-localhost}:${IBMS_GATEWAY_PORT:-8080}
+      SERVER_PORT: ${IBMS_GATEWAY_PORT:-8080}
 
   prometheus-agent:
     image: prom/prometheus:v3.2.1
+    network_mode: host
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-agent:/prometheus
@@ -34,12 +38,13 @@ services:
       - --config.auto-reload-interval=30s
       - --enable-feature=auto-reload-config,metadata-wal-records
       - --web.route-prefix=/
-      - --web.external-url=${IBMS_ORIGIN:?}/prometheus
+      - --web.external-url=${IBMS_GATEWAY_ORIGIN:?}/prometheus
       - --storage.agent.path=/prometheus
       - --agent
 
   prometheus:
     image: prom/prometheus:v3.2.1
+    network_mode: host
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus:/prometheus
@@ -49,32 +54,35 @@ services:
       - --config.auto-reload-interval=30s
       - --enable-feature=auto-reload-config,metadata-wal-records
       - --web.route-prefix=/
-      - --web.external-url=${IBMS_ORIGIN:?}/prometheus
+      - --web.external-url=${IBMS_GATEWAY_ORIGIN:?}/prometheus
       - --storage.tsdb.path=/prometheus
 
   grafana:
     image: grafana/grafana:11.5.2
+    network_mode: host
     volumes:
       - grafana:/var/lib/grafana
     environment:
       GF_DEFAULT_INSTANCE_NAME: ${COMPOSE_PROJECT_NAME}
-      GF_SERVER_ROOT_URL: ${IBMS_ORIGIN:?}/grafana
+      GF_SERVER_ROOT_URL: ${IBMS_GATEWAY_ORIGIN:?}/grafana
       GF_SERVER_SERVE_FROM_SUB_PATH: true
       GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER:?}
       GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD:?}
 
   postgresql:
     image: postgres:14.17
+    network_mode: host
     environment:
-      POSTGRES_PASSWORD: ${DATABASE_ROOT_PASSWORD:?}
+      POSTGRES_PASSWORD: ${IBMS_GATEWAY_DATABASE_ROOT_PASSWORD:?}
     volumes:
       - ./initdb-postgresql.sh:/docker-entrypoint-initdb.d/initdb.sh
       - postgresql:/var/lib/postgresql/data
 
   mysql:
     image: mysql:8.0.41
+    network_mode: host
     environment:
-      MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD:?}
+      MYSQL_ROOT_PASSWORD: ${IBMS_GATEWAY_DATABASE_ROOT_PASSWORD:?}
     healthcheck:
       test: [ "CMD", "mysqladmin", "-uroot", "-p$$MYSQL_ROOT_PASSWORD", "ping", "-h", "localhost" ]
       timeout: 10s
@@ -87,11 +95,8 @@ services:
 
   nginx:
     image: nginx:1.27.4
+    network_mode: host
     restart: always
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/templates:/etc/nginx/templates
-
-networks:
-  default:
-    driver: host

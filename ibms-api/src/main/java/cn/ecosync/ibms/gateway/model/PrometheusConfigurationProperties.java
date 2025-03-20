@@ -92,10 +92,6 @@ public class PrometheusConfigurationProperties {
             this.staticConfigs = Arrays.asList(staticConfigs);
         }
 
-        public List<RelabelConfig> getRelabelConfigs() {
-            return CollectionUtils.nullSafeOf(relabelConfigs);
-        }
-
         public List<StaticConfig> getStaticConfigs() {
             return CollectionUtils.nullSafeOf(staticConfigs);
         }
