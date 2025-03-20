@@ -37,7 +37,7 @@ import static cn.ecosync.ibms.gateway.model.SynchronizationStateEnum.SYNCHRONIZI
 @Tag(name = "网关API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/gateway")
+@RequestMapping
 public class GatewayWebController {
     private static final Logger log = LoggerFactory.getLogger(GatewayWebController.class);
 
