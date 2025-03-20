@@ -3,10 +3,7 @@ package cn.ecosync.ibms.gateway.service;
 import cn.ecosync.ibms.gateway.model.DeviceDataAcquisition;
 import cn.ecosync.ibms.gateway.model.DeviceDataAcquisitionRepository;
 import cn.ecosync.ibms.gateway.model.LabelTable;
-import cn.ecosync.ibms.gateway.model.PrometheusConfigurationProperties.RelabelConfig;
-import cn.ecosync.ibms.gateway.model.PrometheusConfigurationProperties.ScrapeConfig;
-import cn.ecosync.ibms.gateway.model.PrometheusConfigurationProperties.ScrapeConfigs;
-import cn.ecosync.ibms.gateway.model.PrometheusConfigurationProperties.StaticConfig;
+import cn.ecosync.ibms.gateway.model.PrometheusConfigurationProperties.*;
 import cn.ecosync.ibms.util.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -16,7 +13,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Pageable;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +24,7 @@ public class GatewayApplicationService {
     private final DeviceTelemetryService deviceTelemetryService;
     private final DeviceDataAcquisitionRepository dataAcquisitionRepository;
     private final ObjectMapper yamlSerde;
-    private final File scrapeConfigFile;
+    private final File prometheusConfigFile;
     private final Environment environment;
 
     public GatewayApplicationService(DeviceTelemetryService deviceTelemetryService, DeviceDataAcquisitionRepository dataAcquisitionRepository, Environment environment) {
@@ -34,7 +32,7 @@ public class GatewayApplicationService {
         this.dataAcquisitionRepository = dataAcquisitionRepository;
         this.yamlSerde = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER))
                 .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
-        this.scrapeConfigFile = new File("scrape_config_file.yml");
+        this.prometheusConfigFile = new File("prometheus.yml");
         this.environment = environment;
     }
 
@@ -43,15 +41,23 @@ public class GatewayApplicationService {
                 .toArray(new DeviceDataAcquisition[0]);
         deviceTelemetryService.reload(dataAcquisitions);
 
-        List<ScrapeConfig> scrapeConfigs = new ArrayList<>();
-        scrapeConfigs.add(jvmScrapeConfig());
-        for (DeviceDataAcquisition dataAcquisition : dataAcquisitions) {
-            ScrapeConfig scrapeConfig = toScrapeConfig(dataAcquisition);
-            scrapeConfigs.add(scrapeConfig);
-        }
+        String gatewayCode = environment.getRequiredProperty("GATEWAY_CODE");
+        String ibmsOrigin = environment.getRequiredProperty("IBMS_ORIGIN");
+
+        Prometheus.Builder builder = Prometheus.builder()
+                .withGlobal(new Global(Collections.singletonMap("gateway_code", gatewayCode)))
+                .addRemoteWrite(new RemoteWrite(ibmsOrigin + "/ibms/data/prometheus/api/v1/write", null, Collections.singletonMap("Gateway-Code", gatewayCode)))
+                .addScrapeConfig(jvmScrapeConfig())
+                .addScrapeConfig(ScrapeConfig.NODE_EXPORTER);
+
+        Arrays.stream(dataAcquisitions)
+                .map(this::toScrapeConfig)
+                .forEach(builder::addScrapeConfig);
+
+        Prometheus prometheus = builder.build();
 
         try {
-            yamlSerde.writeValue(scrapeConfigFile, new ScrapeConfigs(scrapeConfigs));
+            yamlSerde.writeValue(prometheusConfigFile, prometheus);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -59,7 +65,7 @@ public class GatewayApplicationService {
 
     private ScrapeConfig jvmScrapeConfig() {
         String metricsPath = "/ibms" + PATH_METRICS_JVM;
-        return new ScrapeConfig("jvm", metricsPath, null, null, null, new StaticConfig(getGatewayHost()));
+        return new ScrapeConfig("jvm", metricsPath, new StaticConfig(getGatewayHost()));
     }
 
     private ScrapeConfig toScrapeConfig(DeviceDataAcquisition dataAcquisition) {

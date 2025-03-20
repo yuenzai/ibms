@@ -2,7 +2,7 @@
 
 GATEWAY_DB=gateway
 GATEWAY_USER=gateway
-GATEWAY_PASSWORD="a123451!"
+GATEWAY_PASSWORD="CJVixCszaS+7raa/5326YJDq3xrSBXHg"
 
 echo "初始化数据库: $GATEWAY_DB..."
 psql --username postgres <<-EOSQL
@@ -19,5 +19,3 @@ else
     echo "数据库 $GATEWAY_DB 初始化失败！"
     exit 1
 fi
-
-echo "PostgreSQL 部署完成！"

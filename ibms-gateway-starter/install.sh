@@ -13,8 +13,8 @@ After=docker.service
 Type=oneshot
 RemainAfterExit=yes
 WorkingDirectory=${WORKDIR}
-ExecStart=docker compose up -d
-ExecStop=docker compose down
+ExecStart=docker compose up -d postgresql prometheus grafana gateway nginx
+ExecStop=docker compose down postgresql prometheus grafana gateway nginx
 TimeoutStartSec=0
 
 [Install]
