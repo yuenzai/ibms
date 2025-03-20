@@ -62,7 +62,7 @@ public class GatewayApplicationService {
     }
 
     private ScrapeConfig jvmScrapeConfig() {
-        String metricsPath = "/ibms" + PATH_METRICS_JVM;
+        String metricsPath = SERVLET_CONTEXT_PATH + PATH_METRICS_JVM;
         return new ScrapeConfig("jvm", metricsPath, new StaticConfig(getGatewayHost()));
     }
 
@@ -75,7 +75,7 @@ public class GatewayApplicationService {
         StaticConfig staticConfig = new StaticConfig(deviceCodes);
         List<RelabelConfig> relabelConfigs = RelabelConfig.toRelabelConfigs("device_code", getGatewayHost());
 
-        String metricsPath = "/ibms" + PATH_METRICS_DEVICES;
+        String metricsPath = SERVLET_CONTEXT_PATH + PATH_METRICS_DEVICES;
         Integer scrapeInterval = dataAcquisition.getScrapeInterval();
         Integer scrapeTimeout = dataAcquisition.getScrapeTimeout();
         return new ScrapeConfig(jobName, metricsPath, true, scrapeInterval, scrapeTimeout, relabelConfigs, staticConfig);

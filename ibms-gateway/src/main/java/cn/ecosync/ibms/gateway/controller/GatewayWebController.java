@@ -34,10 +34,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static cn.ecosync.ibms.gateway.model.SynchronizationStateEnum.SYNCHRONIZING;
 
-@Tag(name = "网关API")
+@Tag(name = "数据采集API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping
+@RequestMapping("/data-acquisition")
 public class GatewayWebController {
     private static final Logger log = LoggerFactory.getLogger(GatewayWebController.class);
 
@@ -53,19 +53,19 @@ public class GatewayWebController {
     }
 
     @Operation(summary = "保存数据采集")
-    @PostMapping(path = "/data-acquisition/{data-acquisition-code}", headers = "Command-Type=SAVE")
+    @PostMapping(path = "/{data-acquisition-code}", headers = "Command-Type=SAVE")
     public void execute(@RequestBody @Validated SaveDataAcquisitionCommand command) {
         commandBus.execute(command);
     }
 
     @Operation(summary = "删除数据采集")
-    @PostMapping(path = "/data-acquisition/{data-acquisition-code}", headers = "Command-Type=REMOVE")
+    @PostMapping(path = "/{data-acquisition-code}", headers = "Command-Type=REMOVE")
     public void execute(@RequestBody @Validated RemoveDataAcquisitionCommand command) {
         commandBus.execute(command);
     }
 
     @Operation(summary = "获取数据采集")
-    @GetMapping(path = "/data-acquisition/{data-acquisition-code}", headers = "Query-Type=GET")
+    @GetMapping(path = "/{data-acquisition-code}", headers = "Query-Type=GET")
     public ResponseEntity<DeviceDataAcquisition> get(@PathVariable("data-acquisition-code") String dataAcquisitionCode) {
         DeviceDataAcquisitionId dataAcquisitionId = new DeviceDataAcquisitionId(dataAcquisitionCode);
         GetDataAcquisitionQuery query = new GetDataAcquisitionQuery(dataAcquisitionId);
@@ -78,7 +78,7 @@ public class GatewayWebController {
     }
 
     @Operation(hidden = true)
-    @GetMapping(path = "/data-acquisition/{data-acquisition-code}", headers = "Query-Type=POLL")
+    @GetMapping(path = "/{data-acquisition-code}", headers = "Query-Type=POLL")
     public DeferredResult<ResponseEntity<DeviceDataAcquisition>> poll(@PathVariable("data-acquisition-code") String dataAcquisitionCode) {
         DeviceDataAcquisitionId dataAcquisitionId = new DeviceDataAcquisitionId(dataAcquisitionCode);
         GetDataAcquisitionQuery query = new GetDataAcquisitionQuery(dataAcquisitionId);
@@ -123,7 +123,7 @@ public class GatewayWebController {
     }
 
     @Operation(summary = "查询数据采集")
-    @GetMapping(path = "/data-acquisition", headers = "Query-Type=SEARCH")
+    @GetMapping(headers = "Query-Type=SEARCH")
     public PagedModel<DeviceDataAcquisition> search(@RequestParam(name = "page", required = false) Integer page,
                                                     @RequestParam(name = "pagesize", required = false) Integer pageSize) {
         SearchDataAcquisitionQuery query = new SearchDataAcquisitionQuery(page, pageSize);
@@ -132,7 +132,7 @@ public class GatewayWebController {
     }
 
     @Operation(summary = "导入 BACnet 点位")
-    @PostMapping(path = "/data-acquisition/{data-acquisition-code}", headers = "Command-Type=BACNET_IMPORT")
+    @PostMapping(path = "/{data-acquisition-code}", headers = "Command-Type=BACNET_IMPORT")
     public ResponseEntity<Object> bacnetImport(@PathVariable("data-acquisition-code") String dataAcquisitionCode, @RequestPart("file") MultipartFile file) throws IOException {
         ImportBacnetDataPointsCommand command = new ImportBacnetDataPointsCommand(dataAcquisitionCode, file.getInputStream());
         try {
@@ -144,7 +144,7 @@ public class GatewayWebController {
     }
 
     @Operation(summary = "导入设备信息")
-    @PostMapping(path = "/data-acquisition/{data-acquisition-code}", headers = "Command-Type=DEVICE_INFO_IMPORT")
+    @PostMapping(path = "/{data-acquisition-code}", headers = "Command-Type=DEVICE_INFO_IMPORT")
     public ResponseEntity<Object> deviceInfoImport(@PathVariable("data-acquisition-code") String dataAcquisitionCode, @RequestPart("file") MultipartFile file) throws IOException {
         ImportDeviceInfosCommand command = new ImportDeviceInfosCommand(dataAcquisitionCode, file.getInputStream());
         try {

@@ -6,6 +6,7 @@ public class Constants {
     public static final String REGEX_CODE = "[a-zA-Z_]\\w*";
     public static final Pattern PATTERN_CODE = Pattern.compile(REGEX_CODE);
 
+    public static final String SERVLET_CONTEXT_PATH = "/ibms/gateway";
     public static final String PATH_METRICS_JVM = "/metrics/jvm";
     public static final String PATH_METRICS_DEVICES = "/metrics/devices";
 
