@@ -16,5 +16,8 @@
         <module>ibms-api</module>
         <module>ibms-gateway</module>
         <module>ibms-gateway-starter</module>
+
+        <module>common</module>
+        <module>data-platform/api-server</module>
     </modules>
 </project>
