@@ -17,6 +17,8 @@
 
     <modules>
         <module>common</module>
+        <module>data-platform/api-server</module>
+        <module>edge-server/gateway</module>
     </modules>
 
     <properties>
