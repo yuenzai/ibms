@@ -59,7 +59,7 @@ services:
     environment:
       POSTGRES_PASSWORD: ${EDGE_GATEWAY_DATABASE_ROOT_PASSWORD:?}
     volumes:
-      - ./initdb-postgresql.sh:/docker-entrypoint-initdb.d/initdb.sh
+      - ./postgresql/initdb-postgresql.sh:/docker-entrypoint-initdb.d/initdb.sh
       - postgresql:/var/lib/postgresql/data
 
   nginx:
@@ -98,5 +98,5 @@ services:
 #      retries: 10
 #      start_period: 180s
 #    volumes:
-#      - ./initdb-mysql.sh:/docker-entrypoint-initdb.d/initdb.sh
+#      - ./mysql/initdb-mysql.sh:/docker-entrypoint-initdb.d/initdb.sh
 #      - mysql:/var/lib/mysql
