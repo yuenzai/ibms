@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/gateway
+    username: gateway
+    password: CJVixCszaS+7raa/5326YJDq3xrSBXHg

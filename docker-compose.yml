@@ -1,0 +1,102 @@
+volumes:
+  prometheus:
+    name: ${COMPOSE_PROJECT_NAME}-prometheus
+  grafana:
+    name: ${COMPOSE_PROJECT_NAME}-grafana
+  postgresql:
+    name: ${COMPOSE_PROJECT_NAME}-postgresql
+#  prometheus-agent:
+#    name: ${COMPOSE_PROJECT_NAME}-prometheus-agent
+#  mysql:
+#    name: ${COMPOSE_PROJECT_NAME}-mysql
+
+services:
+  gateway:
+    build: ./gateway
+    image: ecosync/aiot-edge-gateway:0.0.1
+    network_mode: host
+    volumes:
+      - ./gateway/boot/target/aiot-edge-gateway-boot-0.0.1-SNAPSHOT.jar:/opt/app/aiot-edge-gateway-boot-0.0.1-SNAPSHOT.jar
+      - ./prometheus.yml:/opt/app/prometheus.yml
+    command: [ "java", "-jar", "/opt/app/aiot-edge-gateway-boot-0.0.1-SNAPSHOT.jar" ]
+    environment:
+      EDGE_GATEWAY_CODE: ${EDGE_GATEWAY_CODE:?}
+      EDGE_PROMETHEUS_REMOTE_WRITE_URL: ${EDGE_PROMETHEUS_REMOTE_WRITE_URL:?}
+      BACNET_IFACE: ${EDGE_GATEWAY_BACNET_IFACE:-eth0}
+      EDGE_GATEWAY_HOST: ${EDGE_GATEWAY_HOST:-localhost}:${EDGE_GATEWAY_PORT:-8080}
+      SERVER_PORT: ${EDGE_GATEWAY_PORT:-8080}
+
+  prometheus:
+    image: prom/prometheus:v3.2.1
+    network_mode: host
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.listen-address=0.0.0.0:19090
+      - --config.auto-reload-interval=30s
+      - --enable-feature=auto-reload-config,metadata-wal-records
+      - --web.route-prefix=/
+      - --web.external-url=${EDGE_GATEWAY_ORIGIN:?}/prometheus
+      - --storage.tsdb.path=/prometheus
+
+  grafana:
+    image: grafana/grafana:11.5.2
+    network_mode: host
+    volumes:
+      - grafana:/var/lib/grafana
+    environment:
+      GF_DEFAULT_INSTANCE_NAME: ${COMPOSE_PROJECT_NAME}
+      GF_SERVER_ROOT_URL: ${EDGE_GATEWAY_ORIGIN:?}/grafana
+      GF_SERVER_SERVE_FROM_SUB_PATH: true
+      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER:?}
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD:?}
+
+  postgresql:
+    image: postgres:14.17
+    network_mode: host
+    environment:
+      POSTGRES_PASSWORD: ${EDGE_GATEWAY_DATABASE_ROOT_PASSWORD:?}
+    volumes:
+      - ./postgresql/initdb-postgresql.sh:/docker-entrypoint-initdb.d/initdb.sh
+      - postgresql:/var/lib/postgresql/data
+
+  nginx:
+    image: nginx:1.27.4
+    network_mode: host
+    restart: always
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/templates:/etc/nginx/templates
+
+#  prometheus-agent:
+#    image: prom/prometheus:v3.2.1
+#    network_mode: host
+#    volumes:
+#      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+#      - prometheus-agent:/prometheus
+#    command:
+#      - --config.file=/etc/prometheus/prometheus.yml
+#      - --web.listen-address=0.0.0.0:19090
+#      - --config.auto-reload-interval=30s
+#      - --enable-feature=auto-reload-config,metadata-wal-records
+#      - --web.route-prefix=/
+#      - --web.external-url=${EDGE_GATEWAY_ORIGIN:?}/prometheus
+#      - --storage.agent.path=/prometheus
+#      - --agent
+#
+#  mysql:
+#    image: mysql:8.0.41
+#    network_mode: host
+#    environment:
+#      MYSQL_ROOT_PASSWORD: ${EDGE_GATEWAY_DATABASE_ROOT_PASSWORD:?}
+#    healthcheck:
+#      test: [ "CMD", "mysqladmin", "-uroot", "-p$$MYSQL_ROOT_PASSWORD", "ping", "-h", "localhost" ]
+#      timeout: 10s
+#      interval: 30s
+#      retries: 10
+#      start_period: 180s
+#    volumes:
+#      - ./mysql/initdb-mysql.sh:/docker-entrypoint-initdb.d/initdb.sh
+#      - mysql:/var/lib/mysql
