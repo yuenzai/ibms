@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/gateway
+    username: gateway
+    password: CJVixCszaS+7raa/5326YJDq3xrSBXHg
