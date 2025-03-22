@@ -1,0 +1,22 @@
+package cn.ecosync.aiot.edge.gateway.command.handler;
+
+import cn.ecosync.aiot.command.CommandHandler;
+import cn.ecosync.aiot.edge.gateway.command.RemoveDataAcquisitionCommand;
+import cn.ecosync.aiot.edge.gateway.model.DeviceDataAcquisitionId;
+import cn.ecosync.aiot.edge.gateway.model.DeviceDataAcquisitionRepository;
+import org.springframework.transaction.annotation.Transactional;
+
+public class RemoveDataAcquisitionCommandHandler implements CommandHandler<RemoveDataAcquisitionCommand> {
+    private final DeviceDataAcquisitionRepository dataAcquisitionRepository;
+
+    public RemoveDataAcquisitionCommandHandler(DeviceDataAcquisitionRepository dataAcquisitionRepository) {
+        this.dataAcquisitionRepository = dataAcquisitionRepository;
+    }
+
+    @Override
+    @Transactional
+    public void handle(RemoveDataAcquisitionCommand command) {
+        DeviceDataAcquisitionId dataAcquisitionId = command.getDataAcquisitionId();
+        dataAcquisitionRepository.remove(dataAcquisitionId);
+    }
+}
