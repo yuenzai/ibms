@@ -1,0 +1,43 @@
+package cn.ecosync.aiot.edge.gateway.command.handler;
+
+import cn.ecosync.aiot.command.CommandHandler;
+import cn.ecosync.aiot.edge.gateway.SimpleReadListener;
+import cn.ecosync.aiot.edge.gateway.command.ImportDeviceInfosCommand;
+import cn.ecosync.aiot.edge.gateway.command.SaveDataAcquisitionCommand;
+import cn.ecosync.aiot.edge.gateway.exception.ExcelAnalysisException;
+import cn.ecosync.aiot.edge.gateway.model.DeviceDataAcquisitionId;
+import cn.ecosync.aiot.edge.gateway.model.DeviceDataAcquisitionRepository;
+import cn.ecosync.aiot.edge.gateway.model.LabelTable;
+import com.alibaba.excel.EasyExcel;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Slf4j
+public class ImportDeviceInfosCommandHandler implements CommandHandler<ImportDeviceInfosCommand> {
+    private final DeviceDataAcquisitionRepository dataAcquisitionRepository;
+
+    public ImportDeviceInfosCommandHandler(DeviceDataAcquisitionRepository dataAcquisitionRepository) {
+        this.dataAcquisitionRepository = dataAcquisitionRepository;
+    }
+
+    @Override
+    @Transactional
+    public void handle(ImportDeviceInfosCommand command) {
+        SimpleReadListener listener = new SimpleReadListener();
+        EasyExcel.read(command.getInputStream(), listener).sheet().doRead();
+        if (!listener.getExceptions().isEmpty()) {
+            List<ExcelAnalysisException.Cell> cells = listener.getExceptions().stream()
+                    .map(in -> new ExcelAnalysisException.Cell(in.getRowIndex(), in.getColumnIndex(), in.getCellData()))
+                    .collect(Collectors.toList());
+            throw new ExcelAnalysisException(cells);
+        }
+        DeviceDataAcquisitionId dataAcquisitionId = new DeviceDataAcquisitionId(command.getDataAcquisitionCode());
+        SaveDataAcquisitionCommand command2 = new SaveDataAcquisitionCommand(dataAcquisitionId);
+        LabelTable labelTable = new LabelTable(listener.getHead(), listener.getBody());
+        command2.withDeviceInfos(labelTable);
+        dataAcquisitionRepository.save(command2);
+    }
+}
