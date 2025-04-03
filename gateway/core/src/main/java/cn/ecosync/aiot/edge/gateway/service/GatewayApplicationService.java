@@ -71,8 +71,9 @@ public class GatewayApplicationService {
         String[] deviceCodes = dataPoints.get(LABEL_DEVICE_CODE)
                 .distinct()
                 .toArray(String[]::new);
-        String jobName = "aiot-edge";
-        StaticConfig staticConfig = new StaticConfig(deviceCodes);
+        // 一个 dataAcquisition 一个 job，意味着 schema 相同，方便下游处理
+        String jobName = dataAcquisition.getDataAcquisitionId().toString();
+        StaticConfig staticConfig = new StaticConfig(Collections.singletonMap("job_type", "device"), deviceCodes);
         List<RelabelConfig> relabelConfigs = RelabelConfig.toRelabelConfigs("device_code", getGatewayHost());
 
         String metricsPath = SERVLET_CONTEXT_PATH + PATH_METRICS_DEVICES;
